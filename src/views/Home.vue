@@ -1,0 +1,53 @@
+<template>
+  <div>
+    <Header :scrolling="showNavbar"></Header>
+    <router-view></router-view>
+    <Contact></Contact>
+    <Footer></Footer>
+  </div>
+</template>
+<script>
+  import Footer from '@/components/footer/Footer.vue'
+  import Contact from '@/views/Contact.vue'
+  import Header from '@/components/header/Header.vue'
+  function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
+  export default {
+    name:'Home',
+    data() {
+        return {
+          showNavbar: true,
+          lastScrollPosition: 0,
+        }
+      },
+      components: {
+        Header,
+        Footer,
+        Contact
+      },
+      mounted () {
+        window.addEventListener('scroll', this.onScroll);
+      },
+      methods:{
+
+        onScroll () {
+          const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
+
+          if (currentScrollPosition < 0) {
+            return
+          }
+
+          if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 150) {
+            return
+          }
+          this.showNavbar = currentScrollPosition < this.lastScrollPosition;
+          this.lastScrollPosition = currentScrollPosition
+        },
+      },
+  }
+</script>
