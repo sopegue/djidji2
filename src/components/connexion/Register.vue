@@ -36,14 +36,12 @@
             <br><h5 class="h-lr text-center">Se connecter</h5>
             </form>
             <form class="d-login d-flex flex-column" @submit.prevent="login">
-            <label for="usernamec">Email</label>
+            <label for="usernamec">Email<span style="color:red;"> *</span></label>
             <input type="text" id="usernamec" name="usernamec" placeholder="Email" v-model="mailco"/><br>
-            <label for="pwdc">Mot de passe</label>
+            <label for="pwdc">Mot de passe<span style="color:red;"> *</span></label>
             <input type="password" id="pwdc" name="passwordc"  placeholder="Mot de passe" v-model="pwdco"/>
-            <div class="remember">
-                <input type="checkbox" v-model="remember" id="rememberMe"> <label for="rememberMe">Se souvenir</label>
-            </div>
-            <router-link class="pwd-reset" to="#">Mot de passe oublié ?</router-link>
+            <br>
+            <router-link class="pwd-reset" to="#" @click.native="goReinit">Mot de passe oublié ?</router-link>
             <button type="submit" class="b-lr logb" :disabled="loging">Connexion</button>
             </form>
     </div>
@@ -139,7 +137,7 @@
                 loging:false,
                 registring:false,
                 remember:false,
-                mail:'',
+                
                 mailco:'',
                 name:'',
                 surname:'',
@@ -161,10 +159,23 @@
                 'Odienné','Minignan','Mankono','Touba','Séguéla' ]
             }
         },
-        computed:{
+        computed: {
+          mail: {
+            // getter
+            get: function () {
+              return this.$store.state.okConnection.regmail
+            },
+            // setter
+            set: function (newValue) {
+              this.$store.state.okConnection.regmail=newValue
+            }
+          }
         },
         methods:{
             
+            goReinit(){
+                this.$router.push('/reinit')
+            },
             handleFileUpload(){
               this.file = this.$refs.file.files[0];
               let reader  = new FileReader();
@@ -204,35 +215,126 @@
                 console.log('success');
               
           },
-            login:function(){
+          
+            okConnection(){
+                if(this.mailco!==""){
+                    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mailco)){
+                        this.$store.state.okConnection.okuser="true"
+                    }
+                    else
+                        this.$store.state.okConnection.okuser="false"
+                }
+                else
+                        this.$store.state.okConnection.okuser="false"
+
+                if(this.pwdco!==""){
+                    if (this.pwdco.length<8){
+                        this.$store.state.okConnection.okpwd="short"
+                    }
+                    else
+                        this.$store.state.okConnection.okpwd="true"
+                }
+                else
+                        this.$store.state.okConnection.okpwd="false"
+            },
+            okRegister(){
+
+                if(this.mail!==""){
+                    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mail)){
+                        this.$store.state.okConnection.okregmail="true"
+                    }
+                    else
+                        this.$store.state.okConnection.okregmail="false"
+                }
+                else
+                        this.$store.state.okConnection.okregmail="false"
+                if(this.pwd!==""){
+                    if (this.pwd.length<8){
+                        this.$store.state.okConnection.okregpwd="short"
+                    }
+                    else
+                        this.$store.state.okConnection.okregpwd="true"
+                }
+                else
+                        this.$store.state.okConnection.okregpwd="false"
+                
+                 if(this.pwd2!==""){
+                    if (this.pwd2.length<8){
+                        this.$store.state.okConnection.okregpwd2="short"
+                    }
+                    else
+                        this.$store.state.okConnection.okregpwd2="true"
+                }
+                else
+                        this.$store.state.okConnection.okregpwd2="false"
+                if((this.pwd2!=="" && this.pwd!=="") && (this.pwd2 !== this.pwd))
+                    this.$store.state.okConnection.notokpwd="false"
+            },
+            login:function() {
+                this.$store.state.okConnection.okregmail=""
+                this.$store.state.okConnection.notok=""
+                this.$store.state.okConnection.okregpwd=""
+                this.$store.state.okConnection.okregpwd2=""
+                this.$store.state.okConnection.notokpwd=""
+                this.okConnection();
+                if(this.$store.state.okConnection.okuser==="true" && this.$store.state.okConnection.okpwd==="true"){
+                this.$store.state.okConnection.okuser="" 
+                this.$store.state.okConnection.okpwd=""
                 this.$Progress.start();
-                this.loging=true
-                this.registring=true
                 const email = this.mailco
                 const password = this.pwdco
                 this.$store.dispatch('login', { email, password}).then(() => {
-                    if(this.$store.state.next!=='')
-                        this.$router.push(this.$store.state.next)
+                    if(this.$store.state.okConnection.notok!=="true"){
+                        if(this.$store.state.next!=='')
+                            this.$router.push(this.$store.state.next)
+                        else
+                            this.$router.push('/')
+
+                    }
                     else
-                        this.$router.push('/')
+                        this.$notify({
+                        group: 'custom-template',
+                        type:'warn'
+                      });
                     })
                 this.$Progress.finish();
+                }
+                else    
+                this.$notify({
+                  group: 'custom-template',
+                  type:'warn'
+                });
             },
             register:function(){
-                this.$Progress.start();
-                this.registring=true
-                this.loging=true
-                var info = {
-                  name: this.name,
-                  email: this.mail,
-                  password: this.pwd,
-                  surname:this.surname,
-                  ville:this.ville,
-                  tel:this.tel
-
-                }
-                this.$store.dispatch('signup', info).then(() => this.$router.push('/connexion'))
-                this.$Progress.finish();
+                this.$store.state.okConnection.okuser="" 
+                this.$store.state.okConnection.okpwd=""
+                this.$store.state.okConnection.notok=""
+                this.$store.state.okConnection.okregmail=""
+                this.okRegister()
+                if((this.$store.state.okConnection.okregmail==="true" && this.$store.state.okConnection.okregpwd==="true" && this.$store.state.okConnection.okregpwd2==="true")&&this.$store.state.okConnection.notokpwd!=="false"){
+                    this.$store.state.okConnection.okregpwd=""
+                    this.$store.state.okConnection.okregpwd2=""
+                    this.$store.state.okConnection.notokpwd=""
+                    this.$store.state.okConnection.okregmail===""
+                     this.$Progress.start();
+                     var info = {
+                       name: this.name,
+                       email: this.mail,
+                       password: this.pwd,
+                       surname:this.surname,
+                       ville:this.ville,
+                       tel:this.tel
+     
+                     }
+                     this.$store.dispatch('signup', info).then(() => this.$router.push('/connexion'))
+                     }
+                     else
+                     this.$notify({
+                        group: 'custom-template',
+                     type:'warn'
+                    });
+               
+                    this.$Progress.finish();
             },
         },
     }

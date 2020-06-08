@@ -1,24 +1,15 @@
 <template>
   <div class="ssright">
     <div class="sshead d-flex flex-column">
-      <div class="categt d-flex flex-column" v-if="this.$store.state.typeOfSearch==1">
-        <div class="tik align-self-center">
-          <h5>{{this.$store.state.categSearch}}</h5>
-          <br><!--<h6>Pc portable</h6>-->
-        </div>
-        <p>
-          <span class="sssea">{{this.$store.state.search}}</span>
-          <br />
-          <span class="ssnb">{{this.$store.state.searchNb}} annonce(s)</span>
-        </p>
-      </div>
 
-      <div class="categt d-flex flex-column" v-if="this.$store.state.typeOfSearch==2 || this.$store.state.typeOfSearch==0 ">
+      <div class="categt d-flex flex-column" v-if="this.$store.state.typeOfSearch==2 || this.$store.state.typeOfSearch==1 || this.$store.state.typeOfSearch==3 || this.$store.state.typeOfSearch==4">
         <div class="tik align-self-center">
           <h5>{{this.$store.state.categSearch}}</h5>
-          <br><!--<h6>Pc portable</h6>-->
+          <br><h6 v-if="this.$store.state.typeOfSearch==3">{{this.$store.state.sCateg}}</h6><br>
         </div>
         <p>
+           <span v-if="this.$store.state.typeOfSearch==1" class="sssea">{{this.$store.state.search}}</span>
+          <br />
           <span class="ssnb">{{this.$store.state.Ads.length}} annonce(s)</span>
         </p>
       </div>
@@ -30,9 +21,14 @@
         </div>
         <div v-else>
             
-        <div class="ulist-loads" v-if=" this.$store.state.typeOfSearch==2 && this.$store.state.searchfound==='error'">
+        <div class="ulist-loads" v-if=" (this.$store.state.typeOfSearch==2 || this.$store.state.typeOfSearch==4) && this.$store.state.searchfound==='error'">
              <div class="alert alert-light" role="alert">
               Oops ! Désolé, aucune annonce disponible dans "{{this.$store.state.categSearch}}"
+            </div>
+        </div>
+        <div class="ulist-loads" v-if=" this.$store.state.typeOfSearch==3 && this.$store.state.searchfound==='error'">
+             <div class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible dans "{{this.$store.state.sCateg}}"
             </div>
         </div>
          <div class="ulist-loads" v-if="this.$store.state.typeOfSearch==1 && this.$store.state.searchfound==='error'">

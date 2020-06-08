@@ -13,7 +13,7 @@
                     <input type="password" id="pwdconf" name="pwdconf"  placeholder="Confirmer votre mot de passe" /><br>
                     <button type="button" class="b-us_inf regb" v-on:click="saveusinf()">Modifier</button>
                  </div>
-                 <router-link class="pwd-reset" to="#">Mot de passe oublié ? Réinitialisez le ici</router-link>
+                 
             </div>
         </div>
     </div>

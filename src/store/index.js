@@ -7,6 +7,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+
+  okConnection:{
+    okuser:'',
+    okpwd:'',
+    okregmail:'',
+    regmail:'',
+    notok:''
+  },    
     accessToken:  localStorage.getItem('access_token') ||  '',
     currentUser : [],
     adsPlace:[
@@ -30,7 +38,8 @@ export default new Vuex.Store({
     searchNb:0,
     allCateg:'Toutes les catégories',
     searchh:'',
-    typeOfSearch: 0
+    typeOfSearch: 0,
+    sCateg:'',
   },
   getters: {
     isAuthenticated: state => !!state.accessToken,
@@ -80,6 +89,7 @@ export default new Vuex.Store({
       state.searchfound=''
       state.categSearch=''
       state.search=''
+      state.sCateg=''
     }
   },
   actions: {
@@ -94,6 +104,9 @@ export default new Vuex.Store({
       if(state.typeOfSearch==2){
         dispatch('searchMenu',state.categSearch)
       }
+      if(state.typeOfSearch==4){
+        dispatch('searchByWhat',state.categSearch)
+      }
       if(state.typeOfSearch==1){
         var info={
           selected:state.categSearch,
@@ -101,14 +114,24 @@ export default new Vuex.Store({
         }
         dispatch('searchBar',info)
       }
+      if(state.typeOfSearch==3){
+        var info={
+          categ:state.categSearch,
+          scateg:state.sCateg
+        }
+        dispatch('searchMenuSous',info)
+      }
       dispatch('getNumberPlace',state.adsPlace)
     }
       else{
       commit('setPlace',value)
-      state.placeUpd=true
         //dispatch('checkAdsCache')
+        localStorage.setItem('place', JSON.stringify(state.adsPlace))
         if(state.typeOfSearch==2){
           dispatch('searchMenu',state.categSearch)
+        }
+        if(state.typeOfSearch==4){
+          dispatch('searchByWhat',state.categSearch)
         }
         if(state.typeOfSearch==1){
           var info={
@@ -116,6 +139,13 @@ export default new Vuex.Store({
             search:state.search
           }
           dispatch('searchBar',info)
+        }
+        if(state.typeOfSearch==3){
+          var info={
+            categ:state.categSearch,
+            scateg:state.sCateg
+          }
+          dispatch('searchMenuSous',info)
         }
         dispatch('getNumberPlace',state.adsPlace)
        
@@ -142,23 +172,112 @@ export default new Vuex.Store({
         state.Ads= JSON.parse(localStorage.getItem('adsearch'))
         state.adsPlace= JSON.parse(localStorage.getItem('place'))
         state.categSearch=localStorage.getItem('categSearch')
-        state.typeOfSenarch=localStorage.getItem('type')
+        state.typeOfSearch=localStorage.getItem('type')
+        state.sCateg=localStorage.getItem('sCateg')
         if(state.Ads.length==0)
           state.searchfound='error'
         else
           state.searchfound='success'
         state.allCateg=state.categSearch
-        state.searchNb=state.Ads.length
+        state.placeNb=state.Ads.length
         state.searchh=state.search
       }
       else
         router.push('/')
     },
 
+    searchByWhat({commit,dispatch,state},what){
+      commit('reset_search')
+      commit('search_searching')
+      state.categSearch=what
+      localStorage.removeItem('search')
+      localStorage.removeItem('adsearch')
+      localStorage.removeItem('categSearch')
+      localStorage.removeItem('place')
+      localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
+      return new Promise((resolve, reject) => { // The Promise used for router redirect in login
+        Axios({url: 'http://localhost:8000/api/annonce/lookbywhat', data: {look:what, place:state.adsPlace}, method: 'POST' })
+         .then(resp => { // store the token in localstorage
+           if(resp.data.length!=0){
+            commit('search_success',resp.data)
+            localStorage.setItem('adsearch', JSON.stringify(state.Ads))
+            localStorage.setItem('place', JSON.stringify(state.adsPlace))
+            localStorage.setItem('categSearch', state.categSearch)
+            localStorage.setItem('sCateg', '')
+            localStorage.setItem('type', state.typeOfSearch)
+            localStorage.setItem('search', '')
+           }
+           else{
+            commit('search_notFound')
+            localStorage.setItem('adsearch', JSON.stringify(state.Ads))
+            localStorage.setItem('categSearch', state.categSearch)
+            localStorage.setItem('sCateg', '')
+            localStorage.setItem('place', JSON.stringify(state.adsPlace))
+            localStorage.setItem('search', '')
+            localStorage.setItem('type', 4)
+            
+           }
+           resolve(resp)
+         })
+       .catch(err => { // if the request fails, remove any possible user token if possible
+         reject(err)
+       })
+     })
 
+
+    },
+
+    searchMenuSous({commit,state,dispatch},info){
+      commit('reset_search')
+      commit('search_searching')
+      state.categSearch=info.categ
+      state.sCateg=info.scateg
+      localStorage.removeItem('search')
+      localStorage.removeItem('adsearch')
+      localStorage.removeItem('categSearch')
+      localStorage.removeItem('place')
+      localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
+      return new Promise((resolve, reject) => { // The Promise used for router redirect in login
+        Axios({url: 'http://localhost:8000/api/annonce/looksouscateg', data: {categ:info.categ,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
+         .then(resp => { // store the token in localstorage
+           if(resp.data.length!=0){
+            commit('search_success',resp.data)
+            localStorage.setItem('adsearch', JSON.stringify(state.Ads))
+            localStorage.setItem('place', JSON.stringify(state.adsPlace))
+            localStorage.setItem('categSearch', state.categSearch)
+            localStorage.setItem('sCateg', state.sCateg)
+            localStorage.setItem('type', state.typeOfSearch)
+            localStorage.setItem('search', '')
+           }
+           else{
+            commit('search_notFound')
+            localStorage.setItem('adsearch', JSON.stringify(state.Ads))
+            localStorage.setItem('categSearch', state.categSearch)
+            localStorage.setItem('sCateg', state.sCateg)
+            localStorage.setItem('place', JSON.stringify(state.adsPlace))
+            localStorage.setItem('search', '')
+            localStorage.setItem('type', 3)
+            
+           }
+           resolve(resp)
+         })
+       .catch(err => { // if the request fails, remove any possible user token if possible
+         reject(err)
+       })
+     })
+
+    },
     searchMenu({commit,dispatch,state},type){
       commit('reset_search')
       commit('search_searching')
+      localStorage.removeItem('search')
+      localStorage.removeItem('adsearch')
+      localStorage.removeItem('categSearch')
+      localStorage.removeItem('place')
+      localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
         Axios({url: 'http://localhost:8000/api/annonce/lookcateg', data: {categ:type, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
@@ -194,11 +313,12 @@ export default new Vuex.Store({
       commit('search_searching')
       state.categSearch=info.selected
       state.search=info.search
-      localStorage.removeItem('access_token') 
+      localStorage.removeItem('sCateg')
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')
       localStorage.removeItem('categSearch')
       localStorage.removeItem('place')
+      localStorage.removeItem('type')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
         Axios({url: 'http://localhost:8000/api/annonce/look', data: {selected:info.selected, search:info.search, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
@@ -262,6 +382,7 @@ export default new Vuex.Store({
       }
     },
     login:({commit,state},user)=>{
+      state.okConnection.notok=""
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
         Axios({url: 'http://localhost:8000/api/auth/login', data: user, method: 'POST' })
           .then(resp => {
@@ -269,23 +390,30 @@ export default new Vuex.Store({
             localStorage.setItem('access_token', token) // store the token in localstorage
             Axios.defaults.headers.common['Authorization'] = token
             commit('auth_success', token)
+
             Axios({url: 'http://localhost:8000/api/user/tokenS',data: {email:user.email,password:user.password,token:state.accessToken}, method: 'POST' })
             .then(tok=>{
+              
               commit('auth_token',tok)
             })
+
             Axios({url: 'http://localhost:8000/api/user',data: user, method: 'POST' })
             .then(respo => {
+              
               commit('auth_user', respo.data)
               resolve(respo)
             });
+
             resolve(resp)
           })
         .catch(err => {
+          state.okConnection.notok="true"
           commit('auth_error', err)
           localStorage.removeItem('access_token') // if the request fails, remove any possible user token if possible
           reject(err)
         })
-      })
+        
+      }).catch((err)=>console.log(err))
     },
   },
   modules: {

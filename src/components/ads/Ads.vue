@@ -20,8 +20,8 @@
     <div class="row-2">
       <p  v-if="load" style="font-size: small; color: gray; position: relative; left:0.5rem;">Chargement...</p>
       <div class="ad-infoo d-flex flex-column" else>
-        <span class="descPrix">{{ads.prix}}0 000 000 FCFA</span>
-        <span class="descPrix-r-second">{{ads.titre}}Asus Rogue...</span>
+        <span class="descPrix">{{ads.prix}} FCFA</span>
+        <span class="descPrix-r-second">{{ads.titre}}</span>
         <span class="p-time"><i class="far fa-clock"></i>Il y a 9h.</span>
         <span class="p-time"><i class="fas fa-location-arrow"></i> Abidjan</span>
         

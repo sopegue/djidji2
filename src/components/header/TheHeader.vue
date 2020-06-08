@@ -65,90 +65,90 @@
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Informatique')"><i class="fas fa-laptop"></i> Informatique</router-link> <button v-click-outside="hitem" @click="showitem('computer')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive">
-                    <li class="bbli"><router-link to="#" class="bli">Pc Bureau</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Pc Portable</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Accessoires Pc</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Informatique','Pc Bureau')">Pc Bureau</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Informatique','Pc Portable')">Pc Portable</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Informatique','Accessoires Pc')">Accessoires Pc</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Informatique','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Electronique')"><i class="fas fa-plug"></i> Electronique</router-link> <button v-click-outside="hitem1" @click="showitem('electro')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive1">
-                    <li class="bbli"><router-link to="#" class="bli">Electroménager</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Accessoires électro.</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Electronique','Electroménager')">Electroménager</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Electronique','Accessoires électro.')">Accessoires électro.</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Electronique','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Téléphone')"><i class="fas fa-mobile"></i> Téléphone</router-link> <button v-click-outside="hitem2" @click="showitem('tel')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive2">
-                    <li class="bbli"><router-link to="#" class="bli">Android</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Tablette</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Ios</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Windows phone</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Téléphone','Android')">Android</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Téléphone','Tablette')">Tablette</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Téléphone','Ios')">Ios</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Téléphone','Windows phone')">Windows phone</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Téléphone','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Mode')"><i class="fas fa-tshirt"></i> Mode</router-link> <button v-click-outside="hitem3" @click="showitem('mode')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive3">
-                    <li class="bbli"><router-link to="#" class="bli">Homme</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Femme & enfant</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Self-care</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Accessoires H,F & E</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Mode','Homme')">Homme</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Mode','Femme & enfant')">Femme & enfant</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Mode','Self-care')">Self-care</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Mode','Accessoires H,F & E')">Accessoires H,F & E</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Mode','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Maison')"><i class="fas fa-home"></i> Maison</router-link> <button v-click-outside="hitem4" @click="showitem('house')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive4" @click="reloading()">
-                    <li class="bbli"><router-link to="#" class="bli">Meuble</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Decoration</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Bricolage</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Meuble')">Meuble</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Decoration')">Decoration</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Bricolage')">Bricolage</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Jeux')"><i class="fas fa-gamepad"></i> Jeux</router-link> <button v-click-outside="hitem5" @click="showitem('jeu')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive5">
-                    <li class="bbli"><router-link to="#" class="bli">Console</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Jeux vidéos</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Accessoires de jeux</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Jeux','Console')">Console</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Jeux','Jeux vidéos')">Jeux vidéos</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Jeux','Accessoires de jeux')">Accessoires de jeux</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Jeux','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Véhicules')"><i class="fas fa-car"></i> Véhicules</router-link> <button v-click-outside="hitem6" @click="showitem('vehi')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive6">
-                    <li class="bbli"><router-link to="#" class="bli">Moto</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Voitures</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Bicyclette</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Véhicules','Moto')">Moto</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Véhicules','Voiture')">Voitures</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Véhicules','Bicyclette')">Bicyclette</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Véhicules','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Instruments')"><i class="fab fa-think-peaks"></i> Instruments</router-link> <button v-click-outside="hitem7" @click="showitem('instru')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive7">
-                    <li class="bbli"><router-link to="#" class="bli">Sport</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Music</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Instruments','Sport')">Sport</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Instruments','Music')">Music</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Instruments','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Immobilier')"><i class="fas fa-chalkboard-teacher"></i> Immobilier</router-link> <button v-click-outside="hitem8" @click="showitem('imo')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
                   <ul v-if="mactive8">
-                    <li class="bbli"><router-link to="#" class="bli">Location</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Terrain</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Vente</router-link></li>
-                    <li class="bbli"><router-link to="#" class="bli">Autres</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Immobilier','Location')">Location</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Immobilier','Terrain')">Terrain</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Immobilier','Vente')">Vente</router-link></li>
+                    <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Immobilier','Autres')">Autres</router-link></li>
                   </ul>
                   </transition>
               </li>
@@ -171,9 +171,9 @@
       </div>
       <div class="item d-inline-block">
         <div class="iitemm">
-        <button class="ibBtn" @click="shitem('une')"><i class="fas fa-heart"></i> A la une</button>
-        <button class="ieBtn" @click="shitem('eco')"><i class="fas fa-wallet"></i> Economiques</button>
-        <button class="itBtn" @click="shitem('top')"><i class="fas fa-bolt"></i> Top catégories</button>
+        <button class="ibBtn" @click="shitem('A la une')"><i class="fas fa-heart"></i> A la une</button>
+        <button class="ieBtn" @click="shitem('Economiques')"><i class="fas fa-wallet"></i> Economiques</button>
+        <button class="itBtn" @click="shitem('Top catégories')"><i class="fas fa-bolt"></i> Top catégories</button>
         <transition name="fade">
         </transition>
         </div>
@@ -200,8 +200,8 @@
     z-index: 999;
     left: -5%;
     top: -.3rem;
-  height: 12px;
-  width: 12px;
+  height: 10px;
+  width: 10px;
   background-color: rgb(68, 228, 82);
   border-radius: 50%;
   display: inline-block;
@@ -211,8 +211,8 @@
     z-index: 999;
     left: 1.5%;
     top: 5rem;
-  height: 12px;
-  width: 12px;
+  height: 10px;
+  width: 10px;
   background-color: rgb(68, 228, 82);
   border-radius: 50%;
   display: inline-block;
@@ -369,12 +369,23 @@
         ],
       }
     },
+    mounted(){
+    },
     props:['scrolling'],
     methods: {
       gotoAdCateg:function(type){
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
         this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: type.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
+      },
+      gotoAdsCateg:function(categ,scateg){
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',3)
+        let info={
+          categ:categ,
+          scateg:scateg
+        }
+        this.$store.dispatch('searchMenuSous',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: categ.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), souscateg: scateg.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
       },
       searchAds:function(){
         if(this.search==='');
@@ -389,6 +400,21 @@
           this.selected=this.$store.state.categSearch
         }
        
+      },
+      
+      shitem:function(what){
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',4)
+        this.$store.dispatch('searchByWhat',what).then(() =>{
+          if(what==='Top catégories')
+            this.$router.push({ path: '/annonce/search', query: { top: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); 
+          if(what==='A la une')
+            this.$router.push({ path: '/annonce/search', query: { une: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }});
+          else
+            this.$router.push({ path: '/annonce/search', query: { economiques: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }});  
+          this.$Progress.finish(); 
+          })
+          this.$Progress.finish();
       },
       signout: function(){
           this.$store.dispatch('logout').then(() =>{ this.$router.push('/') ; location.reload();})
@@ -460,9 +486,6 @@
         
           this.mactive8=false;
       },
-      shitem(){
-        this.shit=!this.shit;
-      },
       retrievebyloc(){
         // retrieve item by loc
         this.selectmul=false;
@@ -495,6 +518,7 @@
          
       },
       },created() {
+        
        this.$store.dispatch('updPlace',this.$store.state.adsPlace)
         },
       computed:{

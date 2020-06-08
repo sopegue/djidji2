@@ -125,11 +125,13 @@ const routes = [
       },
       { 
         path: 'reinit',
-        name: 'Pwdinit', 
+        name: 'Pwdinit',
+        beforeEnter: ifNotAuthenticated, 
         component: () => import('@/components/user/Reinit.vue') 
       },
       { 
         path: 'verification',
+        beforeEnter: ifNotAuthenticated,
         name: 'Verify', 
         component: () => import('@/components/user/Verify.vue') 
       },
@@ -280,6 +282,14 @@ router.afterEach((to, from) => {
  //router.replace(to);
 })
 router.beforeEach(function (to, from, next) {
+  if (from.path === '/annonce/search' && to.path !== '/annonce/search'){
+      localStorage.removeItem('search')
+      localStorage.removeItem('adsearch')
+      localStorage.removeItem('categSearch')
+      localStorage.removeItem('place')
+      localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
+  }
   window.scrollTo({
     top: 0,
     left: 0,
