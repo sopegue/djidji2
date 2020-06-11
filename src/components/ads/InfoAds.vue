@@ -56,7 +56,7 @@
               <tbody>
                 <tr>
                   <td class="tit">Description du produit</td>
-                  <td class="details">Téléphone portable samsung galaxy s10
+                  <td class="details text-xsmall">Téléphone portable samsung galaxy s10
                     nouveau utilisrtable samsung galaxy s10
                     nouveau utilisértable samsung galaxy s10
                     nouveau utilisértable samsung galaxy s10
@@ -270,7 +270,7 @@ button{
       font-weight: 600;
     }
     .details{
-      font-size: 18px;
+      font-size: 16px;
     }
     .inf-nv{
       position: relative;

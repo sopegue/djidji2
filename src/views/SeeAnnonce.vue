@@ -178,11 +178,21 @@ export default {
   },
   methods:{
     gotoAdCateg:function(type){
+      this.$store.state.currentPageAds=1
+      localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
         this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: type.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
       },
       gotoAdsCateg:function(categ,scateg){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',3)
         let info={

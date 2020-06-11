@@ -22,6 +22,14 @@ export default new Vuex.Store({
       "name":"Tout le pays"
       },
     ],
+
+    pagination:'true',
+    nbPageAds:1,
+    currentPageAds:1,
+    filteringAds:'',
+    prixmin:5,
+    trier:'',
+
     placeUpd:false,
     placeNb:0,
     Ads:[],
@@ -68,7 +76,8 @@ export default new Vuex.Store({
     search_success: (state,ads) => {
       state.Ads=ads
       state.searchfound = 'success'
-      state.searchNb=state.Ads.length
+      state.searchNb=state.Ads.ads.length
+      state.nbPageAds=ads.count
     },
     search_notFound: (state) => {
       state.searchfound = 'error'
@@ -83,10 +92,16 @@ export default new Vuex.Store({
     setPlace: (state,value) => {
       state.adsPlace=value
     },
+    setPmin: (state,value) => {
+      state.prixmin=value
+    },
+    setTrier: (state,value) => {
+      state.trier=value
+    },
     reset_search:(state)=>{
       state.Ads=[]
       state.searchNb=0
-      state.searchfound=''
+      //state.searchfound=''
       state.categSearch=''
       state.search=''
       state.sCateg=''
@@ -119,6 +134,7 @@ export default new Vuex.Store({
           categ:state.categSearch,
           scateg:state.sCateg
         }
+       
         dispatch('searchMenuSous',info)
       }
       dispatch('getNumberPlace',state.adsPlace)
@@ -169,26 +185,43 @@ export default new Vuex.Store({
       commit('search_searching')
       if(localStorage.categSearch){
         state.search=localStorage.getItem('search')
+        if(localStorage.prix){
+        state.prixmin=localStorage.getItem('prix')
+        state.trier=localStorage.getItem('trier')
+        }
+        else{
+          state.prixmin=5
+          state.trier=''
+        }
+
+        state.nbPageAds=localStorage.getItem('nbPageAds')
+        state.currentPageAds=localStorage.getItem('curPageAds')
+
         state.Ads= JSON.parse(localStorage.getItem('adsearch'))
         state.adsPlace= JSON.parse(localStorage.getItem('place'))
         state.categSearch=localStorage.getItem('categSearch')
         state.typeOfSearch=localStorage.getItem('type')
         state.sCateg=localStorage.getItem('sCateg')
-        if(state.Ads.length==0)
+        if(state.Ads.ads.length==0)
           state.searchfound='error'
         else
           state.searchfound='success'
         state.allCateg=state.categSearch
-        state.placeNb=state.Ads.length
         state.searchh=state.search
       }
       else
         router.push('/')
     },
-
+    sorted({dispatch,state}){
+      
+      if(localStorage.prix || localStorage.trier){
+        state.prixmin=localStorage.getItem('prix')
+        state.trier=localStorage.getItem('trier')
+      }
+    },
     searchByWhat({commit,dispatch,state},what){
+      dispatch('sorted')
       commit('reset_search')
-      commit('search_searching')
       state.categSearch=what
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')
@@ -196,16 +229,22 @@ export default new Vuex.Store({
       localStorage.removeItem('place')
       localStorage.removeItem('type')
       localStorage.removeItem('sCateg')
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/lookbywhat', data: {look:what, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'http://localhost:8000/api/annonce/lookbywhat', data: {look:what,curPage:state.currentPageAds,prmin:state.prixmin,trier:state.trier, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
-           if(resp.data.length!=0){
-            commit('search_success',resp.data)
+          commit('search_success',resp.data)
+          if(state.Ads.ads.length!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('sCateg', '')
             localStorage.setItem('type', state.typeOfSearch)
+
+            localStorage.setItem('nbPageAds',state.nbPageAds)
+            localStorage.setItem('curPageAds',state.currentPageAds)
+
             localStorage.setItem('search', '')
            }
            else{
@@ -229,8 +268,8 @@ export default new Vuex.Store({
     },
 
     searchMenuSous({commit,state,dispatch},info){
+      dispatch('sorted')
       commit('reset_search')
-      commit('search_searching')
       state.categSearch=info.categ
       state.sCateg=info.scateg
       localStorage.removeItem('search')
@@ -239,15 +278,19 @@ export default new Vuex.Store({
       localStorage.removeItem('place')
       localStorage.removeItem('type')
       localStorage.removeItem('sCateg')
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/looksouscateg', data: {categ:info.categ,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'http://localhost:8000/api/annonce/looksouscateg', data: {categ:info.categ,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
-           if(resp.data.length!=0){
-            commit('search_success',resp.data)
+          commit('search_success',resp.data)
+          if(state.Ads.ads.length!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('sCateg', state.sCateg)
+            localStorage.setItem('nbPageAds',state.nbPageAds)
+            localStorage.setItem('curPageAds',state.currentPageAds)
             localStorage.setItem('type', state.typeOfSearch)
             localStorage.setItem('search', '')
            }
@@ -270,29 +313,32 @@ export default new Vuex.Store({
 
     },
     searchMenu({commit,dispatch,state},type){
+      dispatch('sorted')
       commit('reset_search')
-      commit('search_searching')
+      state.categSearch=type
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')
       localStorage.removeItem('categSearch')
       localStorage.removeItem('place')
       localStorage.removeItem('type')
       localStorage.removeItem('sCateg')
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/lookcateg', data: {categ:type, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'http://localhost:8000/api/annonce/lookcateg', data: {categ:type,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
-           if(resp.data.length!=0){
-            commit('search_success',resp.data)
-            state.categSearch=type
+          commit('search_success',resp.data)
+           if(state.Ads.ads.length!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', type)
+            localStorage.setItem('nbPageAds',state.nbPageAds)
+            localStorage.setItem('curPageAds',state.currentPageAds)
             localStorage.setItem('type', state.typeOfSearch)
             localStorage.setItem('search', '')
            }
            else{
             commit('search_notFound')
-            state.categSearch=type
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', type)
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
@@ -309,24 +355,28 @@ export default new Vuex.Store({
     },
 
     searchBar({commit,dispatch,state},info){
+      dispatch('sorted')
       commit('reset_search')
-      commit('search_searching')
       state.categSearch=info.selected
       state.search=info.search
-      localStorage.removeItem('sCateg')
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')
       localStorage.removeItem('categSearch')
       localStorage.removeItem('place')
       localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/look', data: {selected:info.selected, search:info.search, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'http://localhost:8000/api/annonce/look', data: {selected:info.selected,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, search:info.search, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
-           if(state.Ads.length!=0){
+           if(state.Ads.ads.length!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
+            localStorage.setItem('nbPageAds',state.nbPageAds)
+            localStorage.setItem('curPageAds',state.currentPageAds)
             localStorage.setItem('type', state.typeOfSearch)
             localStorage.setItem('search', state.search)
            }

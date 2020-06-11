@@ -281,6 +281,11 @@ const router = new VueRouter({
 router.afterEach((to, from) => {
  //router.replace(to);
 })
+
+router.beforeEach((to, from, next) => {
+
+  next()
+})
 router.beforeEach(function (to, from, next) {
   if (from.path === '/annonce/search' && to.path !== '/annonce/search'){
       localStorage.removeItem('search')
@@ -289,11 +294,22 @@ router.beforeEach(function (to, from, next) {
       localStorage.removeItem('place')
       localStorage.removeItem('type')
       localStorage.removeItem('sCateg')
+
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('prix')
+      localStorage.removeItem('curPageAds')
+      localStorage.removeItem('trier')
   }
   window.scrollTo({
     top: 0,
     left: 0,
-    //behavior: 'smooth'
+    behavior: 'smooth'
+  });
+  if(from.name===to.name)
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
   });
 next();
 })

@@ -10,7 +10,7 @@
         <p>
            <span v-if="this.$store.state.typeOfSearch==1" class="sssea">{{this.$store.state.search}}</span>
           <br />
-          <span class="ssnb">{{this.$store.state.Ads.length}} annonce(s)</span>
+          <span class="ssnb">{{this.$store.state.Ads.total}} annonce(s)</span>
         </p>
       </div>
       <hr class="sshr" />
@@ -39,24 +39,24 @@
         <div v-if="this.$store.state.searchfound==='success'">
                                  
       <div class="pagi d-flex flex-row justify-content-between">
-        <div class>
-          <b-pagination
-            class="customPagination"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            first-number
-            last-number
-          ></b-pagination>
-        </div>
-        <div class="prsl">
+        <div v-if="this.$store.state.pagination==='true'">
+        <b-pagination
+          class="customPagination"
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          first-number
+          last-number
+        ></b-pagination>
+      </div>
+        <div class="prsl text-center">
           <div class="form-group d-flex flex-column align-items-center">
             <div>
-              <span>Prix minimum :</span>
+              <span>Prix minimum : </span>
               <span class="prrmin">{{minn}} F CFA</span>
             </div>
             <div>
-              <range-slider class="slider" min="1" max="5000001" step="10" v-model="sliderValue"></range-slider>
+              <range-slider class="slider" min="5" max="1000006" step="500" v-model="sliderValue"></range-slider>
             </div>
           </div>
         </div>
@@ -71,13 +71,15 @@
           </vs-select>
         </div>
       </div>
-      
-      <div class="applist">
-        <div class="d-list-us d-flex flex-wrap justify-content-start">
-          <Ads v-for="ads in this.$store.state.Ads" v-bind="ads" :key="ads.id" :ads.sync="ads"></Ads>
+      <div class="us-list-load" style="margin-bottom:5rem;" v-if="this.$store.state.filteringAds==='loading'" >
+          <b-spinner class="p" label="Loading..."></b-spinner>
+      </div>
+      <div v-else class="applist">
+        <div class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads"></Ads>
         </div>
       </div>
-      <div class="align-self-center">
+      <div class="pagi-bot">
         <b-pagination
           class="customPagination"
           v-model="currentPage"
@@ -96,9 +98,14 @@
 </template>
 
 <style  scoped>
+.pagi-bot{
+  margin: 0 auto;
+  width: fit-content;
+
+}
 .slider {
   /* overwrite slider styles */
-  width: 300px;
+  width: 250px;
 }
 .range-slider-fill {
   background: #004e66;
@@ -117,6 +124,8 @@
   background-color: #f8f9fa;
   margin-top: 2rem;
   padding-bottom: 3rem;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 .applist {
   position: relative;
@@ -124,8 +133,6 @@
 }
 .ads {
   margin-top: 3rem;
-  margin-left: 3.5%;
-  margin-right: auto;
 }
 .us-list-load {
   background-color: white !important;
@@ -193,31 +200,6 @@
 </style>
 <script>
 import Ads from "@/components/ads/Ads.vue";
-function Adse({
-  id,
-  use_id,
-  categorie,
-  titre,
-  description,
-  marque,
-  prix,
-  pp,
-  nbvues,
-  added_at,
-  updated_at
-}) {
-  this.id = id;
-  this.use_id = use_id;
-  this.categorie = categorie;
-  this.titre = titre;
-  this.description = description;
-  this.marque = marque;
-  this.prix = prix;
-  this.pp = pp;
-  this.nbvues = nbvues;
-  this.added_at = added_at;
-  this.updated_at = updated_at;
-}
 // @ is an alias to /src
 import RangeSlider from "vue-range-slider";
 // you probably need to import built-in style
@@ -226,13 +208,7 @@ export default {
   name: "SeeByCateg",
   data() {
     return {
-      rows: 10,
       perPage: 1,
-      currentPage: 5,
-      sliderValue: 1,
-      value: "",
-      adss: [],
-      isLoading: false
     };
   },
  created(){
@@ -241,6 +217,46 @@ export default {
   methods: {
   },
   computed: {
+    rows(){
+      return this.$store.state.nbPageAds
+    },
+    items(){
+      return this.$store.state.Ads.ads
+    },
+    currentPage:{
+      // getter
+    get: function () {
+      return this.$store.state.currentPageAds
+    },
+    // setter
+    set: function (newValue) {
+      this.$store.state.currentPageAds=newValue
+        this.reSearch()
+      }
+      
+    },
+    sliderValue: {
+    // getter
+    get: function () {
+      return this.$store.state.prixmin
+    },
+    // setter
+    set: function (newValue) {
+      this.$store.commit('setPmin',newValue)
+        this.reSearch()
+      }
+    },
+    value: {
+    // getter
+    get: function () {
+      return this.$store.state.trier
+    },
+    // setter
+    set: function (newValue) {
+        this.$store.commit('setTrier',newValue)
+        this.reSearch()
+      }
+    },
     minn() {
       var str = this.sliderValue.toString();
       var len = str.length;
@@ -251,6 +267,62 @@ export default {
           str = str.charAt(0) + " " + str.slice(1, 4) + " " + str.slice(4);
       }
       return str;
+    }
+  },
+  methods:{
+    
+    reSearch(){
+      
+      localStorage.setItem('prix', this.$store.state.prixmin)
+      localStorage.setItem('trier', this.$store.state.trier)
+        this.$store.state.filteringAds="loading"
+        if(this.$store.state.typeOfSearch==1)
+          {
+          this.$Progress.start();
+          var info={
+            selected:this.$store.state.categSearch,
+            search:this.$store.state.search
+          }
+          this.$store.dispatch('searchBar',info).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          }
+
+          if(this.$store.state.typeOfSearch==2)
+          {
+          this.$Progress.start();
+          this.$store.dispatch('searchMenu',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          }
+
+          if(this.$store.state.typeOfSearch==3)
+          {
+          this.$Progress.start();
+          var info={
+            categ:this.$store.state.categSearch,
+            scateg:this.$store.state.sCateg
+          }
+          this.$store.dispatch('searchMenuSous',info).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          }
+
+          if(this.$store.state.typeOfSearch==4)
+          {
+          this.$Progress.start();
+          this.$store.dispatch('searchByWhat',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          }
+
+    },
+    sortBy(type){
+      if(type==="1"){
+        this.$store.state.Ads.ads.sort((a, b)=> a.prix-b.prix)
+      }
+       if(type==="2"){
+        this.$store.state.Ads.ads.sort((a, b)=> b.prix-a.prix)
+      }
+       if(type==="3"){
+        this.$store.state.Ads.ads.sort((a, b)=> new Date(b.added_at)-new Date(a.added_at))
+        
+      }
+       if(type==="4"){
+        this.$store.state.Ads.ads.sort((a, b)=> new Date(a.added_at)-new Date(b.added_at))
+      }
     }
   },
   components: {

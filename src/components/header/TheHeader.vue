@@ -374,11 +374,21 @@
     props:['scrolling'],
     methods: {
       gotoAdCateg:function(type){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
         this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: type.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
       },
       gotoAdsCateg:function(categ,scateg){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',3)
         let info={
@@ -388,8 +398,11 @@
         this.$store.dispatch('searchMenuSous',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: categ.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), souscateg: scateg.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
       },
       searchAds:function(){
-        if(this.search==='');
-        else{
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
          this.$store.commit('setTypeOfSearch',1)
          this.$Progress.start();
           var info={
@@ -398,11 +411,16 @@
           }
           this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: this.selected.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), search: this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), } }); this.$Progress.finish(); })
           this.selected=this.$store.state.categSearch
-        }
+        
        
       },
       
       shitem:function(what){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',4)
         this.$store.dispatch('searchByWhat',what).then(() =>{
