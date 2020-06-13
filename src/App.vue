@@ -4,7 +4,7 @@
     <notifications group="custom-template" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
-        <div class="nottf">
+        <div class="alert alert-danger">
           <p>
             Corrigez les erreurs suivantes :
           </p>
@@ -21,29 +21,86 @@
             <li class="lin" v-if=" this.$store.state.okConnection.okregpwd==='false'">
               Mot de passe invalide !
             </li>
-            <li class="lin" v-if=" this.$store.state.okConnection.okregpwd2==='false'">
-              Confirmation mot de passe invalide !
-            </li>
+            
             <li class="lin" v-if="this.$store.state.okConnection.okpwd==='false'">
               Mot de passe invalide !
             </li>
+            
             <li class="lin" v-if="this.$store.state.okConnection.okpwd==='short'">
               Mot de passe trop court !
             </li>
             <li class="lin" v-if="this.$store.state.okConnection.okregpwd==='short'">
               Mot de passe trop court !
             </li>
+            <li class="lin" v-if=" this.$store.state.okConnection.okregpwd2==='false'">
+              Confirmation mot de passe invalide !
+            </li>
             <li class="lin" v-if="this.$store.state.okConnection.okregpwd2==='short'">
              Confirmation mot de passe trop court !
             </li>
             <li class="lin" v-if="(this.$store.state.okConnection.okregpwd2==='true' && this.$store.state.okConnection.okregpwd==='true') && this.$store.state.okConnection.notokpwd==='false'">
-              Mot de passe et confirmation incorrect !
+              Mot de passe et confirmation ne correspondent pas !
             </li>
           </ul>
     </div>
   </template>
 </notifications>
-
+<notifications group="custom-ad" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Votre annonce a été ajouté avec succès et est en ligne &#10003;
+      </div>
+  </template>
+</notifications>
+<notifications group="success-reg" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Votre compte a été créé &#10003;
+      </div>
+  </template>
+</notifications>
+<notifications group="existUser" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Cet email a été déjà utilisé.
+      </div>
+  </template>
+</notifications>
+<notifications group="IncorrectPwd" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Mot de passe incorrect.
+      </div>
+  </template>
+</notifications>
+<notifications group="User-unmodified" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Cet email est déjà pris.
+      </div>
+  </template>
+</notifications>
+<notifications group="User-modified" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Informations modifiées. &#10003;
+      </div>
+  </template>
+</notifications>
+<notifications group="pwdModified" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Mot de passe modifié. &#10003;
+      </div>
+  </template>
+</notifications>
     <notifications group="regis" />
     <notifications group="log" />
     <router-view></router-view>
@@ -51,10 +108,14 @@
   </div>
 </template>
 <style scoped>
+.alert{
+  margin: 0 auto;
+  width: 100% !important;
+    }
 .nottf{
   padding: 5px 5px 5px 5px;
-  background-color: whitesmoke;
-  border: gray 1px solid;
+  background-color: rgb(243, 195, 195);
+  border: rgb(192, 192, 192) 1px solid;
   border-radius: 10px;
 }
 .lin{

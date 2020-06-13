@@ -232,6 +232,11 @@ export default {
     set: function (newValue) {
       this.$store.state.currentPageAds=newValue
         this.reSearch()
+        window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
       }
       
     },
@@ -309,21 +314,6 @@ export default {
           }
 
     },
-    sortBy(type){
-      if(type==="1"){
-        this.$store.state.Ads.ads.sort((a, b)=> a.prix-b.prix)
-      }
-       if(type==="2"){
-        this.$store.state.Ads.ads.sort((a, b)=> b.prix-a.prix)
-      }
-       if(type==="3"){
-        this.$store.state.Ads.ads.sort((a, b)=> new Date(b.added_at)-new Date(a.added_at))
-        
-      }
-       if(type==="4"){
-        this.$store.state.Ads.ads.sort((a, b)=> new Date(a.added_at)-new Date(b.added_at))
-      }
-    }
   },
   components: {
     Ads,

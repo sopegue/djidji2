@@ -31,6 +31,7 @@ Vue.use(Notifications)
 if (accessToken) {
     Vue.prototype.$http.defaults.headers.common['Authorization'] =  accessToken
 }
+
 import Vuetify from 'vuetify'
 Vue.use(Vuetify)
 Vue.use(EasySlider)

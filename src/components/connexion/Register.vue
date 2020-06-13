@@ -1,11 +1,17 @@
 <template >
-    <div class="c-register">
+    <div class="c-register" style=" position:relative; top:1rem;">
+        
+         <div v-if="this.$store.state.okRegister==='false'" class="alert dan alert-danger text-center" role="alert">
+          Désolé cet email existe déja &#10005;.<br>
+           Connecter vous si cet email vous appartient. <br>
+           Réinitialiser votre mot de passe si vous l'avez oublié.
+        </div>
         <br><h3 class="h-lr text-center">Créer un compte pour vous connecter</h3>
         <div class="c-error"></div>
         <form class="d-login d-flex flex-column" @submit.prevent="register">
             <label for="mail">Email <span style="color:red;">*</span></label>
             <input type="text" id="mail" name="mail" placeholder="Email"  v-model="mail" /><br>
-            <label for="username">Nom</label>
+            <label for="username">Nom <span style="color:red;">*</span></label>
             <input type="text" id="username" name="username" placeholder="Nom" v-model="name" /><br>
             <label for="surname">Prénom</label>
             <input type="text" id="surname" name="surname" placeholder="Prénom" v-model="surname"/><br>
@@ -21,15 +27,12 @@
                 <div class="impp">
                 <input type="file" id="file" ref="file" class="inputfile" v-on:change="handleFileUpload()"/>
                     <label for="file">Importer une photo</label>
-                    <div v-if="notimg" role="alert">
-                      {{msglert}}
-                    </div>
                 </div>
             </div><br>
             <label for="ville">Ville</label>
             <multiselect class="mul-reg-v" v-model="ville" :allow-empty="false" :options="options1" deselectLabel=""  selectedLabel="✓" selectLabel="Choisir" placeholder="Choisir une ville"><span slot="noResult">Oops! Aucun élément trouvé.</span></multiselect><br>
             <label for="reg-tel">Téléphone</label>
-            <input type="text" id="reg-tel" name="reg-tel" placeholder="Numéro de téléphone" v-model="tel" /><br>
+            <input  v-on:keypress="checkTelPress" v-on:keyup="checkTelUp" type="text" id="reg-tel" name="reg-tel" placeholder="Numéro de téléphone" v-model="tel" /><br>
             <button type="submit" class="b-lr regb" :disabled="registring">Créer un compte</button>
        
             <hr class="hr-login">
@@ -173,11 +176,44 @@
         },
         methods:{
             
+    checkTelPress:function(evt){
+    if (evt.which < 48 || evt.which > 57 || this.tel.replace(/\s/g, "").length>8)
+    {
+        evt.preventDefault();
+    }
+    },
+    checkTelUp(){
+     var str = this.tel;
+      var count=(str.split(" ").length - 1)
+      //var string=str.substr(0,str.indexOf(' '))
+      str=str.replace(/\s/g, "")
+
+      if(str.length>8){
+        str=str.substring(0, (str.length-1))
+      }
+      var len=str.length
+      if (len > 2) {
+        if (len ==3 || len ==4){
+          //if(count==0)
+          str = str.slice(0, 2) + " " + str.slice(2);
+        }
+        if (len ==5 || len ==6){ 
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2,4)+ " "+ str.slice(4);
+        }
+        if (len == 7 || len ==8 ){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2,4)+ " "+ str.slice(4,6) + " " + str.slice(6);
+        }
+      }
+      this.tel=str;
+    },
             goReinit(){
                 this.$router.push('/reinit')
             },
             handleFileUpload(){
               this.file = this.$refs.file.files[0];
+              console.log( this.$refs.file.files[0])
               let reader  = new FileReader();
               reader.addEventListener("load", function () {
                   this.image = reader.result;
@@ -186,23 +222,15 @@
                  if ( /\.(jpe?g|png|gif)$/i.test( this.file.name ) ) {
                      if(this.file.size>5000000){
                          this.msglert='Veuillez importer une image de taille < 5 MB';
-                         this.notimg=true;
-                         this.saved=false;
+                         
                      }
                      else{
-                        reader.readAsDataURL( this.file );
-                        this.$Progress.start();
-                        this.submitFile();
-                        this.$Progress.finish();
-                        this.saved=true;
-                        this.notimg=false;
+                         reader.readAsDataURL( this.file );
                      }
                     
                  }
                  else{
                      this.msglert='Attention ! Vous devez importer une image';
-                     this.notimg=true;
-                     this.saved=false;
                  }
             }
           },
@@ -267,7 +295,9 @@
                 }
                 else
                         this.$store.state.okConnection.okregpwd2="false"
-                if((this.pwd2!=="" && this.pwd!=="") && (this.pwd2 !== this.pwd))
+                if((this.pwd2!=="" && this.pwd!=="") && (this.pwd2 === this.pwd))
+                    this.$store.state.okConnection.notokpwd="true"
+                else
                     this.$store.state.okConnection.notokpwd="false"
             },
             login:function() {
@@ -285,10 +315,12 @@
                 const password = this.pwdco
                 this.$store.dispatch('login', { email, password}).then(() => {
                     if(this.$store.state.okConnection.notok!=="true"){
-                        if(this.$store.state.next!=='')
+                        if(this.$store.state.next!==''){
                             this.$router.push(this.$store.state.next)
+                            this.$store.state.next=''
+                        }
                         else
-                            this.$router.push('/')
+                            this.$router.push(this.$store.state.previous)
 
                     }
                     else
@@ -326,7 +358,28 @@
                        tel:this.tel
      
                      }
-                     this.$store.dispatch('signup', info).then(() => this.$router.push('/connexion'))
+                     
+                     var myForm= new FormData()
+                     myForm.append('name',this.name)
+                     myForm.append('surname',this.surname)
+                     myForm.append('email',this.mail)
+                     myForm.append('password',this.pwd)
+                     myForm.append('ville',this.ville)
+                     myForm.append('tel',this.tel)
+                     myForm.append('pic',this.file)
+                     this.$store.dispatch('signup', myForm).then(() =>{ 
+                     if(this.$store.state.UserExistance){
+                         this.$notify({
+                        group: 'existUser',
+                        })
+                     }else{
+                         this.$router.push('/connexion');
+                         this.$notify({
+                            group: 'success-reg',
+                        });
+                     }
+                     
+                     })
                      }
                      else
                      this.$notify({
@@ -357,5 +410,13 @@
     .remember{
         position: relative;
         top: 0.5rem;
+    }
+    .alert{
+        margin: 0 auto;
+        width: 30%;
+    }
+     .dan{
+        margin: 0 auto;
+        width: 40%;
     }
 </style>

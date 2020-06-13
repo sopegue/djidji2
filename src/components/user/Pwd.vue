@@ -2,17 +2,26 @@
     <div class="us-info">
         <div class="container">
             <div class="large-12 medium-12 small-12 cell d-flex">
-                <div class="d-inf-us d-flex flex-column">
+                <form @submit.prevent="updatePwd" class="d-inf-us d-flex flex-column">
                     <h5 class="">Mot de passe</h5>
                     <hr class="hr-us-inf">
                     <label for="pwd">Mot de passe actuel</label>
-                    <input type="password" id="pwd" name="pwd"  placeholder="Mot de passe" /><br>
+                    <input type="password" id="pwd" name="pwd"  placeholder="Mot de passe" v-model="pwd"/>
+                    <span style="color:red;font-size:12px;" v-if="pwdInvalid">Mot de passe invalide.</span>
+                    <span style="color:red;font-size:12px;" v-if="pwdCourt">Mot de passe trop court.</span>
+                    <br>
                     <label for="pwdnew">Nouveau mot de passe</label>
-                    <input type="password" id="pwdnew" name="pwdnew"  placeholder="Mot de passe" /><br>
+                    <input type="password" id="pwdnew" name="pwdnew"  placeholder="Mot de passe" v-model="newpwd"/>
+                    <span style="color:red;font-size:12px;" v-if="newpwdInvalid">Nouveau mot de passe invalide.</span>
+                    <span style="color:red;font-size:12px;" v-if="newpwdCourt">Nouveau mot de passe trop court.</span>
+                    <br>
                     <label for="pwdconf">Confirmation de mot de passe</label>
-                    <input type="password" id="pwdconf" name="pwdconf"  placeholder="Confirmer votre mot de passe" /><br>
-                    <button type="button" class="b-us_inf regb" v-on:click="saveusinf()">Modifier</button>
-                 </div>
+                    <input type="password" id="pwdconf" name="pwdconf"  placeholder="Confirmer votre mot de passe" v-model="conf_newpwd"/>
+                    <span style="color:red;font-size:12px;" v-if="con_pwdInvalid">Mot de passe invalide.</span>
+                    <span style="color:red;font-size:12px;" v-if="con_pwdCourt">Mot de passe trop court.</span>
+                    <br>
+                    <button type="submit" class="b-us_inf regb">Modifier</button>
+                </form>
                  
             </div>
         </div>
@@ -25,11 +34,82 @@
         },
         data () {
             return { 
-
+                pwd:'',
+                newpwd:'',
+                conf_newpwd:'',
+                con_pwdCourt:false,
+                con_pwdInvalid:false,
+                newpwdInvalid:false,
+                newpwdCourt:false,
+                pwdCourt:false,
+                pwdInvalid:false,
+                pwd_unmatch:false,
+                con_and_pwd_unmatch:false
             }
         },
         methods: {
-         
+            updatePwd(){
+                if(this.checkField()){
+                    var form= new FormData()
+                    form.append('user',this.$store.state.currentUser.id)
+                    form.append('pwd',this.pwd)
+                    form.append('newpwd',this.newpwd)
+                    this.$store.dispatch('pwdUpdate',form).then(()=>{
+                        if(this.$store.state.pwdIncorrect){
+                            this.$notify({
+                                group: 'IncorrectPwd'
+                            });
+                        }else{
+                            this.pwd=''
+                            this.newpwd=''
+                            this.conf_newpwd=''
+                            this.$notify({
+                                group: 'pwdModified'
+                            });
+                        }
+                    })
+                }
+            },
+         checkField(){
+             if(this.pwd===''){
+                 this.pwdInvalid=true
+             }
+             else
+                this.pwdInvalid=false
+            if(this.newpwd===''){
+                 this.newpwdInvalid=true
+             }
+             else
+                this.newpwdInvalid=false
+            if(this.conf_newpwd===''){
+                 this.con_pwdInvalid=true
+             }
+             else
+                this.con_pwdInvalid=false
+
+            
+
+            if(this.pwd!=='' && this.pwd.length<8){
+                 this.pwdCourt=true
+             }
+             else
+                this.pwdCourt=false
+
+            if(this.newpwd!=='' && this.newpwd.length<8){
+                 this.newpwdCourt=true
+             }
+             else
+                this.newpwdCourt=false
+            if(this.conf_newpwd!=='' && this.conf_newpwd.length<8){
+                 this.con_pwdCourt=true
+             }
+             else
+                this.con_pwdCourt=false
+
+            if(this.pwdInvalid ==false && this.pwdCourt==false && this.newpwdInvalid==false && this.newpwdCourt==false && this.con_pwdCourt==false  && this.con_pwdInvalid==false)
+                return true
+            return false
+         }
         }
     }
 </script>

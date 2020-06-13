@@ -1,6 +1,6 @@
 <template>
   <div class="container border rounded addtop">
-    
+    <form  @submit.prevent="addAdd">
     <h4  class="text-center" style="padding-top:2rem;">Ajouter une annonce</h4>
     <div  class="container inpfo">
     <div class="d-inline-block" style="padding-top:3rem;">
@@ -37,7 +37,7 @@
         </vs-option>
       </vs-select>
 
-      <vs-select class="sslect" v-if="nOther"  style="padding-top:3rem;" :color="'#004e66'"  placeholder="Choisir..." label="Sous-catégorie " v-model="value1">
+      <vs-select class="sslect" v-if="nOther"  style="padding-top:3rem;" :color="'rgb(84, 202, 129)'"  placeholder="Choisir..." label="Sous-catégorie " v-model="value1">
         <vs-option 
         v-for="(item,index) in cate"
         :key="index"
@@ -46,19 +46,23 @@
         </vs-option>
         
       </vs-select>
+      <span v-if="scategInvalid" style="color:red;font-size:12px;" >Ce champ est requis &#10005;</span>
       </div>
       
     </div>
-      <div class="container inpfo" style="padding-top:3rem;">
+      <div class="container inpfo" style="padding-top:1.5rem;">
           <label for="aatitre" class="notl">Titre de votre annonce</label><br>
-          <input type="text" id="aatitre" name="atitre" placeholder="Un bon titre attire toujours l'attention ..." /><br><br>
+          <input type="text" id="aatitre" name="atitre" placeholder="Un bon titre attire toujours l'attention ..." v-model="titre"/>
+          <br><span style="color:red;font-size:12px;" v-if="titreInvalid">Donner un titre ! <br></span><br>
           <label for="aaprix" class="notl">Prix de vente à afficher </label><br>
-          <input type="text" id="aaprix" name="aaprix" placeholder="F CFA" /><br><br>
+          <input v-on:keypress="checkPrixPress" v-on:keyup="checkPrixUp"  type="text" id="aaprix" name="aaprix" placeholder="F CFA" v-model="prix"/>
+          <br><span style="color:red;font-size:12px;" v-if="prixInvalid">Veuillez donner un prix ! <br></span><br>
           <div class="type_msg">
             <div class="input_msg_write">
               <label for="aadesc">Description détaillée de l'annonce</label>
               <textarea id="aadesc" class="write_msg" placeholder="Décrire votre annonce ..."
-               name="aadesc"></textarea>
+               name="aadesc" v-model="desc"></textarea>
+               <span style="color:red;font-size:12px;" v-if="descInvalid">Donner une description de votre produit</span>
             </div>
           </div>
           
@@ -77,7 +81,7 @@
       @edit-image="editImage"
       @data-change="dataChange"
       :data-images="images"
-      :maxImage="8"
+      :maxImage="9"
       :dragText="'Glisser une ou plusieurs images ici'"
       :browseText="'Cliquer pour sélectionner une ou plusieurs image'"
       :dropText="'Relacher pour ajouter l\'image'"
@@ -87,30 +91,31 @@
       ></vue-upload-multiple-image>
     </div>
     <div class="container inpfo">
+
+      <span style="color:red;font-size:12px;" v-if="picInvalid">Veuillez ajouter au moins une photo !<br></span>
       <br>
       <label for="ville">Ville</label>
       <multiselect class="mul-reg-v" v-model="value2" :allow-empty="false" :options="options1" deselectLabel=""  selectedLabel="✓" selectLabel="Choisir" placeholder="Choisir une ville"><span slot="noResult">Oops! Aucun élément trouvé.</span></multiselect><br>
+       <span style="color:red;font-size:12px;" v-if="villeInvalid" >Veuillez choisir une ville !<br><br></span>
        <label for="aatel" class="notl">Téléphone</label><br>
-       <input type="text" id="aatel" name="atel" placeholder="Votre numéro de téléphone..." /><br><br>
+       <input v-on:keypress="checkTelPress" v-on:keyup="checkTelUp" type="text" id="aatel" name="atel" placeholder="Votre numéro de téléphone..." v-model="number" />
+       <br><span style="color:red;font-size:12px;" v-if="telInvalid">Veuillez donner un numéro de téléphone valide ! <br></span><br>
       
         <label>Votre numéro est-t'il whatsapp ? <i class="fab fa-whatsapp"></i></label><br>
         <div class="whatsa d-flex justify-content-between">
           <div class="d-inline d-flex align-items-center">
-          <input type="radio" class="" id="materialChecked" name="oui" value="1">
+          <input type="radio" class="" id="materialChecked" name="oui" value="1" v-model="checked">
           <label class="radio-label" for="materialChecked">Oui</label>
           </div>
           <div class="d-inline d-flex align-items-center">
-          <input type="radio" class="" id="materialUnChecked" name="oui" value="0" checked>
+          <input type="radio" class="" id="materialUnChecked" name="oui" value="0" v-model="checked" checked>
           <label class="radio-label" for="materialUnChecked">Non</label>
           </div>
-        </div>
-        <br>
-         <label for="aamail" class="notl">Email (Faculatif)</label><br>
-       <input type="text" id="aamail" name="amail" placeholder="Adresse email..." /><br><br>
-       <button type="button" class="b-lr regb">Ajouter</button>
+        </div><br>
+       <button type="submit" class="b-lr regb">Ajouter</button>
   <br>
     </div>
-    
+    </form>
   </div>
 </template>
 <script>
@@ -121,6 +126,20 @@ export default {
     data () {
     return {
       images: [],
+      prixInvalid:false,
+      myfile:new FormData(),
+      telInvalid:false,
+      titreInvalid:false,
+      descInvalid:false,
+      picInvalid:false,
+      scategInvalid:false,
+      villeInvalid:false,
+      picUpload:false,
+      checked:'0',
+      number:'',
+      desc:'',
+      prix:'',
+      titre:'',
       cate:['Pc Bureau','Pc Portable','Accessoires Pc','Autres'],
       cate1:['Pc Bureau','Pc Portable','Accessoires Pc','Autres'],
       cate2:['Electroménager','Accessoires électro.','Autres'],
@@ -192,14 +211,204 @@ export default {
     VueUploadMultipleImage,Multiselect
   },
   methods: {
+    checkPrixPress:function(evt){
+      if (evt.which < 48 || evt.which > 57 || this.prix.replace(/\s/g, "").length>10)
+    {
+        evt.preventDefault();
+    }
+    },
+    checkPrixUp:function(event){
+      var str = this.prix;
+      var count=(str.split(" ").length - 1)
+      //var string=str.substr(0,str.indexOf(' '))
+      str=str.replace(/\s/g, "")
+
+      if(str.length>10){
+        str=str.substring(0, (str.length-1))
+      }
+      var len=str.length
+      if (len > 4) {
+        if (len == 5){
+          //if(count==0)
+          str = str.slice(0, 2) + " " + str.slice(2);
+        }
+        if (len == 6){ 
+          //if(count==1)
+          str = str.slice(0, 3) + " " + str.slice(3);
+        }
+        if (len == 7){
+          //if(count==1)
+          str = str.charAt(0) + " " + str.slice(1, 4) + " " + str.slice(4);
+        }
+        if (len == 8){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2, 5) + " " + str.slice(5);
+        }
+        if (len == 9){
+          //if(count==1)
+          str = str.slice(0, 3) + " " + str.slice(3, 6) + " " + str.slice(6);
+        }
+        if (len == 10){
+          //if(count==1)
+          str = str.slice(0, 1) + " " + str.slice(1, 4) + " " + str.slice(4,7)+ " " + str.slice(7);
+        }
+      }
+      this.prix=str;
+    },
+    checkTelPress:function(evt){
+    if (evt.which < 48 || evt.which > 57 || this.number.replace(/\s/g, "").length>8)
+    {
+        evt.preventDefault();
+    }
+    },
+    checkTelUp(){
+     var str = this.number;
+      var count=(str.split(" ").length - 1)
+      //var string=str.substr(0,str.indexOf(' '))
+      str=str.replace(/\s/g, "")
+
+      if(str.length>8){
+        str=str.substring(0, (str.length-1))
+      }
+      var len=str.length
+      if (len > 2) {
+        if (len ==3 || len ==4){
+          //if(count==0)
+          str = str.slice(0, 2) + " " + str.slice(2);
+        }
+        if (len ==5 || len ==6){ 
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2,4)+ " "+ str.slice(4);
+        }
+        if (len == 7 || len ==8 ){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2,4)+ " "+ str.slice(4,6) + " " + str.slice(6);
+        }
+      }
+      this.number=str;
+    },
+    addAdd(){
+      this.resetValid()
+      var toCorrect=false
+      if(this.titre===''){
+        toCorrect=true
+        this.titreInvalid=true
+      }
+      if(this.prix==''){
+        toCorrect=true
+        this.prixInvalid=true
+      }
+        if(this.number.replace(/\s/g, "").length!=0 && this.number.replace(/\s/g, "").length<8){
+        toCorrect=true
+        this.telInvalid=true
+      }
+      if(!this.picUpload){
+        toCorrect=true
+        this.picInvalid=true
+      }
+      if(this.desc===''){
+        toCorrect=true
+        this.descInvalid=true
+      }
+       if(this.value2===''){
+        toCorrect=true
+        this.villeInvalid=true
+      }
+      if(this.value1===''){
+        toCorrect=true
+        this.scategInvalid=true
+      }
+      if(!toCorrect){
+        this.$Progress.start();
+        var price=parseInt(this.prix.replace(/\s/g, ""))
+        var categg=this.getCategorie()
+        var ad={
+          categ:categg,
+          scateg:this.value1,
+          titre:this.titre,
+          prix:price,
+          desc:this.desc,
+          ville:this.value2,
+          tel:this.number,
+          isWhat:this.checked,
+          user:this.$store.state.currentUser.id
+        }
+        this.myfile.append('categ',categg)
+        this.myfile.append('scateg',this.value1)
+        this.myfile.append('titre',this.titre)
+        this.myfile.append('prix',price)
+        this.myfile.append('desc',this.desc)
+        this.myfile.append('ville',this.value2)
+        this.myfile.append('tel',this.number)
+        this.myfile.append('isWhat',this.checked)
+        this.myfile.append('user',this.$store.state.currentUser.id)
+        //console.log('ii',ad.images)
+        this.myfile.delete('file')
+        for (var key of this.myfile.keys()) 
+        console.log(key);
+        this.addAd(this.myfile)
+      }
+    },
+    getCategorie(){
+      if(this.values==="1")
+        return "Informatique"
+      if(this.values==="2")
+        return "Electronique"
+      if(this.values==="3")
+        return "Téléphone"
+      if(this.values==="4")
+        return "Mode"
+      if(this.values==="5")
+        return "Maison"
+      if(this.values==="6")
+        return "Jeux"
+      if(this.values==="7")
+        return "Véhicules"
+      if(this.values==="8")
+        return "Instruments"
+      if(this.values==="9")
+        return "Immobilier"
+  
+      return "Autres"
+    },
+    resetValid(){
+      this.scategInvalid=false
+      this.villeInvalid=false
+      this.descInvalid=false
+      this.picInvalid=false
+      this.titreInvalid=false
+      this.picInvalid=false
+      this.telInvalid=false
+      this.prixInvalid=false
+    },
+    addAd(ad){
+        // The Promise used for router redirect in login
+        this.$http.post('http://localhost:8000/api/annonce', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
+         .then(resp => { // store the token in localstorage
+            console.log('ad added')
+            console.log(resp)
+            this.$router.push('/user/added');
+            this.$notify({
+              group: 'custom-ad'
+            });
+            this.$Progress.finish();
+         })
+       .catch(err => { // if the request fails, remove any possible user token if possible
+         console.log(err)
+         this.$Progress.finish();
+       })
+    },
     uploadImageSuccess(formData, index, fileList) {
-      console.log('data', formData, index, fileList)
-      // Upload image api
-      // axios.post('http://your-url-upload', { data: formData }).then(response => {
-      //   console.log(response)
-      // })
+      this.picUpload=true
+      this.myfile.append('file[]',formData.get('file'))
+      // this.$http.post('http://localhost:8000/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
+       //  console.log(response)
+       //})
     },
     beforeRemove (index, done, fileList) {
+      
+      if(fileList.length==1)
+        this.picUpload=false
       console.log('index', index, fileList)
       var r = confirm("Supprimer l'image ?")
       if (r == true) {
@@ -208,10 +417,10 @@ export default {
       }
     },
     editImage (formData, index, fileList) {
-      console.log('Modification de l\'image', formData, index, fileList)
+     //alert('Modification de l\'image', formData, index, fileList)
     },
     dataChange (data) {
-      console.log(data)
+      alert(data)
     }
   }
 }

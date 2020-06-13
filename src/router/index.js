@@ -145,7 +145,7 @@ const routes = [
             component: () => import('../views/SeeAnnonce.vue'),
             children:[
               { 
-                path: '',
+                path: 'searching',
                 name: 'bySearch', 
                 component: () => import('@/components/ads/SeeByCateg.vue')
               },
@@ -212,11 +212,13 @@ const routes = [
         children: [
           { 
             path: '',
-            name: 'Connexion', 
+            name: 'Connexion',
+            beforeEnter: ifNotAuthenticated, 
             component: () => import('@/components/connexion/Connexion.vue') 
           },
           { 
-            path: 'register', 
+            path: 'register',
+            beforeEnter: ifNotAuthenticated, 
             component: () => import('@/components/connexion/Register.vue') 
           }
         ]
@@ -229,6 +231,7 @@ const routes = [
         children: [
           { 
             path: '',
+            beforeEnter: ifAuthenticated,
             component: () => import('@/components/user/User.vue'),
             children:[
               { 
@@ -240,11 +243,6 @@ const routes = [
                 path: 'password',
                 name: 'Password', 
                 component: () => import('@/components/user/Pwd.vue') 
-              },
-              { 
-                path: 'message',
-                name: 'Message', 
-                component: () => import('@/components/user/Message.vue') 
               },
               { 
                 path: 'notif',
@@ -282,11 +280,10 @@ router.afterEach((to, from) => {
  //router.replace(to);
 })
 
-router.beforeEach((to, from, next) => {
-
-  next()
-})
 router.beforeEach(function (to, from, next) {
+  store.state.previous=from.path
+  //store.state.next=to.path
+  store.commit('auth_reg','')
   if (from.path === '/annonce/search' && to.path !== '/annonce/search'){
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')
@@ -300,12 +297,6 @@ router.beforeEach(function (to, from, next) {
       localStorage.removeItem('curPageAds')
       localStorage.removeItem('trier')
   }
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: 'smooth'
-  });
-  if(from.name===to.name)
   window.scrollTo({
     top: 0,
     left: 0,

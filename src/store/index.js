@@ -7,7 +7,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+  notUserExist:false,
+  UserExistance:false,
+  pwdIncorrect:false,
   okConnection:{
     okuser:'',
     okpwd:'',
@@ -17,6 +19,8 @@ export default new Vuex.Store({
   },    
     accessToken:  localStorage.getItem('access_token') ||  '',
     currentUser : [],
+    userExist:false,
+    okRegister:'',
     adsPlace:[
       {
       "name":"Tout le pays"
@@ -54,6 +58,9 @@ export default new Vuex.Store({
     authStatus: state => state.usCoStatus,
   },
   mutations: {
+    auth_reg:(state,right)=>{
+      state.okRegister=right
+    },
     auth_success: (state, token) => {
       state.accessToken = token
     },
@@ -66,6 +73,12 @@ export default new Vuex.Store({
     },
     auth_token: (state) => {
       state.token = 'saved'
+    },
+    auth_exist:(state)=>{
+      state.userExist=true
+    },
+    auth_exist:(state,exist)=>{
+      state.userExist=exist
     },
     updateSearch:(state,value)=>{
       state.searchh=value
@@ -108,6 +121,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    
     updPlace({commit,dispatch,state},value){
       if(value.length==0){
       state.adsPlace=[
@@ -395,9 +409,7 @@ export default new Vuex.Store({
        })
      })
     },
-    addAd({commit,dispatch,state},ad){
-      
-    },
+    
     logout({commit}){
       return new Promise((resolve, reject) => {
         localStorage.removeItem('access_token') // clear your user's token from localstorage
@@ -406,11 +418,52 @@ export default new Vuex.Store({
         resolve()
       })
     },
-   signup({},info){
+    isUserExist({commit,dispatch,state},user){
+      return new Promise((resolve, reject)=>{
+      Axios({url: 'http://localhost:8000/api/user/checkUserExistance', data: user, method: 'POST' })
+          .then(respo => {
+            if(respo.data!=0)
+              state.notUserExist=false
+            else
+              state.notUserExist=true
+            resolve(respo)
+          });
+      });
+  },
+  isUserExistUpdate({commit,dispatch,state},user){
+    return new Promise((resolve, reject)=>{
+    Axios({url: 'http://localhost:8000/api/user/checkUserExistanceUpdate', data: user, method: 'POST' })
+        .then(respo => {
+          if(respo.data!=0)
+            state.notUserExist=false
+          else
+            state.notUserExist=true
+          resolve(respo)
+        });
+    });
+},
+pwdUpdate({commit,dispatch,state},info){
+  return new Promise((resolve, reject)=>{
+  Axios({url: 'http://localhost:8000/api/user/pwdUpdate', data: info, method: 'POST' })
+      .then(respo => {
+        if(respo.data!==0)
+          state.pwdIncorrect=false
+        else
+          state.pwdIncorrect=true
+        resolve(respo)
+      });
+  });
+},
+   signup({dispatch,state},info){
+    state.UserExistance=false
+    dispatch('isUserExist',info)
+    if(state.notUserExist)  
+    {
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
          Axios({url: 'http://localhost:8000/api/auth/register', data: info, method: 'POST' })
           .then(resp => { // store the token in localstorage
-            this.state.usRegStatus = 'success'
+            state.usRegStatus = 'success'
+            state.okConnection.regmail=''
             resolve(resp)
           })
         .catch(err => {
@@ -418,6 +471,9 @@ export default new Vuex.Store({
           reject(err)
         })
       })
+    }else{
+      state.UserExistance=true
+    }
     },
     checkLogin({commit,state}){
       if(state.accessToken!==''){
@@ -452,7 +508,7 @@ export default new Vuex.Store({
               
               commit('auth_user', respo.data)
               resolve(respo)
-            });
+            })
 
             resolve(resp)
           })

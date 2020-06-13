@@ -2,13 +2,14 @@
     <div class="us-info">
         <div class="container">
             <div class="large-12 medium-12 small-12 cell">
-                    <h5 class="">Mes annonces enregistrées</h5>
+                    <h5 class="">Mes annonces ajoutées</h5>
                     <hr class="hr-us-inf">
                 <div>
                     <div class="us-list-load" v-if="isLoading">
                        <b-spinner class="p" label="Loading..."></b-spinner>
                     </div>
-                    <div class="d-list-us d-flex flex-wrap justify-content-start" v-else>
+                    <div v-else>
+                    <div  v-if="isAdAdded" class="d-list-us d-flex flex-wrap justify-content-start">
                         
                         <Ads v-for="ads in adss"
                             v-bind="ads"
@@ -17,6 +18,13 @@
                         </Ads>
                     
                     </div>
+                    <div v-else class="text-center">
+                        <hr>
+                        <p>Vous n'avez aucune annonce ajoutée pour l'instant.</p>
+                        <p>Cliquez sur <router-link style="color : #004e66 !important; font-weight:700;" to="/annonce/add">Annoncer</router-link> pour ajouter une annonce.</p>
+                    </div>
+                    </div>
+                    
                  </div>
             </div>
         </div>
@@ -78,6 +86,12 @@
             this.isLoading = true;
             this.$Progress.start();
             this.getAdsAll();
+        },
+        computed:{
+            isAdAdded(){
+                return true
+                //return this.$store.state.hasAdAdded
+            }
         },
         methods:{
             async getAdsAll(){

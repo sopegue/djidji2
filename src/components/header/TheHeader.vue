@@ -28,7 +28,6 @@
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
             <li class="usliinf"><a href="#/user" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/user/message" ><i class="far fa-envelope"></i> Mes messages</a></li>
             <li class="usliinf"><a href="#/user/notif" ><span class="dots"></span><i class="far fa-bell"></i> Mes notifications</a></li>
             <li class="usliinf"><a href="#/user/list" ><i class="far fa-bookmark"></i> Ma liste</a></li>
             <li class="usliinf"><a href="#/user/added" ><i class="fas fa-list"></i> Mes annonces</a></li>
@@ -45,6 +44,7 @@
         </div>
       </div>
     </div>
+    <div class="d-none">{{hidemenu}}</div>
     <div class="down">
       <div v-click-outside="hidem">
       <div @click="shmenu" class="menu d-inline-block">
@@ -158,12 +158,12 @@
         </div>
       </transition>
     </div>
-      <div class="localise d-inline-block">
+      <div v-click-outside="retrievebyloc" class="localise d-inline-block">
         <a @click="selecting" v-if="this.$store.state.adsPlace.length==1" v-show="notselecting" class="a-localise"><i class="fas fa-map-marker-alt"></i> {{this.$store.state.adsPlace[0].name}} <i class="fas fa-chevron-down"></i></a>
         <a @click="selecting" v-if="this.$store.state.adsPlace.length!=1" v-show="notselecting" class="a-localise"><i class="fas fa-map-marker-alt"></i> {{this.$store.state.adsPlace[0].name}} et {{this.$store.state.adsPlace.length-1}} autres <i class="fas fa-chevron-down"></i></a>
         <transition name="fade">
         <div v-if="selectmul">
-          <multiselect class="multiselect" v-model="value" selectedLabel="✓"  deselectGroupLabel="✕" deselectLabel="✕" selectLabel="Choisir" selectGroupLabel="Selectionner" :options="options" :multiple="true" group-values="ville" group-label="district" :group-select="true" placeholder="Trouver un lieu..." track-by="name" label="name"><span slot="noResult">Oops! Aucun élément trouvé.</span></multiselect>
+          <multiselect  class="multiselect" v-model="value" selectedLabel="✓"  deselectGroupLabel="✕" deselectLabel="✕" selectLabel="Choisir" selectGroupLabel="Selectionner" :options="options" :multiple="true" group-values="ville" group-label="district" :group-select="true" placeholder="Trouver un lieu..." track-by="name" label="name"><span slot="noResult">Oops! Aucun élément trouvé.</span></multiselect>
           <button type="button" @click="retrievebyloc" class="sel-btn"> Ok </button>
         </div>
         </transition>
@@ -198,8 +198,8 @@
   .dot {
     position: absolute;;
     z-index: 999;
-    left: -5%;
-    top: -.3rem;
+    left: -6%;
+    top: -.1rem;
   height: 10px;
   width: 10px;
   background-color: rgb(68, 228, 82);
@@ -210,7 +210,7 @@
     position: absolute;;
     z-index: 999;
     left: 1.5%;
-    top: 5rem;
+    top: 2.8rem;
   height: 10px;
   width: 10px;
   background-color: rgb(68, 228, 82);
@@ -381,7 +381,7 @@
         this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
-        this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: type.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
+        this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
       },
       gotoAdsCateg:function(categ,scateg){
         this.$store.state.currentPageAds=1
@@ -395,7 +395,7 @@
           categ:categ,
           scateg:scateg
         }
-        this.$store.dispatch('searchMenuSous',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: categ.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), souscateg: scateg.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
+        this.$store.dispatch('searchMenuSous',info).then(() =>{this.$router.push('/annonce/search/searching');this.$Progress.finish();})
       },
       searchAds:function(){
         this.$store.state.currentPageAds=1
@@ -409,7 +409,7 @@
             selected:this.selected,
             search:this.search 
           }
-          this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: this.selected.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), search: this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), } }); this.$Progress.finish(); })
+          this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
           this.selected=this.$store.state.categSearch
         
        
@@ -425,17 +425,18 @@
         this.$store.commit('setTypeOfSearch',4)
         this.$store.dispatch('searchByWhat',what).then(() =>{
           if(what==='Top catégories')
-            this.$router.push({ path: '/annonce/search', query: { top: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); 
+            this.$router.push('/annonce/search/searching'); 
           if(what==='A la une')
-            this.$router.push({ path: '/annonce/search', query: { une: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }});
+            this.$router.push('/annonce/search/searching');
           else
-            this.$router.push({ path: '/annonce/search', query: { economiques: what.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }});  
+            this.$router.push('/annonce/search/searching');  
           this.$Progress.finish(); 
           })
           this.$Progress.finish();
       },
       signout: function(){
-          this.$store.dispatch('logout').then(() =>{ this.$router.push('/') ; location.reload();})
+        var current=this.$router.currentRoute.path
+        this.$store.dispatch('logout').then(() =>{ this.$router.push(current) ; location.reload();})
       },
       addAd: function(){
         if(this.$store.state.accessToken!=='')
@@ -540,6 +541,9 @@
        this.$store.dispatch('updPlace',this.$store.state.adsPlace)
         },
       computed:{
+        hidemenu(){
+          return this.$store.state.categSearch
+        },
          search: {
           get () {
             return this.$store.state.searchh
@@ -563,6 +567,9 @@
         },
         deep: true
       },
+      hidemenu () {
+        this.shme=false
+      }
     },
   }
 </script>

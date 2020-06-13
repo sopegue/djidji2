@@ -1,5 +1,8 @@
 <template >
-    <div>
+    <div style=" position:relative; top:1rem;">
+        <div v-if="this.$store.state.okRegister==='true'" class="alert alert-success text-center" role="alert">
+            Votre compte a été créé avec succès &#10003;
+        </div>
         <br><h3 class="h-lr text-center">Se connecter</h3>
         <div class="c-error"></div>
         
@@ -89,6 +92,7 @@
                 this.$store.state.okConnection.okregpwd=""
                 this.$store.state.okConnection.okregpwd2=""
                 this.$store.state.okConnection.okpwd=""
+                this.$store.state.okConnection.okuser=""
                 this.okConnection();
                 if(this.$store.state.okConnection.okuser==="true" && this.$store.state.okConnection.okpwd==="true"){
                 this.$store.state.okConnection.okuser="" 
@@ -98,10 +102,14 @@
                 const password = this.pwdco
                 this.$store.dispatch('login', { email, password}).then(() => {
                     if(this.$store.state.okConnection.notok!=="true"){
-                        if(this.$store.state.next!=='')
+                        if(this.$store.state.next!==''){
+                           
                             this.$router.push(this.$store.state.next)
-                        else
-                            this.$router.push('/')
+                            this.$store.state.next=''
+                        }
+                        else{
+                               this.$router.go(-1)
+                          }
 
                     }
                     else
@@ -119,6 +127,7 @@
                 });
             },
             register:function(mail){
+                this.$store.state.okConnection.okuser=""
                 this.$store.state.okConnection.okregmail=""
                 this.$store.state.okConnection.notok=""
                 this.$store.state.okConnection.okregpwd=""
@@ -169,5 +178,9 @@
     .remember{
         position: relative;
         top: 0.5rem;
+    }
+    .alert{
+        margin: 0 auto;
+        width: 30%;
     }
 </style>

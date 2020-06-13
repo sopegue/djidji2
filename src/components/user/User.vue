@@ -1,16 +1,13 @@
 <template>
   <div>
     <div class="well">
-        <ul class="nav nav-tabs">
+        <ul class="text-center nav nav-tabs">
             <li @click="active" v-bind:class="{'actives': active1}"><router-link class="a-prof" to="/user"><i class="fas fa-user"></i>&nbsp;Profile</router-link></li>
             <li @click="active" v-bind:class="{'actives': active2}"><router-link class="a-prof" to="/user/password"><i class="fas fa-lock"></i> Mot de passe</router-link></li>
-            <li @click="active" v-bind:class="{'actives': active3}"><router-link class="a-prof" to="/user/message">
-                
-                <i class="fas fa-envelope"></i> Messages <span class="spii badge badge-pill badge-success">4</span></router-link>
-            </li>
+            
             <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/user/notif">
               
-                <i class="fas fa-bell"></i> Notifications <span class="spii badge badge-pill badge-danger">4</span></router-link>
+                <i class="fas fa-bell"></i> Notifications <span class="spii badge badge-pill badge-success">4</span></router-link>
                 </li>
             <li @click="active" v-bind:class="{'actives': active5}"><router-link class="a-prof" to="/user/list"><i class="fas fa-list"></i> Ma liste</router-link></li>
             <li @click="active" v-bind:class="{'actives': active6}"><router-link class="a-prof" to="/user/added"><i class="fas fa-cube"></i> Mes annonces</router-link></li>
@@ -150,10 +147,11 @@ export default {
         position: relative;
         top: 1.5rem;
     }
+    
     .well li{
-        width: 12%;
-        height: 36px;
-        padding-top: 0.4rem;
+        width: 13%;
+        height: 40px;
+        padding-top: 0.6rem;
         text-align: center;
     }
 </style>

@@ -185,7 +185,7 @@ export default {
         this.$store.commit('setPmin',5)
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
-        this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: type.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
+        this.$store.dispatch('searchMenu',type).then(() =>{this.$router.push({ path: '/annonce/search/searching' });this.$Progress.finish();})
       },
       gotoAdsCateg:function(categ,scateg){
         this.$store.state.currentPageAds=1
@@ -199,7 +199,7 @@ export default {
           categ:categ,
           scateg:scateg
         }
-        this.$store.dispatch('searchMenuSous',info).then(() =>{ this.$router.push({ path: '/annonce/search', query: { categ: categ.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), souscateg: scateg.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }}); this.$Progress.finish(); })
+        this.$store.dispatch('searchMenuSous',info).then(() =>{ this.$router.push({ path: '/annonce/search/searching' });this.$Progress.finish();})
       },
       showitem(n){
         if(n==='computer')
