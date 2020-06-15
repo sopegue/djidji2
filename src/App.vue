@@ -113,7 +113,7 @@
   width: 100% !important;
     }
 .nottf{
-  padding: 5px 5px 5px 5px;
+  padding: 2px 2px 2px 2px;
   background-color: rgb(243, 195, 195);
   border: rgb(192, 192, 192) 1px solid;
   border-radius: 10px;

@@ -1,7 +1,7 @@
 <template>
     <div id="wel-bd">
       <div class="item-title">
-          <router-link to="/top" class="a-ads-title">Top catégories <small class="a-ads-title-small"> Voir plus</small></router-link>
+          <router-link to="#" @click.native="shitem('Top catégories')" class="a-ads-title">Top catégories <small class="a-ads-title-small"> Voir plus</small></router-link>
       </div>
       <div class="item-bd">
         <div id="item-header">
@@ -17,7 +17,7 @@
                 <b-spinner class="p" label="Loading..."></b-spinner>
               </div>
               <div class="d-flex flex-row justify-content-between" v-else>
-                <ads v-for="(j,index) in 5"
+                <ads  class="p-1" v-for="(j,index) in 5"
                   :key="index"
                   :ads="ads[index + (15-i*5)]"
                 >
@@ -75,6 +75,28 @@
         this.isLoading=false;
       },
       deep: true
+      },
+    },
+    
+    methods:{
+      shitem:function(what){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',4)
+        this.$store.dispatch('searchByWhat',what).then(() =>{
+          if(what==='Top catégories')
+            this.$router.push('/annonce/search/searching'); 
+          if(what==='A la une')
+            this.$router.push('/annonce/search/searching');
+          else
+            this.$router.push('/annonce/search/searching');  
+          this.$Progress.finish(); 
+          })
+          this.$Progress.finish();
       },
     },
     components: {

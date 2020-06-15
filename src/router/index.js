@@ -277,13 +277,33 @@ const router = new VueRouter({
   routes
 })
 router.afterEach((to, from) => {
- //router.replace(to);
+ //router.replace(to);  
+ if(to.name==='InfoAd' && from.name==='InfoAd')
+ window.scrollTo({
+  top: 0,
+  left: 0,
+  behavior: 'smooth'
+});
+ 
 })
 
 router.beforeEach(function (to, from, next) {
   store.state.previous=from.path
   //store.state.next=to.path
   store.commit('auth_reg','')
+  if (to.path === '/'){
+    localStorage.removeItem('search')
+      localStorage.removeItem('adsearch')
+      localStorage.removeItem('categSearch')
+      localStorage.removeItem('place')
+      localStorage.removeItem('type')
+      localStorage.removeItem('sCateg')
+
+      localStorage.removeItem('nbPageAds')
+      localStorage.removeItem('prix')
+      localStorage.removeItem('curPageAds')
+      localStorage.removeItem('trier')
+  }
   if (from.path === '/annonce/search' && to.path !== '/annonce/search'){
       localStorage.removeItem('search')
       localStorage.removeItem('adsearch')

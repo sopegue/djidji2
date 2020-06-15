@@ -831,11 +831,7 @@ input{
   border-radius: 10px !important;
 }
 
-.ads-img{
-    position: relative;
-    top: -2.0rem;
-    width: 180px;
-}
+
 .actbtnn svg{
   color: rgb(75, 75, 75) !important;
 }
@@ -857,13 +853,7 @@ input{
   top: 0.5rem;
     float: right;
 }
-.ads{
-  width: fit-content;
-  height: 300px;
-  cursor: pointer;
-  border: 1px solid rgb(184, 184, 184);
-  border-radius: 10px !important;
-}
+
 
 .ads:hover{
   transform: scale(1.05);
@@ -871,10 +861,6 @@ input{
   border-radius: 10px !important;
 }
 
-.row-2{
-  position: relative;
-  top: -2rem;
-}
 #collapseUser{
   z-index: 999;
 }

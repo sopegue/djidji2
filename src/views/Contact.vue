@@ -6,7 +6,7 @@
 				<img src="contact/images/img-01.png" alt="IMG">
 			</div>
 
-			<form class="contact1-form validate-form">
+			<form @submit.prevent="textAdmin" class="contact1-form validate-form">
 				<span class="contact1-form-title">
 					Contactez-nous
 				</span>
@@ -32,7 +32,7 @@
 				</div>
 
 				<div class="container-contact1-form-btn">
-					<button class="contact1-form-btn">
+					<button type="submit" class="contact1-form-btn">
 						<span>
 							Envoyer <i class="fa fa-paper-plane" aria-hidden="true"></i>
 						</span>
@@ -54,7 +54,9 @@ export default {
         }
     },
     methods:{
-        
+        textAdmin(){
+          
+        }
     }
 }
 </script>

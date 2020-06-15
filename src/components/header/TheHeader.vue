@@ -158,7 +158,7 @@
         </div>
       </transition>
     </div>
-      <div v-click-outside="retrievebyloc" class="localise d-inline-block">
+      <div v-click-outside="hideloc" class="localise d-inline-block">
         <a @click="selecting" v-if="this.$store.state.adsPlace.length==1" v-show="notselecting" class="a-localise"><i class="fas fa-map-marker-alt"></i> {{this.$store.state.adsPlace[0].name}} <i class="fas fa-chevron-down"></i></a>
         <a @click="selecting" v-if="this.$store.state.adsPlace.length!=1" v-show="notselecting" class="a-localise"><i class="fas fa-map-marker-alt"></i> {{this.$store.state.adsPlace[0].name}} et {{this.$store.state.adsPlace.length-1}} autres <i class="fas fa-chevron-down"></i></a>
         <transition name="fade">
@@ -373,6 +373,10 @@
     },
     props:['scrolling'],
     methods: {
+      hideloc(){
+        this.selectmul=false;
+        this.notselecting=true;
+      },
       gotoAdCateg:function(type){
         this.$store.state.currentPageAds=1
         localStorage.removeItem('prix')

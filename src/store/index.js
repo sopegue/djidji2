@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+  finish:false,
   notUserExist:false,
   UserExistance:false,
   pwdIncorrect:false,
@@ -19,6 +20,8 @@ export default new Vuex.Store({
   },    
     accessToken:  localStorage.getItem('access_token') ||  '',
     currentUser : [],
+    infoAds : [],
+    infoUsers : [],
     userExist:false,
     okRegister:'',
     adsPlace:[
@@ -29,13 +32,23 @@ export default new Vuex.Store({
 
     pagination:'true',
     nbPageAds:1,
+    nbPageMyAds:1,
     currentPageAds:1,
+    currentPageMyAds:1,
     filteringAds:'',
     prixmin:5,
     trier:'',
 
     placeUpd:false,
     placeNb:0,
+
+    pricing:'false',
+    
+    saveAds:[],
+    savedAdfound :'',
+    hasAdAdded:false,
+
+    hasFoundAfterResearch:true,
     Ads:[],
     categSearch:'',
     Ad:[],
@@ -45,7 +58,7 @@ export default new Vuex.Store({
     usRegStatus:'',
     token:'',
     logStatus:'',
-    searchfound:'',
+    searchfound:'success',
     search:'',
     searchNb:0,
     allCateg:'Toutes les catégories',
@@ -91,12 +104,36 @@ export default new Vuex.Store({
       state.searchfound = 'success'
       state.searchNb=state.Ads.ads.length
       state.nbPageAds=ads.count
+      state.hasFoundAfterResearch=true
     },
+    success: (state) => {
+      state.searchfound = 'success'
+    },
+    savedAd_success: (state,ads) => {
+      state.saveAds=ads
+      state.savedAdfound = 'success'
+      state.nbPageMyAds=ads.count
+      state.hasAdAdded=true
+    },
+    savedAd_failed: (state) => {
+      state.saveAds=[]
+      state.savedAdfound = 'r'
+      state.nbPageMyAds=1
+      state.hasAdAdded=false
+    },
+    savedAd_reset: (state) => {
+      state.saveAds=[]
+      state.savedAdfound = 'loading'
+      state.hasAdAdded=false
+      //state.nbPageMyAds=1
+    },
+
     search_notFound: (state) => {
-      state.searchfound = 'error'
+      state.hasFoundAfterResearch = false
       state.searchNb=0
     },
     search_searching: (state) => {
+      state.hasFoundAfterResearch=true
       state.searchfound = 'loading'
     },
     setTypeOfSearch: (state,nb) => {
@@ -111,7 +148,14 @@ export default new Vuex.Store({
     setTrier: (state,value) => {
       state.trier=value
     },
+    infoAd: (state,value) => {
+      state.infoAds=value
+    },
+    infoUser: (state,value) => {
+      state.infoUsers=value
+    },
     reset_search:(state)=>{
+      state.hasFoundAfterResearch=true
       state.Ads=[]
       state.searchNb=0
       //state.searchfound=''
@@ -207,19 +251,21 @@ export default new Vuex.Store({
           state.prixmin=5
           state.trier=''
         }
-
-        state.nbPageAds=localStorage.getItem('nbPageAds')
-        state.currentPageAds=localStorage.getItem('curPageAds')
+        if(localStorage.nbPageAds)
+          state.nbPageAds=localStorage.getItem('nbPageAds')
+        else state.nbPageAds=0
+        if(localStorage.curPageAds)
+          state.currentPageAds=localStorage.getItem('curPageAds')
+        else
+        state.currentPageAds=1
 
         state.Ads= JSON.parse(localStorage.getItem('adsearch'))
         state.adsPlace= JSON.parse(localStorage.getItem('place'))
         state.categSearch=localStorage.getItem('categSearch')
         state.typeOfSearch=localStorage.getItem('type')
         state.sCateg=localStorage.getItem('sCateg')
-        if(state.Ads.ads.length==0)
-          state.searchfound='error'
-        else
           state.searchfound='success'
+        
         state.allCateg=state.categSearch
         state.searchh=state.search
       }
@@ -249,7 +295,7 @@ export default new Vuex.Store({
         Axios({url: 'http://localhost:8000/api/annonce/lookbywhat', data: {look:what,curPage:state.currentPageAds,prmin:state.prixmin,trier:state.trier, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
-          if(state.Ads.ads.length!=0){
+          if(state.Ads.total!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', state.categSearch)
@@ -262,7 +308,9 @@ export default new Vuex.Store({
             localStorage.setItem('search', '')
            }
            else{
+          
             commit('search_notFound')
+            
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('sCateg', '')
@@ -298,7 +346,7 @@ export default new Vuex.Store({
         Axios({url: 'http://localhost:8000/api/annonce/looksouscateg', data: {categ:info.categ,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
-          if(state.Ads.ads.length!=0){
+          if(state.Ads.total!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', state.categSearch)
@@ -309,6 +357,7 @@ export default new Vuex.Store({
             localStorage.setItem('search', '')
            }
            else{
+            
             commit('search_notFound')
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', state.categSearch)
@@ -342,7 +391,7 @@ export default new Vuex.Store({
         Axios({url: 'http://localhost:8000/api/annonce/lookcateg', data: {categ:type,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
-           if(state.Ads.ads.length!=0){
+          if(state.Ads.total!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
             localStorage.setItem('categSearch', type)
@@ -352,7 +401,9 @@ export default new Vuex.Store({
             localStorage.setItem('search', '')
            }
            else{
+            
             commit('search_notFound')
+            
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', type)
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
@@ -385,7 +436,7 @@ export default new Vuex.Store({
         Axios({url: 'http://localhost:8000/api/annonce/look', data: {selected:info.selected,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, search:info.search, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
-           if(state.Ads.ads.length!=0){
+           if(state.Ads.total!=0){
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
@@ -395,7 +446,9 @@ export default new Vuex.Store({
             localStorage.setItem('search', state.search)
            }
            else{
+            
             commit('search_notFound')
+            
             localStorage.setItem('adsearch', JSON.stringify(state.Ads))
             localStorage.setItem('categSearch', state.categSearch)
             localStorage.setItem('place', JSON.stringify(state.adsPlace))
@@ -418,18 +471,7 @@ export default new Vuex.Store({
         resolve()
       })
     },
-    isUserExist({commit,dispatch,state},user){
-      return new Promise((resolve, reject)=>{
-      Axios({url: 'http://localhost:8000/api/user/checkUserExistance', data: user, method: 'POST' })
-          .then(respo => {
-            if(respo.data!=0)
-              state.notUserExist=false
-            else
-              state.notUserExist=true
-            resolve(respo)
-          });
-      });
-  },
+    
   isUserExistUpdate({commit,dispatch,state},user){
     return new Promise((resolve, reject)=>{
     Axios({url: 'http://localhost:8000/api/user/checkUserExistanceUpdate', data: user, method: 'POST' })
@@ -454,16 +496,25 @@ pwdUpdate({commit,dispatch,state},info){
       });
   });
 },
+isUserExist({commit,dispatch,state},user){
+  return new Promise((resolve, reject)=>{
+  Axios({url: 'http://localhost:8000/api/user/checkUserExistance', data: user, method: 'POST' })
+      .then(respo => {
+        if(respo.data==0)
+          state.notUserExist=true
+        else
+          state.notUserExist=false
+        resolve(respo)
+      })
+  });
+},
    signup({dispatch,state},info){
-    state.UserExistance=false
-    dispatch('isUserExist',info)
-    if(state.notUserExist)  
-    {
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
          Axios({url: 'http://localhost:8000/api/auth/register', data: info, method: 'POST' })
           .then(resp => { // store the token in localstorage
             state.usRegStatus = 'success'
             state.okConnection.regmail=''
+            state.UserExistance=false
             resolve(resp)
           })
         .catch(err => {
@@ -471,9 +522,6 @@ pwdUpdate({commit,dispatch,state},info){
           reject(err)
         })
       })
-    }else{
-      state.UserExistance=true
-    }
     },
     checkLogin({commit,state}){
       if(state.accessToken!==''){
@@ -486,6 +534,25 @@ pwdUpdate({commit,dispatch,state},info){
             });
         });
       }
+    },
+    getSavedAds({commit,state},form){
+      commit('savedAd_reset')
+      
+        return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/annonce/saved', data:form, method: 'POST' })
+            .then(respo => {
+              if(respo.data.total!=0){
+                console.log(respo.data)
+                state.nbPageMyAds=respo.data.count
+                commit('savedAd_success',respo.data)
+              }else{
+                console.log(form.get('user'))
+                commit('savedAd_failed')
+              }
+              resolve(respo)
+            });
+        });
+      
     },
     login:({commit,state},user)=>{
       state.okConnection.notok=""
@@ -505,7 +572,7 @@ pwdUpdate({commit,dispatch,state},info){
 
             Axios({url: 'http://localhost:8000/api/user',data: user, method: 'POST' })
             .then(respo => {
-              
+              localStorage.setItem('usetrixco', respo.data.id)
               commit('auth_user', respo.data)
               resolve(respo)
             })

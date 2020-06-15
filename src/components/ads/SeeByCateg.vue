@@ -11,6 +11,12 @@
            <span v-if="this.$store.state.typeOfSearch==1" class="sssea">{{this.$store.state.search}}</span>
           <br />
           <span class="ssnb">{{this.$store.state.Ads.total}} annonce(s)</span>
+          <span v-if="this.$store.state.Ads.total!==0" class="ssnb"><br>
+          <span v-if="this.$store.state.Ads.total>=16">
+            <span v-if="this.$store.state.Ads.total-(this.$store.state.currentPageAds-1)*16 +1>16">({{(this.$store.state.currentPageAds-1)*16 +1}} - {{(this.$store.state.currentPageAds-1)*16 + 16 }})</span>
+            <span v-else>({{(this.$store.state.currentPageAds-1)*16 +1}} - {{((this.$store.state.currentPageAds-1)*16 +1)+ (this.$store.state.Ads.total - ((this.$store.state.currentPageAds-1)*16 +1))}})</span>
+          </span>
+          <span v-else>({{this.$store.state.currentPageAds}} - {{this.$store.state.Ads.total}})</span></span>
         </p>
       </div>
       <hr class="sshr" />
@@ -20,26 +26,10 @@
           <b-spinner class="p" label="Loading..."></b-spinner>
         </div>
         <div v-else>
-            
-        <div class="ulist-loads" v-if=" (this.$store.state.typeOfSearch==2 || this.$store.state.typeOfSearch==4) && this.$store.state.searchfound==='error'">
-             <div class="alert alert-light" role="alert">
-              Oops ! Désolé, aucune annonce disponible dans "{{this.$store.state.categSearch}}"
-            </div>
-        </div>
-        <div class="ulist-loads" v-if=" this.$store.state.typeOfSearch==3 && this.$store.state.searchfound==='error'">
-             <div class="alert alert-light" role="alert">
-              Oops ! Désolé, aucune annonce disponible dans "{{this.$store.state.sCateg}}"
-            </div>
-        </div>
-         <div class="ulist-loads" v-if="this.$store.state.typeOfSearch==1 && this.$store.state.searchfound==='error'">
-             <div class="alert alert-light" role="alert">
-              Oops ! Désolé, aucune annonce disponible sous " {{this.$store.state.search}}"
-            </div>
-        </div>
-        <div v-if="this.$store.state.searchfound==='success'">
+        <div v-show="this.$store.state.searchfound==='success'">
                                  
       <div class="pagi d-flex flex-row justify-content-between">
-        <div v-if="this.$store.state.pagination==='true'">
+        
         <b-pagination
           class="customPagination"
           v-model="currentPage"
@@ -48,9 +38,9 @@
           first-number
           last-number
         ></b-pagination>
-      </div>
-        <div class="prsl text-center">
-          <div class="form-group d-flex flex-column align-items-center">
+     
+        <div class="prsl text-center align-self-center">
+          <div class="form-group d-flex flex-column">
             <div>
               <span>Prix minimum : </span>
               <span class="prrmin">{{minn}} F CFA</span>
@@ -75,8 +65,13 @@
           <b-spinner class="p" label="Loading..."></b-spinner>
       </div>
       <div v-else class="applist">
-        <div class="d-list-us d-flex  justify-content-between flex-wrap">
+        <div v-if="this.$store.state.hasFoundAfterResearch" class="d-list-us d-flex  justify-content-between flex-wrap">
           <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads"></Ads>
+        </div>
+        <div v-else>
+           <div class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible."
+            </div>
         </div>
       </div>
       <div class="pagi-bot">
@@ -98,6 +93,11 @@
 </template>
 
 <style  scoped>
+.alert{
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
 .pagi-bot{
   margin: 0 auto;
   width: fit-content;
@@ -211,6 +211,18 @@ export default {
       perPage: 1,
     };
   },
+  updated(){
+    if(this.$store.state.Ads.total<=16)
+        this.$store.state.pagination='false'
+    else
+      this.$store.state.pagination='true'
+  },
+  beforeMount(){
+    if(this.$store.state.Ads.total<=16)
+        this.$store.state.pagination='false'
+    else
+      this.$store.state.pagination='true'
+  },
  created(){
    this.$store.dispatch('checkAdsCache')
  },
@@ -231,6 +243,7 @@ export default {
     // setter
     set: function (newValue) {
       this.$store.state.currentPageAds=newValue
+       this.$store.state.pricing='true'
         this.reSearch()
         window.scrollTo({
         top: 0,
@@ -248,6 +261,7 @@ export default {
     // setter
     set: function (newValue) {
       this.$store.commit('setPmin',newValue)
+       this.$store.state.pricing='true'
         this.reSearch()
       }
     },
@@ -259,6 +273,7 @@ export default {
     // setter
     set: function (newValue) {
         this.$store.commit('setTrier',newValue)
+         this.$store.state.pricing='true'
         this.reSearch()
       }
     },
@@ -276,8 +291,8 @@ export default {
   },
   methods:{
     
-    reSearch(){
-      
+    async reSearch(){
+     
       localStorage.setItem('prix', this.$store.state.prixmin)
       localStorage.setItem('trier', this.$store.state.trier)
         this.$store.state.filteringAds="loading"
@@ -288,13 +303,30 @@ export default {
             selected:this.$store.state.categSearch,
             search:this.$store.state.search
           }
-          this.$store.dispatch('searchBar',info).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          await this.$store.dispatch('searchBar',info).then(() =>{this.$store.state.filteringAds="";
+          if(this.$store.state.Ads.total==0){
+            this.$store.state.hasFoundAfterResearch=false
+          }
+          else{
+            this.$store.state.hasFoundAfterResearch=true
+          }
+           
+           this.$Progress.finish(); })
           }
 
           if(this.$store.state.typeOfSearch==2)
           {
           this.$Progress.start();
-          this.$store.dispatch('searchMenu',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          await this.$store.dispatch('searchMenu',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds="";
+          if(this.$store.state.Ads.total==0){
+            this.$store.state.hasFoundAfterResearch=false
+          }
+          else{
+            this.$store.state.hasFoundAfterResearch=true
+          }
+           
+          this.$Progress.finish(); })
+          
           }
 
           if(this.$store.state.typeOfSearch==3)
@@ -304,14 +336,32 @@ export default {
             categ:this.$store.state.categSearch,
             scateg:this.$store.state.sCateg
           }
-          this.$store.dispatch('searchMenuSous',info).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          await this.$store.dispatch('searchMenuSous',info).then(() =>{this.$store.state.filteringAds="";
+          if(this.$store.state.Ads.total==0){
+            this.$store.state.hasFoundAfterResearch=false
+          }
+          else{
+            this.$store.state.hasFoundAfterResearch=true
+          }
+          
+          this.$Progress.finish(); })
           }
 
           if(this.$store.state.typeOfSearch==4)
           {
           this.$Progress.start();
-          this.$store.dispatch('searchByWhat',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds=""; this.$Progress.finish(); })
+          await this.$store.dispatch('searchByWhat',this.$store.state.categSearch).then(() =>{this.$store.state.filteringAds="";
+          if(this.$store.state.Ads.total==0){
+            this.$store.state.hasFoundAfterResearch=false
           }
+          else{
+            this.$store.state.hasFoundAfterResearch=true
+          }
+          
+          this.$Progress.finish(); })
+          }
+         this.$store.state.pricing='false'
+           
 
     },
   },

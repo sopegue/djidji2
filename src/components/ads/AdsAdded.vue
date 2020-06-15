@@ -1,22 +1,13 @@
 <template>
-  <div v-cloak class="ads" @click="goToAds()" :title="this.ads.titre">
+  <div v-cloak class="ads" title="Cliquez pour voir l'annonce" @click="goToAds()" >
     <div class="row-1">
-      <div v-if="saved"  class="d-btn-nc d-flex justify-content-between">
-            <button title="Retirer de ma liste" class="btn-nc btn btn-link"  >
-                <i  class="fas fa-check"></i>
-            </button> 
-            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
-                <i class="fas fa-exclamation-circle"></i>
-            </button>
-          
-      </div>
-      <div  v-else  class="d-btn-nc d-flex justify-content-between">
-            <button title="Ajouter à ma liste" class="btn-nc btn btn-link">
-                <i  class="fas fa-plus"></i>
-            </button>
-            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
-                <i class="fas fa-exclamation-circle"></i>
-            </button>
+      <div class="d-btn-nc d-flex justify-content-between">
+          <button title="Modifier l'annonce" class="btn-nc btn btn-link">
+              <i class="fas fa-edit"></i>
+          </button> 
+          <button title="Supprimer l'annonce" class="btn-nc btn btn-link">
+              <i class="fas fa-trash"></i>
+          </button>
           
       </div>
       <div class="ads-img">
@@ -53,13 +44,13 @@
     top: 0.2rem;
   }
   
-.fa-plus{
+.fa-edit{
   position: relative;
   top: -0.15rem;
-  right: .25rem;
+  right: .30rem;
   color: #ddd; 
 }
-.fa-exclamation-circle{
+.fa-trash{
   position: relative;
   top: -0.15rem;
   right: .3rem;
@@ -92,10 +83,14 @@
   export default {
     data() {
       return {
-        saved:false,
+        saved:true,
         loading:true,
         pic:[]
       }
+    },
+    beforeUpdate(){
+      this.ville=this.ads.ville
+      console.log(this.ads.ville)
     },
     computed:{
       ville:{
@@ -191,25 +186,9 @@
           behavior: 'smooth'
         });
       this.addPic();
-      this.checkIfSaved()
     },
     props: ['ads'],
     methods:{
-      checkIfSaved(){
-        if(this.$store.state.accessToken!=='')
-        {
-        var form= new FormData()
-        form.append('user',this.$store.state.currentUser.id)
-        form.append('ad',this.ads.id)
-        this.$http.post('http://localhost:8000/api/savedAdsCheck', form ).then(response => {
-          if(response.data!=0)
-            this.saved=true
-          else
-            this.saved=false
-         //console.log('user',this.$store.state.currentUser.id,'ad',this.ads.id)
-        })
-        }
-      },
       goToAds(){
         this.$router.push({name:'InfoAd',params:{id:this.ads.id}}).then(()=>{
        

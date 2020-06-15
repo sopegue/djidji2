@@ -36,8 +36,8 @@
           Autres
         </vs-option>
       </vs-select>
-
-      <vs-select class="sslect" v-if="nOther"  style="padding-top:3rem;" :color="'rgb(84, 202, 129)'"  placeholder="Choisir..." label="Sous-catégorie " v-model="value1">
+      <div  v-if="nOther" >
+      <vs-select class="sslect" style="padding-top:3rem;" :color="'rgb(84, 202, 129)'"  placeholder="Choisir..." label="Sous-catégorie " v-model="value1">
         <vs-option 
         v-for="(item,index) in cate"
         :key="index"
@@ -47,6 +47,7 @@
         
       </vs-select>
       <span v-if="scategInvalid" style="color:red;font-size:12px;" >Ce champ est requis &#10005;</span>
+      </div>
       </div>
       
     </div>
@@ -314,9 +315,15 @@ export default {
         toCorrect=true
         this.villeInvalid=true
       }
-      if(this.value1===''){
-        toCorrect=true
+      if(this.nOther){
+        if(this.value1==='')
+        {
+          toCorrect=true
         this.scategInvalid=true
+        }
+      }
+      else{
+        this.scategInvalid=false
       }
       if(!toCorrect){
         this.$Progress.start();
@@ -386,6 +393,7 @@ export default {
         this.$http.post('http://localhost:8000/api/annonce', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
          .then(resp => { // store the token in localstorage
             console.log('ad added')
+            this.$store.dispatch('updPlace',this.$store.state.adsPlace)
             console.log(resp)
             this.$router.push('/user/added');
             this.$notify({

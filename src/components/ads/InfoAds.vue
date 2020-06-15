@@ -21,7 +21,7 @@
                     :key="index">
                     <template v-slot:content>
                       <div class="d-vi-img">
-                        <img class="vueperslide__image" style="border-radius : 10px;" :src="`/images/`+pp+`.JPG`"/>
+                        <img class="vueperslide__image" style="border-radius : 10px;" :src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
                       </div>
                     </template>
                   </vueper-slide>
@@ -45,7 +45,7 @@
             @click.native="$refs.vueperslides2 && $refs.vueperslides2.goToSlide(i - 1)">
               <template v-slot:content>
                 <div class="vueperslide__content-wrapper">
-                  <img class="vueperslide__image1" style="border-radius : 10px;" :src="`/images/`+pic[index]+`.JPG`"/>
+                  <img class="vueperslide__image1" style="border-radius : 10px;" :src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
                 </div>
               </template>
             </vueper-slide>
@@ -55,13 +55,8 @@
             <table class="table table-bordered">
               <tbody>
                 <tr>
-                  <td class="tit">Description du produit</td>
-                  <td class="details text-xsmall">Téléphone portable samsung galaxy s10
-                    nouveau utilisrtable samsung galaxy s10
-                    nouveau utilisértable samsung galaxy s10
-                    nouveau utilisértable samsung galaxy s10
-                    nouveau utilisértable samsung galaxy s10
-                    nouveau utiliséé 2 mois.
+                  <td class="tit">Description détaillée</td>
+                  <td class="details text-xsmall">{{desc}}
                   </td>
                 </tr>
               </tbody>
@@ -71,42 +66,39 @@
       <div class="bdd-right">
           <div class="titre d-flex justify-content-between">
             <div>
-              <i class="fas fa-tags"></i><span> Informatique </span> ><span> Ordinateur portable</span> 
+              <i class="fas fa-tags"></i><span><router-link to="#" @click.native="gotoAdCateg(categ)"> {{categ}}</router-link> </span><span v-if="categ!=='Autres'"> > <router-link to="#" @click.native="gotoAdsCateg(categ,souscateg)"> {{souscateg}}</router-link></span> 
             </div>
-            <div class="d-btn-ncc d-flex justify-content-between">
-              <button class="btn-nc btn btn-link">
-                  <i v-if="saved"  class="fas fa-check"></i>
-                  <i v-else class="fas fa-plus"></i>
-              </button> 
-              <button class="btn-nc btn btn-link">
-                  <i class="fas fa-exclamation-circle"></i>
-              </button>
+             <div class="d-btn-nc d-flex justify-content-between">
+            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
+                <i class="fas fa-exclamation-circle"></i>
+            </button>
           
-            </div>
+          </div>
+      
           </div>
           <div class="pr-titre">
-            <span class="pr">{{ad.prix}} FCFA</span><br>
-            <span class="ptitre">{{ad.titre}}fvregverfvrere regvrevregvre</span><br>
-            <span class="d-aj">Ajouté il y'a 2 jours</span>
+            <span class="pr">{{prix}} FCFA</span><br>
+            <span class="ptitre">{{ad.titre}}</span><br>
+            <span class="d-aj">Ajouté il y'a {{date}}</span>
           </div>
           <hr class="hr1">
           
           <div class="user-bdd">
               <div class="ustt d-titre d-flex justify-content-between">
-                  <span class="pptitre">Annonceur</span><button class="text-center impbtn">
+                  <span class="pptitre">Annonceur</span><button title="Signaler l'utilisateur" class="text-center impbtn">
                   <i class="fas ffaex fa-exclamation-circle"></i>
               </button>
               </div>
              <div class="us-inf-img d-user d-flex flex-row">
-                <img :style="{'position':'relative','top':'2rem' }" :src="`/images/`+user.pp" :height="64" :width="64"/>
+                <img :style="{'position':'relative','top':'2rem' }" :src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp" :height="64" :width="64"/>
                 <div class="inf-nv">
-                  <span class="ppr">{{user.Prenom}}</span><br>
-                  <span class="pville"><i class="fas fa-map-pin"></i> {{user.ville}}</span>
+                  <span class="ppr">{{this.user.Prenom}} {{this.user.Nom}}</span><br>
+                  <span class="pville"><i class="fas fa-map-pin"></i> {{this.ad.ville}}</span>
                 </div>
               </div>
               
               <div class="dd-cc">
-                <span class="pville d-cc">Annonceur depuis 2 mois</span>
+                <span class="pville d-cc">Membre depuis {{dateM}}</span>
               </div>
           </div>
           
@@ -134,11 +126,126 @@ export default {
   name: 'InfoAd',
   data(){
     return{
-      ads:[],
       pic:[],
+      us:[],
+      add:[],
       usReady:false,
       isLoading:true,
-      saved:true
+      //saved:false
+    }
+  },
+  computed:{
+    users(){
+      return this.ad.use_id
+    },
+    desc(){
+      return this.ad.description
+    },
+    categ(){
+      return this.ad.categorie
+    },
+    souscateg(){
+      
+      return this.ad.souscateg
+    },
+    date(){
+      var date=new Date(this.ad.updated_at.toString())
+      var date1 = Date.now()
+      var mili = date.getTime()
+      const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
+      console.log(diffTime + " seconds")
+      if(Math.floor(diffTime/60)>=1){
+        if(Math.floor(diffTime/(60*60))>=1){
+          if(Math.floor(diffTime/(60*60*24))>=1){
+            if(Math.floor(diffTime/(60*60*24*7))>=1){
+              if(Math.floor(diffTime/(60*60*24*7*4))>=1){
+                if(Math.floor(diffTime/(60*60*24*7*4*12))>=1){
+                  return Math.floor(diffTime/(60*60*24*7*4*12)).toString()+' an(s)'
+                }
+                else
+                  return Math.floor(diffTime/(60*60*24*7*4)).toString()+' mois'
+                
+              }
+              else
+                return Math.floor(diffTime/(60*60*24*7)).toString()+' semaine(s)'
+            }
+            else{
+              return Math.floor(diffTime/(60*60*24)).toString()+' jour(s)'
+            }
+          }
+          else{
+            return Math.floor(diffTime/(60*60)).toString()+' heure(s)'
+          }
+        }
+        else{
+          return Math.floor(diffTime/60).toString()+' minute(s)'
+        }
+      }
+      else{
+        return '1 minute'
+      }
+
+    },
+    dateM(){
+      var date=new Date(this.user.created_at.toString())
+      var date1 = Date.now()
+      var mili = date.getTime()
+      const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
+      console.log(diffTime + " seconds")
+      if(Math.floor(diffTime/60)>=1){
+        if(Math.floor(diffTime/(60*60))>=1){
+          if(Math.floor(diffTime/(60*60*24))>=1){
+            if(Math.floor(diffTime/(60*60*24*7))>=1){
+              if(Math.floor(diffTime/(60*60*24*7*4))>=1){
+                if(Math.floor(diffTime/(60*60*24*7*4*12))>=1){
+                  return Math.floor(diffTime/(60*60*24*7*4*12)).toString()+' an(s)'
+                }
+                else
+                  return Math.floor(diffTime/(60*60*24*7*4)).toString()+' mois'
+                
+              }
+              else
+                return Math.floor(diffTime/(60*60*24*7)).toString()+' semaine(s)'
+            }
+            else{
+              return Math.floor(diffTime/(60*60*24)).toString()+' jour(s)'
+            }
+          }
+          else{
+            return Math.floor(diffTime/(60*60)).toString()+' heure(s)'
+          }
+        }
+        else{
+          return Math.floor(diffTime/60).toString()+' minute(s)'
+        }
+      }
+      else{
+        return '1 minute'
+      }
+    },
+    prix(){
+       var str = this.ad.prix.toString();
+      var len = str.length;
+      if (len > 4) {
+        if (len == 5) str = str.slice(0, 2) + " " + str.slice(2);
+        if (len == 6) str = str.slice(0, 3) + " " + str.slice(3);
+        if (len == 7)
+          str = str.charAt(0) + " " + str.slice(1, 4) + " " + str.slice(4);
+        if (len == 8){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2, 5) + " " + str.slice(5);
+        }
+        if (len == 9){
+          //if(count==1)
+          str = str.slice(0, 3) + " " + str.slice(3, 6) + " " + str.slice(6);
+        }
+        if (len == 10){
+          //if(count==1)
+          str = str.slice(0, 1) + " " + str.slice(1, 4) + " " + str.slice(4,7)+ " " + str.slice(7);
+        }
+      }
+      return str;
+    
     }
   },
   props:['ad','user']
@@ -146,9 +253,11 @@ export default {
   watch:{
       ad: { 
         handler: function(n){
-          this.pic=this.ad.pp.split(",");
+          this.pic=this.ad.pp.split(",")
+          if(!this.pic)
+            this.pic[0]=this.ad.pp
       },
-      deep: true
+      deep: true,
       },
       user:{
         handler: function(n){
@@ -158,12 +267,48 @@ export default {
       deep: true
       }
   },
+  methods:{
+    
+    addPic(){
+        this.pic=this.ads.pp.split(",");
+      },
+    gotoAdCateg:function(type){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',2)
+        this.$store.dispatch('searchMenu',type).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
+      },
+      gotoAdsCateg:function(categ,scateg){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',3)
+        let info={
+          categ:categ,
+          scateg:scateg
+        }
+        this.$store.dispatch('searchMenuSous',info).then(() =>{this.$router.push('/annonce/search/searching');this.$Progress.finish();})
+      },
+  },
   components: {
       VueperSlides, VueperSlide
   }
 }
 </script>
 <style scoped>
+.fa-plus{
+  position: relative;
+  top: -0.15rem;
+  right: .25rem;
+  color: #ddd; 
+}
 button{
   border: none !important;
 }
@@ -179,7 +324,7 @@ button{
       margin:  0 auto;
       
     }
-    .d-btn-ncc{
+    .d-btn-nc{
   width: 13%;
   position: relative;
   top: 0.5rem;
@@ -220,7 +365,6 @@ button{
       position: relative;
         padding-top: 5rem;
         padding-bottom: 5rem;
-        background-color: white !important;
         width: 64px;
         height: 64px;
         margin: 0 auto;
@@ -235,7 +379,10 @@ button{
     .titre{
       font-size: 23px;
       font-weight: 700;
-      color: rgb(0, 78, 102);
+      color: rgb(0, 78, 102) !important;
+    }
+    .titre a{
+      color: rgb(0, 78, 102) !important;
     }
     .pr-titre{
       position: relative;
@@ -259,6 +406,7 @@ button{
       font-size: 20px;
     }
     .tit{
+      width: 25%;
       background-color: rgb(1, 151, 81);
       color:white;
       border: 1px solid rgb(1, 151, 81);

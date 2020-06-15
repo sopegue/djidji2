@@ -3,20 +3,48 @@
         <div class="container">
             <div class="large-12 medium-12 small-12 cell">
                     <h5 class="">Mes annonces ajoutées</h5>
+                    <br />
+                     <span class="ssnb">{{this.$store.state.saveAds.total}} annonce(s)</span>
+                     <span v-if="this.$store.state.saveAds.total!==0" class="ssnb"><br>
+                     <span v-if="this.$store.state.saveAds.total>=12">
+                       <span v-if="this.$store.state.saveAds.total-(this.$store.state.currentPageMyAds-1)*12 +1>12">({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{(this.$store.state.currentPageMyAds-1)*12 + 12 }})</span>
+                       <span v-else>({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{((this.$store.state.currentPageMyAds-1)*12 +1)+ (this.$store.state.saveAds.total - ((this.$store.state.currentPageMyAds-1)*12 +1))}})</span>
+                     </span>
+                     <span v-else>({{this.$store.state.currentPageMyAdss}} - {{this.$store.state.saveAds.total}})</span></span>
                     <hr class="hr-us-inf">
-                <div>
-                    <div class="us-list-load" v-if="isLoading">
-                       <b-spinner class="p" label="Loading..."></b-spinner>
+
+                    <div class="us-list-load" v-if="this.$store.state.savedAdfound==='loading'" >
+                        <b-spinner class="p" label="Loading..."></b-spinner>
                     </div>
                     <div v-else>
-                    <div  v-if="isAdAdded" class="d-list-us d-flex flex-wrap justify-content-start">
-                        
-                        <Ads v-for="ads in adss"
+                        <div v-if="this.$store.state.hasAdAdded">
+                        <b-pagination
+                      class="customPagination"
+                      v-model="currentPage"
+                      :total-rows="rows"
+                      :per-page="perPage"
+                      first-number
+                      last-number
+                    ></b-pagination>
+                    <div  class="d-list-us " >
+                        <div class="ddl d-flex flex-wrap justify-content-between">
+                        <AdsAdded class="p-1" v-for="ads in items"
                             v-bind="ads"
                             :key="ads.id"
                             :ads.sync="ads">
-                        </Ads>
-                    
+                        </AdsAdded>
+                        </div>
+                    </div>
+                     <div class="pp">
+                    <b-pagination
+                      class="customPagination"
+                      v-model="currentPage"
+                      :total-rows="rows"
+                      :per-page="perPage"
+                      first-number
+                      last-number
+                    ></b-pagination>
+                    </div>
                     </div>
                     <div v-else class="text-center">
                         <hr>
@@ -24,25 +52,32 @@
                         <p>Cliquez sur <router-link style="color : #004e66 !important; font-weight:700;" to="/annonce/add">Annoncer</router-link> pour ajouter une annonce.</p>
                     </div>
                     </div>
-                    
-                 </div>
             </div>
         </div>
     </div>
 </template>
 <style scoped>
+.ddl{
+    padding-left: 7%;
+    width: 90%;
+}
+.pp{
+    position: relative;
+    top: 0.5rem;
+    width: fit-content;
+    margin:  0 auto;
+}
     .large-12{
         margin-top: 3rem;
     }
     .d-list-us{
         background-color: #f8f9fa;
-        margin-top: 2rem;
+        padding-top: 0rem !important;
         padding-bottom: 3rem;
     }
     .ads{
-        margin-top: 3rem;
-         margin-left: 2%;
-        margin-right:auto;
+        margin-top: 5rem !important;
+        margin: 0 auto;
     }
     .us-list-load{
         background-color: white !important;
@@ -56,49 +91,90 @@
     }
 </style>
 <script>
-    import Ads from '@/components/ads/Ads.vue'
-    function Adse({ id, use_id, categorie, titre, description, marque, prix, pp, nbvues, added_at, updated_at}) 
-  {
-     this.id = id;
-     this.use_id= use_id;
-     this.categorie= categorie;
-     this.titre=titre;
-     this.description=description;
-     this.marque=marque;
-     this.prix=prix;
-     this.pp=pp;
-     this.nbvues=nbvues;
-     this.added_at=added_at;
-     this.updated_at=updated_at;
-   }
+    import AdsAdded from '@/components/ads/AdsAdded.vue'
     
     export default {
         data () {
             return { 
-                adss:[],
-                isLoading:false,
+                perPage:1
             }
         },
+        computed: {
+            items(){
+                return this.$store.state.saveAds.ads
+            },
+          rows(){
+            return this.$store.state.nbPageMyAds
+          },
+          currentPage:{
+            // getter
+          get: function () {
+            return this.$store.state.currentPageMyAds
+          },
+          // setter
+          set: function (newValue) {
+            this.$store.state.currentPageMyAds=newValue
+            this.gotoNextPage()
+              window.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: 'smooth'
+            });
+            }
+
+          },
+        },
+        
+    methods:{
+      shitem:function(what){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+        this.$Progress.start();
+        this.$store.commit('setTypeOfSearch',4)
+        this.$store.dispatch('searchByWhat',what).then(() =>{
+          if(what==='Top catégories')
+            this.$router.push('/annonce/search/searching'); 
+          if(what==='A la une')
+            this.$router.push('/annonce/search/searching');
+          else
+            this.$router.push('/annonce/search/searching');  
+          this.$Progress.finish(); 
+          })
+          this.$Progress.finish();
+      },
+    },
         components:{
-            Ads,
+            AdsAdded,
         },
-        created(){
-            this.isLoading = true;
+        beforeMount(){
+            
             this.$Progress.start();
-            this.getAdsAll();
-        },
-        computed:{
-            isAdAdded(){
-                return true
-                //return this.$store.state.hasAdAdded
-            }
+            this.$store.state.savedAdfound='loading'
+            setTimeout(() => {
+               var user=localStorage.getItem('usetrixco')
+                let form= new FormData()
+            form.append('user',user)
+            form.append('curPage',this.$store.state.currentPageMyAds)
+            console.log(user)
+            this.$store.dispatch('getSavedAds',form).then(()=>{
+            //form.append('next',this.$store.state.currentPageMyAds)
+            this.$Progress.finish();
+            })
+            }, 1000);
+            
         },
         methods:{
-            async getAdsAll(){
-                const { data } = await this.$http.get('http://localhost:8000/api/annonce');
-                data.forEach(ad => this.adss.push(new Adse(ad)));
-                this.isLoading = false;
-                this.$Progress.finish();
+            gotoNextPage(){
+            let form= new FormData()
+            form.append('user',this.$store.state.currentUser.id)
+            form.append('curPage',this.$store.state.currentPageMyAds)
+            this.$store.dispatch('getSavedAds',form).then(()=>{
+            //form.append('next',this.$store.state.currentPageMyAds)
+            this.$Progress.finish();
+            })
             },
         },
     }

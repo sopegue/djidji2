@@ -27,13 +27,13 @@ export default {
   },
   watch:{
     ad:{
-      handler:function(){
+      handler:function(n){
         this.getUser();
         this.$Progress.finish();
       }
     }
   },
-  created(){
+  beforeMount(){
     this.getAd();
   },
   methods:{
@@ -42,11 +42,16 @@ export default {
         const { data } = await this.$http.get(`http://localhost:8000/api/user/${this.ad.use_id}`);
        // alert(this.ad.use_id)
         this.user=data;
+        localStorage.setItem('infoUser',JSON.stringify(this.user))
+        //this.$store.commit('infoUser',data)
+
       },
       async getAd(){
         this.$Progress.start();
         const { data } = await this.$http.get(`http://localhost:8000/api/annonce/${this.$route.params.id}`);
         this.ad=data;
+        localStorage.setItem('infoAd',JSON.stringify(this.ad))
+        this.$store.commit('infoAd',data)
       },
   }
 }

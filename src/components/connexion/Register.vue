@@ -140,7 +140,7 @@
                 loging:false,
                 registring:false,
                 remember:false,
-                
+                picUploaded:false,
                 mailco:'',
                 name:'',
                 surname:'',
@@ -225,6 +225,7 @@
                          
                      }
                      else{
+                        this.picUploaded=true
                          reader.readAsDataURL( this.file );
                      }
                     
@@ -338,6 +339,7 @@
                 });
             },
             register:function(){
+                //this.$store.state.UserExistance=false
                 this.$store.state.okConnection.okuser="" 
                 this.$store.state.okConnection.okpwd=""
                 this.$store.state.okConnection.notok=""
@@ -349,16 +351,6 @@
                     this.$store.state.okConnection.notokpwd=""
                     this.$store.state.okConnection.okregmail===""
                      this.$Progress.start();
-                     var info = {
-                       name: this.name,
-                       email: this.mail,
-                       password: this.pwd,
-                       surname:this.surname,
-                       ville:this.ville,
-                       tel:this.tel
-     
-                     }
-                     
                      var myForm= new FormData()
                      myForm.append('name',this.name)
                      myForm.append('surname',this.surname)
@@ -366,21 +358,24 @@
                      myForm.append('password',this.pwd)
                      myForm.append('ville',this.ville)
                      myForm.append('tel',this.tel)
-                     myForm.append('pic',this.file)
-                     this.$store.dispatch('signup', myForm).then(() =>{ 
-                     if(this.$store.state.UserExistance){
-                         this.$notify({
-                        group: 'existUser',
-                        })
-                     }else{
-                         this.$router.push('/connexion');
-                         this.$notify({
-                            group: 'success-reg',
-                        });
-                     }
-                     
-                     })
-                     }
+                     if(this.picUploaded)
+                        myForm.append('pic',this.file)
+                    this.$store.dispatch('isUserExist', myForm).then(() =>{
+                        if(this.$store.state.notUserExist){
+                            this.$store.dispatch('signup', myForm).then(() =>{
+                                 this.$router.push('/connexion');
+                                 this.$notify({
+                                    group: 'success-reg',
+                                });
+                            })
+                        }
+                        else{
+                            this.$notify({
+                                group: 'existUser',
+                            })
+                        }
+                    })
+                    }
                      else
                      this.$notify({
                         group: 'custom-template',

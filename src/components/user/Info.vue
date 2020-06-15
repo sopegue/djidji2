@@ -3,7 +3,7 @@
         <div class="container">
             <div class="large-12 medium-12 small-12 cell">
                 <div class="us-inf-img">
-                    <img :style="{'position':'relative','top':'2.2rem' }" :src="image" :height="64" :width="64"/>
+                    <img :style="{'position':'relative','top':'2.2rem' }" :src="mypp" :height="64" :width="64"/>
                 </div>
                 <div class="us-inf-inf d-flex"> 
                     <input type="file" id="file" ref="file" class="inputfile" v-on:change="handleFileUpload()"/>
@@ -47,6 +47,11 @@
             
         },
         computed:{
+            mypp(){
+
+                return this.$store.state.currentUser.id===undefined ? 'http://localhost:8000/storage/images/profile/user.png' :
+                 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp
+            },
             mail:{
                 get:function(){
                     return this.$store.state.currentUser.email
@@ -98,8 +103,9 @@
         },
         data () {
             return {
-                image:'/images/profile/2.JPG',
+                image:'',
                 validMail:false,
+                picUpdated:false,
                 validName:false,
                 validTel:false,
                 file: '',
@@ -159,7 +165,7 @@
             handleFileUpload(){
               this.file = this.$refs.file.files[0];
               let reader  = new FileReader();
-              reader.addEventListener("load", function () {
+                 reader.addEventListener("load", function () {
                   this.image = reader.result;
             }.bind(this), false);
             if( this.file ){
@@ -170,10 +176,17 @@
                          this.saved=false;
                      }
                      else{
+                        //this.$store.dispatch('checkLogin')
+                        
                         reader.readAsDataURL( this.file );
                         this.$Progress.start();
                         this.updatePic();
                         this.$Progress.finish();
+                        
+                        this.$store.dispatch('checkLogin').then(()=>{
+                            this.picUpdated=true
+                        })
+                        //alert( 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp)
                         this.saved=true;
                         this.notimg=false;
                         setTimeout(function(){ this.saved=false }, 5000);
