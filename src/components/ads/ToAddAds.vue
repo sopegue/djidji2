@@ -623,7 +623,7 @@ a {
     position: relative;
     top: 3rem;
     bottom: 2rem;
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
     width: 60%;
 }
 .inpfo{

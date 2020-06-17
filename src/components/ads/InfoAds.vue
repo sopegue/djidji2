@@ -44,7 +44,7 @@
             :key="index"
             @click.native="$refs.vueperslides2 && $refs.vueperslides2.goToSlide(i - 1)">
               <template v-slot:content>
-                <div class="vueperslide__content-wrapper"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif'  }">
+                <div class="vueperslide__content-wrapper"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loadingss.gif'  }">
                   <img class="vueperslide__image1" style="border-radius : 10px;" :data-src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
                 </div>
               </template>
@@ -61,6 +61,12 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+            <div class="alert-bdd d-flex flex-row justify-content-between">
+            <p class="warn-alrt"><i class="fas fa-exclamation-triangle"></i></p>
+            <p class="warn-mess">Assurez-vous de vérifier la crédibilité des annonces avant de procéder à tout achat. <br>
+              Il est aussi recommandé de procéder à l'échange dans un lieu public.
+            </p>
           </div>
       </div>
       <div class="bdd-right">
@@ -107,25 +113,117 @@
           </div>
           
           <div v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="contact-bdd d-flex flex-row">
-             <button type="button" class="b-lr regbs"><i class="fas fa-envelope"></i> Envoyer un message</button>
-             <button type="button" class="b-lr regbs regg2"><i class="fas fa-phone"></i> Contacter par téléphone</button>
+             <button type="button" @click="afficheMbox" class="b-lr regbs"><i class="fas fa-envelope"></i> Envoyer un message</button>
+             <button v-if="!showTelBox" @click="afficheTelBox" type="button" class="b-lr regbs regg2"><i class="fas fa-phone"></i> Contacter par téléphone</button>
+             <transition v-else name="fade">
+             <div style="margin-top:1.4rem; margin-left:1rem;">
+               <span> Téléphone : {{ad.tel}}</span> <span v-if="ad.what==1" style="margin-left:1rem;"><i  title="Ce numéro a un compte Whatsapp" class="fab fa-whatsapp"></i></span>
+             </div>
+             </transition>
           </div>
           <div v-else class="contact-bdd d-flex flex-row text-center">
              <p>Cette annonce vous appartient.</p>
           </div>
+          
           <hr class="hr11">
-          <div class="alert-bdd d-flex flex-row justify-content-between">
-            <p class="warn-alrt"><i class="fas fa-exclamation-triangle"></i></p>
-            <p class="warn-mess">Assurez-vous de vérifier la crédibilité des annonces avant de procéder à tout achat. <br>
-              Il est aussi recommandé de procéder à l'échange dans un lieu public.
-            </p>
+           <transition v-if="showMbox" name="fade">
+          <div style="position:relative; padding-top:5rem;">
+            <h5 class="text-center">Envoyez votre message à l'annonceur</h5>
+            <form @submit.prevent="envoyerMail">
+                <div class="half left cf">
+                  <input type="text" id="input-name" placeholder="Votre nom">
+                  <input type="email" id="input-email" placeholder="Votre adresse email">
+                </div>
+                <div class="half right cf">
+                  <textarea name="message" type="text" id="input-message" placeholder="Votre message"></textarea>
+                </div>  
+                <button type="submit" id="input-submit">Envoyer <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+            </form>
           </div>
+           </transition>
+          
       </div>
   </div>
   </transition>
-  <hr class="hr1">
   </div>
 </template>
+<style lang="scss" scoped>
+.fa-whatsapp{
+  font-size: 20px;
+  color: green;
+}
+@import url(https://fonts.googleapis.com/css?family=Merriweather);
+$red: #e74c3c;
+
+form {
+   max-width: 600px;
+   text-align: center;
+   margin: 20px auto;
+  input{
+    height: 20px;
+  }
+  input, textarea {
+     border:0; outline:0;
+     padding: 1em;
+     display: block;
+     width: 100%;
+     margin-top: 1em;
+     font-family: 'Merriweather', sans-serif;
+     resize: none;
+    
+    &:focus {
+    }
+  }
+  
+  #input-submit {
+     color: white; 
+     background: rgb(1, 151, 81);
+     cursor: pointer;
+     width: 100%;
+    
+    &:hover {
+    }
+  }
+  
+  textarea {
+      height: 150px;
+  }
+}
+
+
+.half {
+  float: left;
+  width: 48%;
+  margin-bottom: 1em;
+}
+
+.right { width: 50%; }
+
+.left {
+     margin-right: 2%; 
+}
+
+
+@media (max-width: 480px) {
+  .half {
+     width: 100%; 
+     float: none;
+     margin-bottom: 0; 
+  }
+}
+
+
+/* Clearfix */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+</style>
 <style scoped>
 .contact-bdd p{
   width: fit-content;
@@ -148,6 +246,10 @@ export default {
       add:[],
       usReady:false,
       isLoading:true,
+      showMbox:false,
+      loadTel:true,
+      loadM:true,
+      showTelBox:false
       //saved:false
     }
   },
@@ -293,7 +395,15 @@ export default {
       }
   },
   methods:{
-    
+    afficheTelBox(){
+      this.showTelBox=true
+    },
+    afficheMbox(){
+      this.showMbox=true
+    },
+    envoyerMail(){
+
+    },
     addPic(){
         this.pic=this.ads.pp.split(",");
       },
@@ -401,10 +511,9 @@ button{
     /*your style here*/
     position: relative;
     left: 48%;
-    top: 45%;
-    margin: 0 auto;
-    width: 8% !important;
-    height: 8% !important;
+    top: 50%;
+
+    
   }
   .vueperslide__image[lazy=loaded] {
     /*your style here*/
@@ -429,9 +538,10 @@ button{
     height: 100% !important;
   }
     .bdd{
-        height: 100%;
+        height: fit-content;
         width: 80%;
         position: relative;
+        padding-bottom: 2rem;
         margin: 0 auto;
         top: 2.5rem;
     }
@@ -525,7 +635,7 @@ button{
     }
     .alert-bdd{
       position: relative;
-      top: 5rem;
+      top: 1rem;
       background: rgba(255, 184, 169, 0.08);
       border: 1px solid rgb(207, 207, 207);
     }

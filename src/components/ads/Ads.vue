@@ -41,11 +41,8 @@
 </template>
 <style scoped>
 img[lazy=loading] {
-    /*your style here*/
-    position: relative;
-    left: 40%;
-    top: 50%;
-    margin: 0 auto;
+   width: 180px;
+    height: 180px;
   }
   img[lazy=error] {
     /*your style here*/
