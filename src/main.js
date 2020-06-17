@@ -6,6 +6,15 @@ import router from './router'
 import store from './store'
 import Vuesax from 'vuesax'
 import ProductZoomer from 'vue-product-zoomer'
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+
+// or with options
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  attempt: 3,
+  lazyComponent: true
+})
 Vue.use(ProductZoomer)
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 Vue.use(Vuesax, {

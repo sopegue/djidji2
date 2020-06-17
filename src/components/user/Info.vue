@@ -2,8 +2,8 @@
     <div class="us-info">
         <div class="container">
             <div class="large-12 medium-12 small-12 cell">
-                <div class="us-inf-img">
-                    <img :style="{'position':'relative','top':'2.2rem' }" :src="mypp" :height="64" :width="64"/>
+                <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadings.gif ' }">
+                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="mypp"/>
                 </div>
                 <div class="us-inf-inf d-flex"> 
                     <input type="file" id="file" ref="file" class="inputfile" v-on:change="handleFileUpload()"/>
@@ -49,8 +49,7 @@
         computed:{
             mypp(){
 
-                return this.$store.state.currentUser.id===undefined ? 'http://localhost:8000/storage/images/profile/user.png' :
-                 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp
+                return this.$store.state.currentUser.id ? 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp : ''
             },
             mail:{
                 get:function(){
@@ -289,6 +288,16 @@
     }
 </script>
 <style scoped>
+  img[lazy=error] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+  img[lazy=loaded] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
     .mul-reg-v{
         width: 50%;
         position: relative;

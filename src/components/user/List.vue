@@ -4,20 +4,20 @@
             <div class="large-12 medium-12 small-12 cell">
                     <h5 class="">Mes annonces enregistrées</h5>
                     <br />
-                     <span class="ssnb">{{this.$store.state.saveAds.total}} annonce(s)</span>
-                     <span v-if="this.$store.state.saveAds.total!==0" class="ssnb"><br>
-                     <span v-if="this.$store.state.saveAds.total>=12">
-                       <span v-if="this.$store.state.saveAds.total-(this.$store.state.currentPageMyAds-1)*12 +1>12">({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{(this.$store.state.currentPageMyAds-1)*12 + 12 }})</span>
-                       <span v-else>({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{((this.$store.state.currentPageMyAds-1)*12 +1)+ (this.$store.state.saveAds.total - ((this.$store.state.currentPageMyAds-1)*12 +1))}})</span>
+                     <span class="ssnb">{{this.$store.state.mysaveAds.total}} annonce(s)</span>
+                     <span v-if="this.$store.state.mysaveAds.total!==0" class="ssnb"><br>
+                     <span v-if="this.$store.state.mysaveAds.total>=12">
+                       <span v-if="this.$store.state.mysaveAds.total-(this.$store.state.currentPageSavedAds-1)*12 +1>12">({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{(this.$store.state.currentPageSavedAds-1)*12 + 12 }})</span>
+                       <span v-else>({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{((this.$store.state.currentPageSavedAds-1)*12 +1)+ (this.$store.state.mysaveAds.total - ((this.$store.state.currentPageSavedAds-1)*12 +1))}})</span>
                      </span>
-                     <span v-else>({{this.$store.state.currentPageMyAdss}} - {{this.$store.state.saveAds.total}})</span></span>
+                     <span v-else>({{this.$store.state.currentPageSavedAds}} - {{this.$store.state.mysaveAds.total}})</span></span>
                     <hr class="hr-us-inf">
 
-                    <div class="us-list-load" v-if="this.$store.state.savedAdfound==='loading'" >
+                    <div class="us-list-load" v-if="this.$store.state.mysavedAdfound==='loading'" >
                         <b-spinner class="p" label="Loading..."></b-spinner>
                     </div>
                     <div v-else>
-                        <div v-if="this.$store.state.hasAdAdded">
+                        <div v-if="this.$store.state.hasAdSaved">
                         <b-pagination
                       class="customPagination"
                       v-model="currentPage"
@@ -28,11 +28,11 @@
                     ></b-pagination>
                     <div  class="d-list-us " >
                         <div class="ddl d-flex flex-wrap justify-content-between">
-                        <AdsAdded class="p-1" v-for="ads in items"
+                        <Ads class="p-1" v-for="ads in items"
                             v-bind="ads"
                             :key="ads.id"
                             :ads.sync="ads">
-                        </AdsAdded>
+                        </Ads>
                         </div>
                     </div>
                      <div class="pp">
@@ -91,7 +91,7 @@
     }
 </style>
 <script>
-    import AdsAdded from '@/components/ads/AdsAdded.vue'
+    import Ads from '@/components/ads/Ads.vue'
     
     export default {
         data () {
@@ -101,19 +101,19 @@
         },
         computed: {
             items(){
-                return this.$store.state.saveAds.ads
+                return this.$store.state.mysaveAds.ads
             },
           rows(){
-            return this.$store.state.nbPageMyAds
+            return this.$store.state.nbPageMySavedAds
           },
           currentPage:{
             // getter
           get: function () {
-            return this.$store.state.currentPageMyAds
+            return this.$store.state.currentPageSavedAds
           },
           // setter
           set: function (newValue) {
-            this.$store.state.currentPageMyAds=newValue
+            this.$store.state.currentPageSavedAds=newValue
             this.gotoNextPage()
               window.scrollTo({
               top: 0,
@@ -124,42 +124,20 @@
 
           },
         },
-        
-    methods:{
-      shitem:function(what){
-        this.$store.state.currentPageAds=1
-        localStorage.removeItem('prix')
-        localStorage.removeItem('trier')
-        this.$store.commit('setTrier','')
-        this.$store.commit('setPmin',5)
-        this.$Progress.start();
-        this.$store.commit('setTypeOfSearch',4)
-        this.$store.dispatch('searchByWhat',what).then(() =>{
-          if(what==='Top catégories')
-            this.$router.push('/annonce/search/searching'); 
-          if(what==='A la une')
-            this.$router.push('/annonce/search/searching');
-          else
-            this.$router.push('/annonce/search/searching');  
-          this.$Progress.finish(); 
-          })
-          this.$Progress.finish();
-      },
-    },
         components:{
-            AdsAdded,
+            Ads,
         },
         beforeMount(){
             
             this.$Progress.start();
-            this.$store.state.savedAdfound='loading'
+            this.$store.state.mysavedAdfound='loading'
             setTimeout(() => {
                var user=localStorage.getItem('usetrixco')
                 let form= new FormData()
             form.append('user',user)
-            form.append('curPage',this.$store.state.currentPageMyAds)
+            form.append('curPage',this.$store.state.currentPageSavedAds)
             console.log(user)
-            this.$store.dispatch('getSavedAds',form).then(()=>{
+            this.$store.dispatch('getMySavedAds',form).then(()=>{
             //form.append('next',this.$store.state.currentPageMyAds)
             this.$Progress.finish();
             })
@@ -170,8 +148,8 @@
             gotoNextPage(){
             let form= new FormData()
             form.append('user',this.$store.state.currentUser.id)
-            form.append('curPage',this.$store.state.currentPageMyAds)
-            this.$store.dispatch('getSavedAds',form).then(()=>{
+            form.append('curPage',this.$store.state.currentPageSavedAds)
+            this.$store.dispatch('getMySavedAds',form).then(()=>{
             //form.append('next',this.$store.state.currentPageMyAds)
             this.$Progress.finish();
             })

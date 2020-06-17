@@ -1,7 +1,6 @@
 <template>
   <div>
     <router-view :user="user" :ad="ad"></router-view>
-    <welcome class="wel-to"></welcome>
   </div>
 </template>
 <style scoped>
@@ -48,7 +47,10 @@ export default {
       },
       async getAd(){
         this.$Progress.start();
-        const { data } = await this.$http.get(`http://localhost:8000/api/annonce/${this.$route.params.id}`);
+        const { data } = await this.$http.get(`http://localhost:8000/api/annonce/${this.$route.params.id}`)
+        .catch(()=>{
+          this.$router.push('/')
+        })
         this.ad=data;
         localStorage.setItem('infoAd',JSON.stringify(this.ad))
         this.$store.commit('infoAd',data)

@@ -20,8 +20,8 @@
                     v-for="(pp,index) in pic"
                     :key="index">
                     <template v-slot:content>
-                      <div class="d-vi-img">
-                        <img class="vueperslide__image" style="border-radius : 10px;" :src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
+                      <div class="d-vi-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loadingss.gif' }">
+                        <img class="vueperslide__image" style="border-radius : 10px;" :data-src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
                       </div>
                     </template>
                   </vueper-slide>
@@ -44,8 +44,8 @@
             :key="index"
             @click.native="$refs.vueperslides2 && $refs.vueperslides2.goToSlide(i - 1)">
               <template v-slot:content>
-                <div class="vueperslide__content-wrapper">
-                  <img class="vueperslide__image1" style="border-radius : 10px;" :src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
+                <div class="vueperslide__content-wrapper"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif'  }">
+                  <img class="vueperslide__image1" style="border-radius : 10px;" :data-src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
                 </div>
               </template>
             </vueper-slide>
@@ -68,7 +68,7 @@
             <div>
               <i class="fas fa-tags"></i><span><router-link to="#" @click.native="gotoAdCateg(categ)"> {{categ}}</router-link> </span><span v-if="categ!=='Autres'"> > <router-link to="#" @click.native="gotoAdsCateg(categ,souscateg)"> {{souscateg}}</router-link></span> 
             </div>
-             <div class="d-btn-nc d-flex justify-content-between">
+             <div  v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="d-btn-nc d-flex justify-content-between">
             <button title="Signaler l'annonce" class="btn-nc btn btn-link">
                 <i class="fas fa-exclamation-circle"></i>
             </button>
@@ -77,20 +77,24 @@
       
           </div>
           <div class="pr-titre">
-            <span class="pr">{{prix}} FCFA</span><br>
-            <span class="ptitre">{{ad.titre}}</span><br>
+            <span class="pr">{{prix}} FCFA</span><br><br>
+            <div id="ppptitre">
+            <span class="ptitre">{{ad.titre}}</span>
+            </div><br>
             <span class="d-aj">Ajouté il y'a {{date}}</span>
           </div>
           <hr class="hr1">
           
           <div class="user-bdd">
               <div class="ustt d-titre d-flex justify-content-between">
-                  <span class="pptitre">Annonceur</span><button title="Signaler l'utilisateur" class="text-center impbtn">
+                  <span class="pptitre">Annonceur</span><button v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" title="Signaler l'utilisateur" class="text-center impbtn">
                   <i class="fas ffaex fa-exclamation-circle"></i>
               </button>
               </div>
              <div class="us-inf-img d-user d-flex flex-row">
-                <img :style="{'position':'relative','top':'2rem' }" :src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp" :height="64" :width="64"/>
+                <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/user.png' }">
+                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp"/>
+                </div>
                 <div class="inf-nv">
                   <span class="ppr">{{this.user.Prenom}} {{this.user.Nom}}</span><br>
                   <span class="pville"><i class="fas fa-map-pin"></i> {{this.ad.ville}}</span>
@@ -102,9 +106,12 @@
               </div>
           </div>
           
-          <div class="contact-bdd d-flex flex-row">
+          <div v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="contact-bdd d-flex flex-row">
              <button type="button" class="b-lr regbs"><i class="fas fa-envelope"></i> Envoyer un message</button>
              <button type="button" class="b-lr regbs regg2"><i class="fas fa-phone"></i> Contacter par téléphone</button>
+          </div>
+          <div v-else class="contact-bdd d-flex flex-row text-center">
+             <p>Cette annonce vous appartient.</p>
           </div>
           <hr class="hr11">
           <div class="alert-bdd d-flex flex-row justify-content-between">
@@ -119,6 +126,16 @@
   <hr class="hr1">
   </div>
 </template>
+<style scoped>
+.contact-bdd p{
+  width: fit-content;
+  margin:  0 auto;
+}
+  #ppptitre{
+    width: 80% !important;
+    word-wrap: break-word;
+  }
+</style>
 <script>
 import { VueperSlides, VueperSlide } from 'vueperslides'
 import 'vueperslides/dist/vueperslides.css'
@@ -248,6 +265,14 @@ export default {
     
     }
   },
+  
+    beforeMount(){
+      window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        });
+    },
   props:['ad','user']
   ,
   watch:{
@@ -351,6 +376,58 @@ button{
     .bd-left{
         width: 45%;
     }
+    img[lazy=error] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+  img[lazy=loading] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+  img[lazy=loaded] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+
+   .vueperslide__image[lazy=error] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+  .vueperslide__image[lazy=loading] {
+    /*your style here*/
+    position: relative;
+    left: 48%;
+    top: 45%;
+    margin: 0 auto;
+    width: 8% !important;
+    height: 8% !important;
+  }
+  .vueperslide__image[lazy=loaded] {
+    /*your style here*/
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+
+  .vueperslide__image1[lazy=error] {
+    /*your style here*/
+    width: 64px;
+    height: 64px;
+  }
+  .vueperslide__image1[lazy=loading] {
+    /*your style here*/
+    width: 40% !important;
+    height: 40% !important;
+  }
+  .vueperslide__image1[lazy=loaded] {
+    /*your style here*/
+    width: 100% !important;
+    height: 100% !important;
+  }
     .bdd{
         height: 100%;
         width: 80%;
@@ -358,6 +435,7 @@ button{
         margin: 0 auto;
         top: 2.5rem;
     }
+    
     .no-shadow{
         top: 0.5rem;
     }
@@ -385,12 +463,13 @@ button{
       color: rgb(0, 78, 102) !important;
     }
     .pr-titre{
+      width: 100% !important;
       position: relative;
       top: 2rem;
     }
     .dd-cc{
       position: relative;
-      top: 2rem;
+      top: 2.5rem;
     }
     .d-aj{
       position: relative;
@@ -428,6 +507,9 @@ button{
     .hr1{
       position: relative;
       top: 3rem;
+    }
+    .pr-titre .ptitre{
+      width: 50% !important;
     }
     .pr-titre .pr,.pr-titre .ptitre{
       font-size: 22px;

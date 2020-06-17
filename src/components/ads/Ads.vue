@@ -19,14 +19,13 @@
             </button>
           
       </div>
-      <div class="ads-img">
-        <img v-if="loading" :style="{'position':'relative'}" :src="'/images/loading.png'" :height="180" :width="180"/>
-        <img v-else :style="{'position':'relative'}" :src="image" :height="180" :width="180"/>
+      <div class="ads-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif ' }">
+        <img :style="{'position':'relative'}" :data-src="image"/>
       </div>
       
     </div>
     <div class="row-2">
-      <p  v-if="load" style="font-size: small; color: gray; position: relative; left:0.5rem;">Chargement...</p>
+     
       <div class="ad-infoo d-flex flex-column" else>
         <span class="descPrix">{{prix}}</span>
         <span class="descPrix-r-second">{{titre}}</span>
@@ -38,8 +37,26 @@
  
     </div>
   </div>
+
 </template>
 <style scoped>
+img[lazy=loading] {
+    /*your style here*/
+    position: relative;
+    left: 40%;
+    top: 50%;
+    margin: 0 auto;
+  }
+  img[lazy=error] {
+    /*your style here*/
+    width: 180px;
+    height: 180px;
+  }
+  img[lazy=loaded] {
+    /*your style here*/
+    width: 180px;
+    height: 180px;
+  }
   .p-time{
     padding-left: 0.5rem;
     padding-top: 0.2rem;
@@ -74,12 +91,12 @@
 }
 .row-2{
   position: relative;
-  top: -2rem;
 }
 .ads-img{
     position: relative;
     top: -2.0rem;
     width: 180px;
+    height: 180px;
 }
 .fa-check{
   position: relative;
@@ -185,13 +202,16 @@
       }
     },
     beforeMount(){
+      
+      this.addPic();
+      this.checkIfSaved()
+    },
+    mounted(){
       window.scrollTo({
           top: 0,
           left: 0,
           behavior: 'smooth'
         });
-      this.addPic();
-      this.checkIfSaved()
     },
     props: ['ads'],
     methods:{

@@ -9,7 +9,7 @@
           <slider animation="fade"
           :stopOnHover="true">
             <slider-item
-              v-for="i in 3"
+              v-for="i in 2"
               :key="i"
               :style="{ backgroundColor: '#f8f9fa', width: '100%', height: '100%' }"
             >
@@ -19,7 +19,7 @@
               <div class="d-flex flex-row justify-content-between" v-else>
                 <ads  class="p-1" v-for="(j,index) in 5"
                   :key="index"
-                  :ads="ads[index + (15-i*5)]"
+                  :ads="ads[index + (10-i*5)]"
                 >
                 </ads>
               </div>

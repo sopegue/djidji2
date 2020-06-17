@@ -43,7 +43,7 @@ export default {
         Notif,
         Pwd
     },
-    mounted(){
+    beforeMount(){
         this.active()
     },
     created(){

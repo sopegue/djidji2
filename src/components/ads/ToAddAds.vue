@@ -71,7 +71,7 @@
           
       </div>
       <div class="container inpfo text-center" style="position:relative; top:2rem;">
-        <h6>Ajouter des images de votre produit</h6>
+        <h6>Ajouter des images de votre produit (Assurez-vous que le contenu soit fait d'images dont la taille est inférieure à 5 MB ou bien il sera ignoré.)</h6>
       </div>
        
     <div id="my-strictly-unique-vue-upload-multiple-image" style="display: flex; justify-content: center;">
@@ -82,7 +82,7 @@
       @edit-image="editImage"
       @data-change="dataChange"
       :data-images="images"
-      :maxImage="9"
+      :maxImage="15"
       :dragText="'Glisser une ou plusieurs images ici'"
       :browseText="'Cliquer pour sélectionner une ou plusieurs image'"
       :dropText="'Relacher pour ajouter l\'image'"
@@ -93,7 +93,8 @@
     </div>
     <div class="container inpfo">
 
-      <span style="color:red;font-size:12px;" v-if="picInvalid">Veuillez ajouter au moins une photo !<br></span>
+      <span style="color:red;font-size:12px;" v-if="picInvalid">Veuillez ajouter au moins 3 images !<br></span>
+      <span style="color:red;font-size:12px;" v-if="invalid">Image invalide ou taille fichier > 5 MB !<br></span>
       <br>
       <label for="ville">Ville</label>
       <multiselect class="mul-reg-v" v-model="value2" :allow-empty="false" :options="options1" deselectLabel=""  selectedLabel="✓" selectLabel="Choisir" placeholder="Choisir une ville"><span slot="noResult">Oops! Aucun élément trouvé.</span></multiselect><br>
@@ -120,6 +121,13 @@
   </div>
 </template>
 <script>
+var mimage=''
+function srcToFile(src, fileName, mimeType){
+    return (fetch(src)
+        .then(function(res){return res.arrayBuffer();})
+        .then(function(buf){return new File([buf], fileName, {type:mimeType});})
+    );
+}
 // @ is an alias to /src
 import VueUploadMultipleImage from 'vue-upload-multiple-image'
 import Multiselect from 'vue-multiselect'
@@ -127,7 +135,10 @@ export default {
     data () {
     return {
       images: [],
+      imageToDel:[],
+      mymage:[],
       prixInvalid:false,
+      invalid:false,
       myfile:new FormData(),
       telInvalid:false,
       titreInvalid:false,
@@ -154,7 +165,7 @@ export default {
       cate9:['Location','Vente','Autres'],
       cate10:[''],
       value2: '',
-      options1: ['Abidjan','Yamoussoukro','Bouaké', 'Katiola','Korhogo','Boundiali','Ferkessédougou','Daloa',
+      options1: ['Abidjan','Yamoussoukro','Bouaké', 'Katiola','Korhogo','Boundiali','Ferké','Daloa',
                 'Bouaflé','Man','Duékoué','Guiglo','Sassandra','San-Pédro','Soubré','Abengourou',
                 'Aboisso','Gagnoa','Divo','Daoukro','Bongouanou','Dimbokro','Bouna','Bondoukou',
                 'Odienné','Minignan','Mankono','Touba','Séguéla' ],
@@ -291,6 +302,7 @@ export default {
     addAdd(){
       this.resetValid()
       var toCorrect=false
+      var kk=0
       if(this.titre===''){
         toCorrect=true
         this.titreInvalid=true
@@ -299,11 +311,28 @@ export default {
         toCorrect=true
         this.prixInvalid=true
       }
-        if(this.number.replace(/\s/g, "").length!=0 && this.number.replace(/\s/g, "").length<8){
+        if(((this.number.replace(/\s/g, "").length!=0 && this.number.replace(/\s/g, "").length<8)||this.number.replace(/\s/g, "").length==0)){
         toCorrect=true
         this.telInvalid=true
       }
       if(!this.picUpload){
+        toCorrect=true
+        this.picInvalid=true
+      }
+      if(!(Array.isArray(this.mymage) && this.mymage.length)){
+        toCorrect=true
+        this.picInvalid=true
+      }
+      if(this.mymage.length!=0)
+      {
+        for (let index = 0; index < this.mymage.length; index++) {
+          if(this.mymage[index]!=undefined)
+          kk++
+          
+        }
+      }
+      if(kk<3){
+        console.log('k',kk)
         toCorrect=true
         this.picInvalid=true
       }
@@ -340,6 +369,10 @@ export default {
           isWhat:this.checked,
           user:this.$store.state.currentUser.id
         }
+        for (let index = 0; index < this.mymage.length; index++) {
+          if(this.mymage[index]!=undefined)
+          this.myfile.append('file[]',this.mymage[index])   
+        }
         this.myfile.append('categ',categg)
         this.myfile.append('scateg',this.value1)
         this.myfile.append('titre',this.titre)
@@ -350,9 +383,7 @@ export default {
         this.myfile.append('isWhat',this.checked)
         this.myfile.append('user',this.$store.state.currentUser.id)
         //console.log('ii',ad.images)
-        this.myfile.delete('file')
-        for (var key of this.myfile.keys()) 
-        console.log(key);
+        //this.myfile.delete('file')
         this.addAd(this.myfile)
       }
     },
@@ -407,24 +438,58 @@ export default {
        })
     },
     uploadImageSuccess(formData, index, fileList) {
-      this.picUpload=true
-      this.myfile.append('file[]',formData.get('file'))
+      if(index==0)
+      this.mymage=[]
+      //console.log(this.images)
+      if ( /\.(jpe?g|png|gif)$/i.test( formData.get('file').name ) ) {
+       
+            
+            this.picUpload=true
+            //this.invalid=false
+             this.mymage[index]=formData.get('file')
+             //this.myfile.append('file[]',formData.get('file'))
+          
+      
+      }else{
+        this.mymage[index]=undefined
+      }
+      console.log('im', this.mymage)
       // this.$http.post('http://localhost:8000/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
        //  console.log(response)
        //})
     },
     beforeRemove (index, done, fileList) {
-      
+      //console.log('index', index, fileList)
+      var ii=[]
+      console.log('intodel',index)
       if(fileList.length==1)
-        this.picUpload=false
-      console.log('index', index, fileList)
+      this.picUpload=false
+      ii=this.mymage.splice(index,1)
+      if(fileList.length==1)
+      this.mymage=[]
       var r = confirm("Supprimer l'image ?")
       if (r == true) {
+        
         done()
+        console.log('image restant', this.mymage)
       } else {
       }
     },
     editImage (formData, index, fileList) {
+      //console.log(this.images)
+      if ( /\.(jpe?g|png|gif)$/i.test( formData.get('file').name ) ) {
+       
+            
+            this.picUpload=true
+            //this.invalid=false
+             this.mymage[index]=formData.get('file')
+             //this.myfile.append('file[]',formData.get('file'))
+          
+      
+      }else{
+        this.mymage[index]=undefined
+      }
+      console.log('im', this.mymage)
      //alert('Modification de l\'image', formData, index, fileList)
     },
     dataChange (data) {

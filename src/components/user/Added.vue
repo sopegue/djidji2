@@ -10,7 +10,7 @@
                        <span v-if="this.$store.state.saveAds.total-(this.$store.state.currentPageMyAds-1)*12 +1>12">({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{(this.$store.state.currentPageMyAds-1)*12 + 12 }})</span>
                        <span v-else>({{(this.$store.state.currentPageMyAds-1)*12 +1}} - {{((this.$store.state.currentPageMyAds-1)*12 +1)+ (this.$store.state.saveAds.total - ((this.$store.state.currentPageMyAds-1)*12 +1))}})</span>
                      </span>
-                     <span v-else>({{this.$store.state.currentPageMyAdss}} - {{this.$store.state.saveAds.total}})</span></span>
+                     <span v-else>({{this.$store.state.currentPageMyAds}} - {{this.$store.state.saveAds.total}})</span></span>
                     <hr class="hr-us-inf">
 
                     <div class="us-list-load" v-if="this.$store.state.savedAdfound==='loading'" >
@@ -59,7 +59,7 @@
 <style scoped>
 .ddl{
     padding-left: 7%;
-    width: 90%;
+    width: 92%;
 }
 .pp{
     position: relative;
@@ -124,28 +124,6 @@
 
           },
         },
-        
-    methods:{
-      shitem:function(what){
-        this.$store.state.currentPageAds=1
-        localStorage.removeItem('prix')
-        localStorage.removeItem('trier')
-        this.$store.commit('setTrier','')
-        this.$store.commit('setPmin',5)
-        this.$Progress.start();
-        this.$store.commit('setTypeOfSearch',4)
-        this.$store.dispatch('searchByWhat',what).then(() =>{
-          if(what==='Top catégories')
-            this.$router.push('/annonce/search/searching'); 
-          if(what==='A la une')
-            this.$router.push('/annonce/search/searching');
-          else
-            this.$router.push('/annonce/search/searching');  
-          this.$Progress.finish(); 
-          })
-          this.$Progress.finish();
-      },
-    },
         components:{
             AdsAdded,
         },

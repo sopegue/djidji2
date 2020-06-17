@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    mimage:'',
   finish:false,
   notUserExist:false,
   UserExistance:false,
@@ -34,6 +35,8 @@ export default new Vuex.Store({
     nbPageAds:1,
     nbPageMyAds:1,
     currentPageAds:1,
+    nbPageMySavedAds:1,
+    currentPageSavedAds:1,
     currentPageMyAds:1,
     filteringAds:'',
     prixmin:5,
@@ -47,6 +50,10 @@ export default new Vuex.Store({
     saveAds:[],
     savedAdfound :'',
     hasAdAdded:false,
+
+    mysaveAds:[],
+    mysavedAdfound :'',
+    hasAdSaved:false,
 
     hasFoundAfterResearch:true,
     Ads:[],
@@ -96,6 +103,9 @@ export default new Vuex.Store({
     updateSearch:(state,value)=>{
       state.searchh=value
     },
+    video_image:(state,value)=>{
+      state.mimage=value
+    },
     auth_logout: (state) => {
       state.logStatus = 'logged out'
     },
@@ -127,6 +137,27 @@ export default new Vuex.Store({
       state.hasAdAdded=false
       //state.nbPageMyAds=1
     },
+
+
+    mysavedAd_success: (state,ads) => {
+      state.mysaveAds=ads
+      state.mysavedAdfound = 'success'
+      state.nbPageMySavedAds=ads.count
+      state.hasAdSaved=true
+    },
+    mysavedAd_failed: (state) => {
+      state.mysaveAds=[]
+      state.mysavedAdfound = 'r'
+      state.nbPageMySavedAds=1
+      state.hasAdSaved=false
+    },
+    mysavedAd_reset: (state) => {
+      state.mysaveAds=[]
+      state.mysavedAdfound = 'loading'
+      state.hasAdSaved=false
+      //state.nbPageMyAds=1
+    },
+
 
     search_notFound: (state) => {
       state.hasFoundAfterResearch = false
@@ -548,6 +579,25 @@ isUserExist({commit,dispatch,state},user){
               }else{
                 console.log(form.get('user'))
                 commit('savedAd_failed')
+              }
+              resolve(respo)
+            });
+        });
+      
+    },
+    getMySavedAds({commit,state},form){
+      commit('mysavedAd_reset')
+      
+        return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/annonce/mysaved', data:form, method: 'POST' })
+            .then(respo => {
+              if(respo.data.total!=0){
+                console.log(respo.data)
+                state.nbPageMySavedAds=respo.data.count
+                commit('mysavedAd_success',respo.data)
+              }else{
+                console.log(form.get('user'))
+                commit('mysavedAd_failed')
               }
               resolve(respo)
             });
