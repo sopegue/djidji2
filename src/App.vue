@@ -53,11 +53,57 @@
       </div>
   </template>
 </notifications>
+
+<notifications group="deladdel" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Votre annonce a été supprimée &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="custom-admod" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Votre annonce a été modifiée &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="ad-signaler" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Nous avons reçu votre signalement, merci de nous aider à améliorer nos services &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="ad-sauver" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Annonce enregistrée &#10003;
+      </div>
+  </template>
+</notifications>
+
 <notifications group="success-reg" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
       <div class="alert alert-success text-center">
         Votre compte a été créé &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="success-sendEmail" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Votre message a été envoyé &#10003;
       </div>
   </template>
 </notifications>
@@ -129,7 +175,9 @@ import Axios from 'axios'
 export default {
   name: 'App',
   created() {
-    this.$store.dispatch('checkLogin')
+    this.$store.dispatch('checkLogin').catch(()=>{
+      this.$router.push('/connexion')
+    })
   Axios.interceptors.response.use(undefined, function (err) {
     return new Promise(function (resolve, reject) {
       if (err.status === 401 && err.config && !err.config.__isRetryRequest) {

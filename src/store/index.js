@@ -22,6 +22,7 @@ export default new Vuex.Store({
     accessToken:  localStorage.getItem('access_token') ||  '',
     currentUser : [],
     infoAds : [],
+    picAds : [],
     infoUsers : [],
     userExist:false,
     okRegister:'',
@@ -57,10 +58,16 @@ export default new Vuex.Store({
 
     hasFoundAfterResearch:true,
     Ads:[],
+
+    delAds:[],
+
     categSearch:'',
     Ad:[],
     previous:'',
     next:'',
+    saving:'',
+    adToSave:0,
+    adToDelete:0,
     usCoStatus:'',
     usRegStatus:'',
     token:'',
@@ -118,6 +125,9 @@ export default new Vuex.Store({
     },
     success: (state) => {
       state.searchfound = 'success'
+    },
+    adtodell: (state,value) => {
+      state.delAds=value
     },
     savedAd_success: (state,ads) => {
       state.saveAds=ads
@@ -556,14 +566,20 @@ isUserExist({commit,dispatch,state},user){
     },
     checkLogin({commit,state}){
       if(state.accessToken!==''){
+        state.accessToken=localStorage.getItem('access_token')
         return new Promise((resolve, reject)=>{
         Axios({url: 'http://localhost:8000/api/user/check', data: {token:state.accessToken}, method: 'POST' })
             .then(respo => {
               commit('auth_user', respo.data)
               commit('auth_token')
               resolve(respo)
-            });
-        });
+            }).catch(err => {
+              state.okConnection.notok="true"
+              commit('auth_error', err)
+              localStorage.removeItem('access_token') // if the request fails, remove any possible user token if possible
+              reject(err)
+            })
+        })
       }
     },
     getSavedAds({commit,state},form){
@@ -584,6 +600,70 @@ isUserExist({commit,dispatch,state},user){
             });
         });
       
+    },
+
+    getAdToDel({commit,state},content){
+        state.adToDelete=[]
+        return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/annonce/adtodell', data:content, method: 'POST' })// add to modify
+            .then(respo => {
+                commit('adtodell',respo.data)
+                localStorage.setItem('adtomod', JSON.stringify(respo.data))
+              resolve(respo)
+            })
+            .catch(err => {
+              state.adToDelete=[] // if the request fails, remove any possible user token if possible
+              localStorage.removeItem('adtomod')
+              reject(err)
+            });
+        });
+      
+    },
+
+    sendEmail({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/message/sending', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('message sent')
+          resolve(respo)
+        })
+        })
+    },
+    signalerAd({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/signalement', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('ad reported')
+          resolve(respo)
+        })
+        })
+    },
+    sauverAd({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/sauvegarde', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('ad saved')
+          resolve(respo)
+        })
+        })
+    },
+    retirerAd({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/sauvegardedel', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('ad del')
+          resolve(respo)
+        })
+        })
+    },
+    supprimerAd({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/delad', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('myad del')
+          resolve(respo)
+        })
+        })
     },
     getMySavedAds({commit,state},form){
       commit('mysavedAd_reset')

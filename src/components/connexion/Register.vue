@@ -317,8 +317,20 @@
                 this.$store.dispatch('login', { email, password}).then(() => {
                     if(this.$store.state.okConnection.notok!=="true"){
                         if(this.$store.state.next!==''){
-                            this.$router.push(this.$store.state.next)
                             this.$store.state.next=''
+                            this.$router.push(this.$store.state.next)
+                        }
+                        
+                        if(this.$store.state.saving!==''){
+                            console.log(this.$store.state.adToSave,this.$store.state.currentUser.id)
+                            var content = new FormData()
+                             content.append('ad',this.$store.state.adToSave)
+                             content.append('user',localStorage.getItem('usetrixco'))
+                             this.$store.dispatch('sauverAd',content).then(()=>{
+                                this.$router.push(this.$store.state.saving)
+                                this.$store.state.saving=''
+                            })
+                            
                         }
                         else
                             this.$router.push(this.$store.state.previous)

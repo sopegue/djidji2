@@ -700,7 +700,7 @@ input{
 .dropdown-content a:hover {background-color: #ddd;}
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .2s;
+  transition: opacity .5s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
@@ -795,15 +795,6 @@ input{
   padding-top: 1rem !important;
 }
 
-.btn-nc{
-  position: relative;
-  top: -.1rem;
-  right: 0.2rem;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  width: 32px;
-  height: 32px;
-  z-index: 1;
-}
 
 .btn-more{
   position: relative;
@@ -840,12 +831,14 @@ input{
   top: -0.15rem;
   right: .20rem;
   color: #ddd;
+  
 }
 .fa-check{
   position: relative;
   top: -0.1rem;
   right: .3rem;
   color: #ddd;
+  
 }
 .d-btn-nc{
   width: 38%;

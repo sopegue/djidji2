@@ -24,7 +24,7 @@
       <div class="toConnect d-flex flex-row justify-content-around">
         <div class="userB" v-if="this.$store.state.usCoStatus==='success'">
           <span class="dot"></span>
-          <a href="#" type="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >{{this.$store.state.currentUser.Prenom}} {{this.$store.state.currentUser.Nom}}</a>
+          <a href="#" role="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >{{this.$store.state.currentUser.Prenom}} {{this.$store.state.currentUser.Nom}}</a>
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
             <li class="usliinf"><a href="#/user" ><i class="far fa-user"></i> Mon compte</a></li>
@@ -174,16 +174,18 @@
         <button class="ibBtn" @click="shitem('A la une')"><i class="fas fa-heart"></i> A la une</button>
         <button class="ieBtn" @click="shitem('Economiques')"><i class="fas fa-wallet"></i> Economiques</button>
         <button class="itBtn" @click="shitem('Top catégories')"><i class="fas fa-bolt"></i> Top catégories</button>
-        <transition name="fade">
-        </transition>
+        
         </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.usliinf{
+  margin: 0 auto;
+}
 .userInff{
-  width: 180px !important;
+  width: 165px !important;
 }
 .sBtn{
   border-radius: unset !important;
@@ -428,15 +430,9 @@
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',4)
         this.$store.dispatch('searchByWhat',what).then(() =>{
-          if(what==='Top catégories')
-            this.$router.push('/annonce/search/searching'); 
-          if(what==='A la une')
-            this.$router.push('/annonce/search/searching');
-          else
             this.$router.push('/annonce/search/searching');  
           this.$Progress.finish(); 
           })
-          this.$Progress.finish();
       },
       signout: function(){
         var current=this.$router.currentRoute.path
@@ -540,7 +536,8 @@
             this.shit=false;
          
       },
-      },created() {
+      },
+      created() {
         
        this.$store.dispatch('updPlace',this.$store.state.adsPlace)
         },

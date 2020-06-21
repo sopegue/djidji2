@@ -74,11 +74,29 @@
             <div>
               <i class="fas fa-tags"></i><span><router-link to="#" @click.native="gotoAdCateg(categ)"> {{categ}}</router-link> </span><span v-if="categ!=='Autres'"> > <router-link to="#" @click.native="gotoAdsCateg(categ,souscateg)"> {{souscateg}}</router-link></span> 
             </div>
-             <div  v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="d-btn-nc d-flex justify-content-between">
-            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
+             <div  v-if="!this.$store.state.currentUser.id || this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="d-btn-nc d-flex justify-content-between align-items-center">
+            <div v-show="saved==false">
+            <button  title="Ajouter à ma liste" @click="sauverAd" class="btn-nc df btn btn-link">
+                <span><i class="fas fa-plus" key="stared"></i></span>
+            </button>
+            </div>
+            <div v-show="saved==true">
+            <button  type="button" @click="retirerAd" title="Retirer de ma liste" class="btn-nc df btn btn-link">
+                <span><i class="fas fa-check" key="unstared"></i></span>
+            </button>
+            </div>
+            <button @click="signalerAd" title="Signaler l'annonce" class="btn-nc btn btn-link">
                 <i class="fas fa-exclamation-circle"></i>
             </button>
           
+          </div>
+          <div v-else class="d-btn-nc d-flex justify-content-between align-items-center">
+            <button @click="modifierAd" title="Modifier l'annonce" class="btn-nc btn btn-link">
+              <i class="fas fa-edit"></i>
+          </button> 
+          <button @click="supprimerAd" title="Supprimer l'annonce" class="btn-nc btn btn-link">
+              <i class="fas fa-trash"></i>
+          </button>
           </div>
       
           </div>
@@ -112,33 +130,43 @@
               </div>
           </div>
           
-          <div v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="contact-bdd d-flex flex-row">
-             <button type="button" @click="afficheMbox" class="b-lr regbs"><i class="fas fa-envelope"></i> Envoyer un message</button>
-             <button v-if="!showTelBox" @click="afficheTelBox" type="button" class="b-lr regbs regg2"><i class="fas fa-phone"></i> Contacter par téléphone</button>
+          <div v-if="!this.$store.state.currentUser.id  || this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" class="contact-bdd d-flex flex-row">
+             <button type="button" @click.prevent="afficheMbox" class="b-lr regbs"><i class="fas fa-envelope"></i> Envoyer un message</button>
+             <button type="button" v-if="!showTelBox" @click="afficheTelBox"  class="b-lr regbs regg2"><i class="fas fa-phone"></i> Contacter par téléphone</button>
              <transition v-else name="fade">
-             <div style="margin-top:1.4rem; margin-left:1rem;">
+             <div style="margin-top:1.4rem; margin-left:1rem; z-index: 11;">
                <span> Téléphone : {{ad.tel}}</span> <span v-if="ad.what==1" style="margin-left:1rem;"><i  title="Ce numéro a un compte Whatsapp" class="fab fa-whatsapp"></i></span>
              </div>
              </transition>
           </div>
-          <div v-else class="contact-bdd d-flex flex-row text-center">
+          <div v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id ==this.user.id)" class="contact-bdd d-flex flex-row text-center">
              <p>Cette annonce vous appartient.</p>
           </div>
           
           <hr class="hr11">
            <transition v-if="showMbox" name="fade">
+             <div>
           <div style="position:relative; padding-top:5rem;">
             <h5 class="text-center">Envoyez votre message à l'annonceur</h5>
             <form @submit.prevent="envoyerMail">
                 <div class="half left cf">
-                  <input type="text" id="input-name" placeholder="Votre nom">
-                  <input type="email" id="input-email" placeholder="Votre adresse email">
+                  <input type="text" id="input-name" placeholder="Votre nom" v-model="name">
+                  <span style="color:red;font-size:12px;" v-if="nameValid" >Veuillez ajouter un nom ! </span>
+                  <input type="email" id="input-email" placeholder="Votre adresse email" v-model="mail">
+                  <span style="color:red;font-size:12px;" v-if="mailValid">Veuillez ajouter une adresse email ou votre email est invalide ! </span>
                 </div>
                 <div class="half right cf">
-                  <textarea name="message" type="text" id="input-message" placeholder="Votre message"></textarea>
-                </div>  
+                  <textarea name="message" type="text" id="input-message" placeholder="Votre message" v-model="message"></textarea>
+                  <span style="color:red;font-size:12px;" v-if="messValid">Veuillez ajouter un message ! </span>
+                </div>
+                  <div v-if="sending" class=" spinner-border text-secondary" role="status">
+                    <span class="sr-only">Loading...</span>
+          
+                  </div>
                 <button type="submit" id="input-submit">Envoyer <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
             </form>
+            </div>
+          
           </div>
            </transition>
           
@@ -148,6 +176,35 @@
   </div>
 </template>
 <style lang="scss" scoped>
+.fa-edit{
+  position: relative;
+  top: -0.15rem;
+  right: .30rem;
+  color: #ddd; 
+}
+.fa-trash{
+  position: relative;
+  top: -0.15rem;
+  right: .3rem;
+  color: #ddd;
+}
+.btn-nc{
+  position: relative;
+  top: -.1rem;
+  right: 0.2rem;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+}
+.df{
+  position: relative;
+  top: -.2rem;
+}
+button{
+  z-index: 10;
+  cursor: pointer !important;
+}
 .fa-whatsapp{
   font-size: 20px;
   color: green;
@@ -160,7 +217,7 @@ form {
    text-align: center;
    margin: 20px auto;
   input{
-    height: 20px;
+    height: 16px;
   }
   input, textarea {
      border:0; outline:0;
@@ -171,17 +228,19 @@ form {
      font-family: 'Merriweather', sans-serif;
      resize: none;
     
-    &:focus {
-    }
   }
   
   #input-submit {
      color: white; 
      background: rgb(1, 151, 81);
      cursor: pointer;
+     position: relative;
+     top: 0.5rem;
      width: 100%;
     
+    
     &:hover {
+      background-color: #004e66;
     }
   }
   
@@ -243,6 +302,16 @@ export default {
     return{
       pic:[],
       us:[],
+      saved:false,
+      mail:'',
+      name:'',
+      message:'',
+      sending:false,
+      messValid:false,
+      nameValid:false,
+      mailValid:false,
+
+
       add:[],
       usReady:false,
       isLoading:true,
@@ -342,6 +411,13 @@ export default {
         return '1 minute'
       }
     },
+    titres(){
+        var str = this.ad.titre;
+      var len = str.length;
+       if(str.length>19)
+       return str.slice(0,16)+'...'
+       return str
+      },
     prix(){
        var str = this.ad.prix.toString();
       var len = str.length;
@@ -367,7 +443,6 @@ export default {
     
     }
   },
-  
     beforeMount(){
       window.scrollTo({
           top: 0,
@@ -380,6 +455,7 @@ export default {
   watch:{
       ad: { 
         handler: function(n){
+          this.checkIfSaved()
           this.pic=this.ad.pp.split(",")
           if(!this.pic)
             this.pic[0]=this.ad.pp
@@ -401,11 +477,148 @@ export default {
     afficheMbox(){
       this.showMbox=true
     },
-    envoyerMail(){
-
+    checkIfSaved(){
+        if(this.$store.state.accessToken!=='')
+        {
+        var form= new FormData()
+        form.append('user',this.$store.state.currentUser.id)
+        form.append('ad',this.ad.id)
+        this.$http.post('http://localhost:8000/api/savedAdsCheck', form ).then(response => {
+          if(response.data!=0)
+            {
+              this.saved=true
+              console.log('saved',this.saved)
+            }
+          else
+            this.saved=false
+         //console.log('user',this.$store.state.currentUser.id,'ad',this.ads.id)
+        })
+        }
+      },
+    checkField(){
+      this.messValid=false
+      this.nameValid=false
+      this.mailValid=false
+      if(this.mail!=='' && this.name!=='' && this.message!==''){
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mail)){
+          return true
+        }else{
+          this.mailValid=true
+          return false
+        }
+        
+      }
+      if(this.mail==='')
+        this.mailValid=true
+      if(this.name==='')
+        this.nameValid=true
+      if(this.message==='')
+        this.messValid=true
+      return false
     },
+    resetField(){
+      this.mail=''
+      this.name=''
+      this.message=''
+    },
+     supprimerAd(){
+       var r = confirm("Voulez-vous supprimer cette annonce ? Cliquez sur Ok pour supprimer.")
+        if (r == true) {
+        this.$Progress.start()
+        var content = new FormData()
+          content.append('ad',this.ad.id)
+          this.$store.dispatch('supprimerAd',content).then(()=>{
+            this.$notify({
+              group: 'deladdel',
+            });
+             this.$Progress.finish()
+             this.$router.go(-1)
+          })
+          }
+      },
+      modifierAd(){
+        this.$Progress.start()
+        this.$store.state.adToDelete=this.ad.id
+        var content = new FormData()
+          content.append('ad',this.ad.id)
+        this.$store.dispatch('getAdToDel',content).then(()=>{
+           this.$Progress.finish()
+          this.$router.push('/annonce/updating')
+        })
+      },
+    envoyerMail(){
+      if(this.checkField()){
+        this.sending=true
+        var content = new FormData()
+        content.append('email',this.mail)
+        content.append('to_user',this.user.id)
+        content.append('toemail',this.user.email)
+        console.log(this.user.email)
+        content.append('ad',this.ad.id)
+        content.append('prix',this.prix)
+        content.append('titre',this.titres)
+        content.append('name',this.name)
+        content.append('message',this.message)
+        if(this.$store.state.accessToken!=='')
+          content.append('user',this.$store.state.currentUser.id)
+        // envoyer le message
+        this.$store.dispatch('sendEmail',content).then(()=>{
+          
+        this.resetField()
+          this.$notify({
+              group: 'success-sendEmail',
+          });
+          this.sending=false
+        })
+      }
+    },
+      retirerAd(){
+        var content = new FormData()
+          content.append('ad',this.ad.id)
+          content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('retirerAd',content).then(()=>{
+            this.checkIfSaved()
+            if(this.$router.currentRoute.path==='/user/list')
+              location.reload()
+          })
+      },
+      signalerAd(){
+        var r = confirm("Pensez-vous que cette annonce est inappropriée ? Cliquez sur Ok pour signaler.")
+        if (r == true) {
+          var content = new FormData()
+          content.append('ad',this.ad.id)
+          if(this.$store.state.accessToken!=='')
+            content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('signalerAd',content).then(()=>{
+            this.$notify({
+              group: 'ad-signaler',
+            })
+          })
+        }
+      },
+      sauverAd(){
+        if(this.$store.state.accessToken!=='')
+         {
+          var content = new FormData()
+          content.append('ad',this.ad.id)
+          content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('sauverAd',content).then(()=>{
+            this.checkIfSaved()
+          })
+          
+        }
+        else{
+          this.$store.state.adToSave=this.ad.id
+          this.$store.state.saving=this.$router.currentRoute.path
+          this.$router.push('/connexion')
+        }
+      },
+      adNotSaved(){
+
+        return false
+      },
     addPic(){
-        this.pic=this.ads.pp.split(",");
+        this.pic=this.ad.pp.split(",");
       },
     gotoAdCateg:function(type){
         this.$store.state.currentPageAds=1
@@ -443,9 +656,6 @@ export default {
   top: -0.15rem;
   right: .25rem;
   color: #ddd; 
-}
-button{
-  border: none !important;
 }
   .vueperslide__image1{
       width:100%;
@@ -501,7 +711,12 @@ button{
     width: 64px;
     height: 64px;
   }
-
+.fa-exclamation-circle{
+  position: relative;
+  top: -0.15rem;
+  right: .22rem;
+  color: #ddd;
+}
    .vueperslide__image[lazy=error] {
     /*your style here*/
     width: 64px;

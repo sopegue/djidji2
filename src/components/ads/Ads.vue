@@ -1,30 +1,40 @@
 <template>
-  <div v-cloak class="ads" @click="goToAds()" :title="this.ads.titre">
+  <div v-cloak class="ads" :title="this.ads.titre">
+    
     <div class="row-1">
-      <div v-if="saved"  class="d-btn-nc d-flex justify-content-between">
-            <button title="Retirer de ma liste" class="btn-nc btn btn-link"  >
-                <i  class="fas fa-check"></i>
+      <div v-if="!this.$store.state.currentUser.id || (this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.ads.use_id))" class="d-btn-nc d-flex justify-content-between">
+            <div v-show="saved==false">
+            <button  title="Ajouter à ma liste" @click="sauverAd" class="btn-nc btn btn-link">
+                <span><i class="fas fa-plus" key="stared"></i></span>
+            </button>
+            </div>
+            <div v-show="saved==true">
+            <button  type="button" @click="retirerAd" title="Retirer de ma liste" class="btn-nc btn btn-link">
+                <span><i class="fas fa-check" key="unstared"></i></span>
+            </button>
+            </div>
+            <button @click="signalerAd" title="Signaler l'annonce" class="btn-nc btn btn-link">
+                <i class="fas fa-exclamation-circle"></i>
+            </button>
+          
+      </div>
+      <div v-else class="d-btn-nc d-flex justify-content-between">
+        <button v-if="saved==false" title="Ajouter à ma liste" @click="sauverAd" class="btn-ncb btn btn-link">
+               
+            </button>
+            <button v-if="saved==true" type="button" @click="retirerAd" title="Retirer de ma liste" class="btn-ncb btn btn-link"  >
+                
             </button> 
-            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
-                <i class="fas fa-exclamation-circle"></i>
+            <button @click="signalerAd" title="Signaler l'annonce" class="btn-ncb btn btn-link">
+               
             </button>
-          
       </div>
-      <div  v-else  class="d-btn-nc d-flex justify-content-between">
-            <button title="Ajouter à ma liste" class="btn-nc btn btn-link">
-                <i  class="fas fa-plus"></i>
-            </button>
-            <button title="Signaler l'annonce" class="btn-nc btn btn-link">
-                <i class="fas fa-exclamation-circle"></i>
-            </button>
-          
-      </div>
-      <div class="ads-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif ' }">
+      <div  @click.prevent="goToAds()"  class="ads-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif ' }">
         <img :style="{'position':'relative'}" :data-src="image"/>
       </div>
       
     </div>
-    <div class="row-2">
+    <div  @click.prevent="goToAds()"  class="row-2">
      
       <div class="ad-infoo d-flex flex-column" else>
         <span class="descPrix">{{prix}}</span>
@@ -40,6 +50,24 @@
 
 </template>
 <style scoped>
+
+.btn-nc{
+  position: relative;
+  top: -.1rem;
+  right: 0.2rem;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+}
+.btn-ncb{
+  position: relative;
+  top: -.1rem;
+  right: 0.2rem;
+  width: 32px;
+  height: 32px;
+  z-index: 0;
+}
 img[lazy=loading] {
    width: 180px;
     height: 180px;
@@ -182,6 +210,15 @@ img[lazy=loading] {
        return str.slice(0,16)+'...'
        return str
     },
+    save:{
+      get:function(){
+        return this.saved==='false' ? false : true
+        },
+        set:function(val){
+          this.saved=val
+        }
+      
+    },
       titre(){
         var str = this.ads.titre;
       var len = str.length;
@@ -198,6 +235,9 @@ img[lazy=loading] {
        return 'http://localhost:8000/storage/'+this.ads.use_id+'/annonces/'+this.pic[0];
       }
     },
+    updated(){
+      this.checkIfSaved()
+    },
     beforeMount(){
       
       this.addPic();
@@ -212,6 +252,48 @@ img[lazy=loading] {
     },
     props: ['ads'],
     methods:{
+      retirerAd(){
+        var content = new FormData()
+          content.append('ad',this.ads.id)
+          content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('retirerAd',content).then(()=>{
+            this.checkIfSaved()
+            if(this.$router.currentRoute.path==='/user/list')
+              location.reload()
+          })
+      },
+      signalerAd(){
+        var r = confirm("Pensez-vous que cette annonce est inappropriée ? Cliquez sur Ok pour signaler.")
+        if (r == true) {
+          var content = new FormData()
+          content.append('ad',this.ads.id)
+          if(this.$store.state.accessToken!=='')
+            content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('signalerAd',content).then(()=>{
+            this.$notify({
+              group: 'ad-signaler',
+            })
+          })
+        }
+      },
+     sauverAd(){
+        if(this.$store.state.accessToken!=='')
+         {
+          var content = new FormData()
+          content.append('ad',this.ads.id)
+          content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('sauverAd',content).then(()=>{
+            this.checkIfSaved()
+          })
+          
+        }
+        else{
+          this.$store.state.adToSave=this.ads.id
+          this.$store.state.saving=this.$router.currentRoute.path
+          console.log('currentpath',this.$store.state.saving)
+          this.$router.push('/connexion')
+        }
+      },
       checkIfSaved(){
         if(this.$store.state.accessToken!=='')
         {
@@ -220,7 +302,10 @@ img[lazy=loading] {
         form.append('ad',this.ads.id)
         this.$http.post('http://localhost:8000/api/savedAdsCheck', form ).then(response => {
           if(response.data!=0)
-            this.saved=true
+            {
+              this.saved=true
+              console.log('saved',this.saved)
+            }
           else
             this.saved=false
          //console.log('user',this.$store.state.currentUser.id,'ad',this.ads.id)
@@ -229,8 +314,6 @@ img[lazy=loading] {
       },
       goToAds(){
         this.$router.push({name:'InfoAd',params:{id:this.ads.id}}).then(()=>{
-       
-        location.reload();
         }).catch(err => {
 
         });
@@ -245,6 +328,14 @@ img[lazy=loading] {
         handler: function(){
           //this.pic=this.ads.pp.split(",");
           this.loading=false;
+        
+      },
+      deep:true
+      },
+      saved: {
+        handler: function(n){
+          //this.pic=this.ads.pp.split(",");
+          this.save=n;
         
       },
       deep:true

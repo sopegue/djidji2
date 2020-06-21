@@ -1,21 +1,21 @@
 <template>
-  <div v-cloak class="ads" title="Cliquez pour voir l'annonce" @click="goToAds()" >
+  <div v-cloak class="ads" title="Cliquez pour voir l'annonce" >
     <div class="row-1">
       <div class="d-btn-nc d-flex justify-content-between">
-          <button title="Modifier l'annonce" class="btn-nc btn btn-link">
+          <button @click="modifierAd" title="Modifier l'annonce" class="btn-nc btn btn-link">
               <i class="fas fa-edit"></i>
           </button> 
-          <button title="Supprimer l'annonce" class="btn-nc btn btn-link">
+          <button @click="supprimerAd" title="Supprimer l'annonce" class="btn-nc btn btn-link">
               <i class="fas fa-trash"></i>
           </button>
           
       </div>
-      <div class="ads-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif ' }">
+      <div  @click="goToAds()" class="ads-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loading.gif ' }">
         <img :style="{'position':'relative'}" :data-src="image"/>
       </div>
       
     </div>
-    <div class="row-2">
+    <div  @click="goToAds()" class="row-2">
     
       <div class="ad-infoo d-flex flex-column" else>
         <span class="descPrix">{{prix}}</span>
@@ -31,6 +31,15 @@
 </template>
 <style scoped>
 
+.btn-nc{
+  position: relative;
+  top: -.1rem;
+  right: 0.2rem;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+}
 img[lazy=loading] {
    width: 180px;
     height: 180px;
@@ -193,6 +202,10 @@ img[lazy=loading] {
        return 'http://localhost:8000/storage/'+this.ads.use_id+'/annonces/'+this.pic[0];
       }
     },
+    
+    updated(){
+      this.checkIfSaved()
+    },
     beforeMount(){
       window.scrollTo({
           top: 0,
@@ -203,10 +216,35 @@ img[lazy=loading] {
     },
     props: ['ads'],
     methods:{
+      supprimerAd(){
+        var r = confirm("Voulez-vous supprimer cette annonce ? Cliquez sur Ok pour supprimer.")
+        if (r == true) {
+        this.$Progress.start()
+        var content = new FormData()
+          content.append('ad',this.ads.id)
+          this.$store.dispatch('supprimerAd',content).then(()=>{
+            this.$notify({
+              group: 'deladdel',
+            });
+             this.$Progress.finish()
+
+            if(this.$router.currentRoute.path==='/user/added')
+              location.reload()
+          })
+          }
+      },
+      modifierAd(){
+        this.$Progress.start()
+        this.$store.state.adToDelete=this.ads.id
+        var content = new FormData()
+          content.append('ad',this.ads.id)
+        this.$store.dispatch('getAdToDel',content).then(()=>{
+           this.$Progress.finish()
+          this.$router.push('/annonce/updating')
+        })
+      },
       goToAds(){
         this.$router.push({name:'InfoAd',params:{id:this.ads.id}}).then(()=>{
-       
-        location.reload();
         }).catch(err => {
 
         });

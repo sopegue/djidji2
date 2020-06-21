@@ -48,8 +48,7 @@
                     </div>
                     <div v-else class="text-center">
                         <hr>
-                        <p>Vous n'avez aucune annonce ajoutée pour l'instant.</p>
-                        <p>Cliquez sur <router-link style="color : #004e66 !important; font-weight:700;" to="/annonce/add">Annoncer</router-link> pour ajouter une annonce.</p>
+                        <p>Vous n'avez aucune annonce enregistrée pour l'instant.</p>
                     </div>
                     </div>
             </div>
