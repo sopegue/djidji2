@@ -107,6 +107,43 @@
       </div>
   </template>
 </notifications>
+
+<notifications group="pwdreseted" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+         Mot de passe réinitialisé avec succès &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="verifiedMail" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+         Email verifié avec succès &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="emailNoExist" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Aucun compte n'existe sous cet email, vous pouvez créer un compte sous cet email si vous le souhaitez.
+      </div>
+  </template>
+</notifications>
+
+<notifications group="resetNotCode" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Code incorrect.
+      </div>
+  </template>
+</notifications>
+
 <notifications group="existUser" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -115,6 +152,7 @@
       </div>
   </template>
 </notifications>
+
 <notifications group="IncorrectPwd" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">

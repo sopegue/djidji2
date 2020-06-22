@@ -130,6 +130,12 @@ const routes = [
         component: () => import('@/components/user/Reinit.vue') 
       },
       { 
+        path: 'reset',
+        name: 'Pwdres',
+        beforeEnter: ifNotAuthenticated, 
+        component: () => import('@/components/user/Reset.vue') 
+      },
+      { 
         path: 'verification',
         beforeEnter: ifNotAuthenticated,
         name: 'Verify', 

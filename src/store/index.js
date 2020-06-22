@@ -18,7 +18,17 @@ export default new Vuex.Store({
     okregmail:'',
     regmail:'',
     notok:''
-  },    
+  },   
+
+  emailreseting:'',
+  mailConfirmed:false,
+  resetObject:
+    {
+    email:"",
+    code:0,
+    existMail:false,
+    }
+  ,  
     accessToken:  localStorage.getItem('access_token') ||  '',
     currentUser : [],
     infoAds : [],
@@ -161,6 +171,10 @@ export default new Vuex.Store({
       state.nbPageMySavedAds=1
       state.hasAdSaved=false
     },
+    reset_success: (state,value) => {
+      state.resetObject.code=value
+      state.resetObject.existMail=true
+    },
     mysavedAd_reset: (state) => {
       state.mysaveAds=[]
       state.mysavedAdfound = 'loading'
@@ -299,7 +313,7 @@ export default new Vuex.Store({
           state.currentPageAds=localStorage.getItem('curPageAds')
         else
         state.currentPageAds=1
-
+        
         state.Ads= JSON.parse(localStorage.getItem('adsearch'))
         state.adsPlace= JSON.parse(localStorage.getItem('place'))
         state.categSearch=localStorage.getItem('categSearch')
@@ -625,6 +639,48 @@ isUserExist({commit,dispatch,state},user){
         Axios({url: 'http://localhost:8000/api/message/sending', data: content, method: 'POST' })
         .then(respo => {
           console.log('message sent')
+          resolve(respo)
+        })
+        })
+    },
+    setreset({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/pwdreset', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('pwd reseted')
+          resolve(respo)
+        })
+        })
+    },
+    reset({commit,state},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/verify', data: content, method: 'POST' })
+        .then(respo => {
+         if(respo.data!=0){
+           commit('reset_success',respo.data)
+           var reset=state.resetObject
+           console.log(state.resetObject)
+         }
+         else{
+          state.resetObject.existMail=false
+         }
+          resolve(respo)
+        })
+        })
+    },
+    verify({commit,state},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/checkcode', data: content, method: 'POST' })
+        .then(respo => {
+         if(respo.data!=0){
+           //commit('reset_success',respo.data)
+           state.mailConfirmed=true
+           localStorage.setItem('mailreset', state.resetObject.email)
+           //console.log(state.resetObject)
+         }
+         else{
+          state.mailConfirmed=false
+         }
           resolve(respo)
         })
         })

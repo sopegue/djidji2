@@ -15,11 +15,14 @@
     
                       <div class="form-group">
                         <div class="input-group">
-                          <input id="email" name="email" placeholder="Adresse email" class="form-control"  type="email">
+                          <input id="email" name="email" placeholder="Adresse email" class="form-control"  type="email" v-model="mail">
+                          
                         </div>
                       </div>
+                      <span v-if="mailInvalid" style="color:red;font-size:12px;" >Veuillez entrer un email valide.</span>
+                      <span v-if="mailVide" style="color:red;font-size:12px;" >Veuillez remplir ce champ pour continuer</span>
                       <div class="form-group redivbtn">
-                          <button class="btn btn-lg btn-primary btn-block">Réinitialiser le mot de passe</button>
+                          <button @click="reinit" class="btn btn-lg btn-primary btn-block">Réinitialiser le mot de passe</button>
                       </div>
                       
                       <input type="hidden" class="hide" name="token" id="token" value=""> 
@@ -67,5 +70,55 @@ input{
 <script>
 // @ is an alias to /src
 export default {
+  data(){
+    return{
+      mail:'',
+      mailInvalid:false,
+      mailVide:false
+    }
+  },
+  methods:{
+    checkField(){
+      
+      this.mailInvalid=false
+      this.mailVide=false
+      if (this.mail!=='' && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mail)){
+        this.mailInvalid=false
+      }
+      else if(this.mail!=='' && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mail))
+        this.mailInvalid=true
+
+      if (this.mail==''){
+        this.mailVide=true
+      }
+      else
+        this.mailVide=false
+
+      return (this.mailInvalid==false && this.mailVide==false)
+
+    },
+    reinit(){
+      if(this.checkField()){
+        this.$Progress.start()
+        this.$store.state.resetObject.email=this.mail
+        var myForm= new FormData()
+        myForm.append('email',this.mail)
+        this.$store.dispatch('reset',myForm).then(()=>{
+          if(this.$store.state.resetObject.existMail){
+            this.$Progress.finish()
+            this.$router.push('/reset')
+          }
+          else{
+            this.$Progress.finish()
+            this.$notify({
+                group: 'emailNoExist',
+            });
+          }
+        })
+        
+        
+      }
+    }
+  }
 }
 </script>
