@@ -247,8 +247,9 @@ export default {
         },
         filteredList() {
             return this.users.filter(post => {
-            return (post.Nom.toLowerCase().includes(this.search.toLowerCase())|| post.type.toLowerCase().includes(this.search.toLowerCase()) || post.email.toLowerCase().includes(this.search.toLowerCase()) ||
-            post.Prenom.toLowerCase().includes(this.search.toLowerCase()) || (post.Nom.toLowerCase()+' '+post.Prenom.toLowerCase()).includes(this.search.toLowerCase()))
+            return (post.Nom.toLowerCase().includes(this.search.toLowerCase())
+            || post.type.toLowerCase().includes(this.search.toLowerCase()) 
+            || post.email.toLowerCase().includes(this.search.toLowerCase()))
             })
         }
     },
@@ -273,7 +274,7 @@ export default {
         async getUser(){
         this.$Progress.start();
         const { data } = await this.$http.get('http://localhost:8000/api/user');
-         data.forEach(user => this.users.push(new User(user)));
+         this.users=data
          this.users=this.users.filter(post => {
             return (post.type.toLowerCase().includes('administrateur'))
             })

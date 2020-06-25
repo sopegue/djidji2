@@ -6,18 +6,18 @@
                     <h5 class="">Mot de passe</h5>
                     <hr class="hr-us-inf">
                      <span style="color:red;font-size:12px;" v-if="pwd_unmatch">Mot de passe et Confirmation ne correspondent pas.</span>
-                    <label for="pwd">Mot de passe actuel</label>
-                    <input type="password" id="pwd" name="pwd"  placeholder="Mot de passe" v-model="pwd"/>
+                    <label for="apwd">Mot de passe actuel</label>
+                    <input type="password" id="apwd" name="pwd"  placeholder="Mot de passe" v-model="pwd"/>
                     <span style="color:red;font-size:12px;" v-if="pwdInvalid">Mot de passe invalide.</span>
                     <span style="color:red;font-size:12px;" v-if="pwdCourt">Mot de passe trop court.</span>
                     <br>
-                    <label for="pwdnew">Nouveau mot de passe</label>
-                    <input type="password" id="pwdnew" name="pwdnew"  placeholder="Mot de passe" v-model="newpwd"/>
+                    <label for="apwdnew">Nouveau mot de passe</label>
+                    <input type="password" id="apwdnew" name="pwdnew"  placeholder="Mot de passe" v-model="newpwd"/>
                     <span style="color:red;font-size:12px;" v-if="newpwdInvalid">Nouveau mot de passe invalide.</span>
                     <span style="color:red;font-size:12px;" v-if="newpwdCourt">Nouveau mot de passe trop court.</span>
                     <br>
-                    <label for="pwdconf">Confirmation de mot de passe</label>
-                    <input type="password" id="pwdconf" name="pwdconf"  placeholder="Confirmer votre mot de passe" v-model="conf_newpwd"/>
+                    <label for="apwdconf">Confirmation de mot de passe</label>
+                    <input type="password" id="apwdconf" name="pwdconf"  placeholder="Confirmer votre mot de passe" v-model="conf_newpwd"/>
                     <span style="color:red;font-size:12px;" v-if="con_pwdInvalid">Mot de passe invalide.</span>
                     <span style="color:red;font-size:12px;" v-if="con_pwdCourt">Mot de passe trop court.</span>
                     <br>

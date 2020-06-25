@@ -149,7 +149,7 @@ img[lazy=loading] {
         }
       },
       dateA(){
-      var date=new Date(this.ads.updated_at.toString())
+      var date=new Date(this.ads.created_at.toString())
       var date1 = Date.now()
       var mili = date.getTime()
       const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
@@ -257,6 +257,9 @@ img[lazy=loading] {
           content.append('ad',this.ads.id)
           content.append('user',this.$store.state.currentUser.id)
           this.$store.dispatch('retirerAd',content).then(()=>{
+            this.$notify({
+              group: 'removed',
+            })
             this.checkIfSaved()
             if(this.$router.currentRoute.path==='/user/list')
               location.reload()
@@ -283,6 +286,9 @@ img[lazy=loading] {
           content.append('ad',this.ads.id)
           content.append('user',this.$store.state.currentUser.id)
           this.$store.dispatch('sauverAd',content).then(()=>{
+            this.$notify({
+              group: 'added',
+            })
             this.checkIfSaved()
           })
           
@@ -313,6 +319,15 @@ img[lazy=loading] {
         }
       },
       goToAds(){
+        var myForm=new FormData()
+        myForm.append('ad',this.ads.id)
+        if(this.$store.state.accessToken!=='' && this.ads.use_id != this.$store.state.currentUser.id ){
+          myForm.append('user',this.$store.state.currentUser.id)
+        }
+        if(this.$store.state.accessToken!=='' && this.ads.use_id == this.$store.state.currentUser.id ){
+          myForm.append('self',this.$store.state.currentUser.id)
+        }
+        this.$store.dispatch('increment',myForm)
         this.$router.push({name:'InfoAd',params:{id:this.ads.id}}).then(()=>{
         }).catch(err => {
 

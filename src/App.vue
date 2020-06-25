@@ -63,6 +63,15 @@
   </template>
 </notifications>
 
+<notifications group="coderesent" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Code renvoyé &#10003;
+      </div>
+  </template>
+</notifications>
+
 <notifications group="custom-admod" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -117,6 +126,33 @@
   </template>
 </notifications>
 
+<notifications group="added" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+         Ajoutée à la liste &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="admin_contact" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+         Message envoyé, merci de nous contacter &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="removed" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+         Annonce retirée de la liste &#10003;
+      </div>
+  </template>
+</notifications>
+
 <notifications group="verifiedMail" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -161,6 +197,7 @@
       </div>
   </template>
 </notifications>
+
 <notifications group="User-unmodified" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -169,6 +206,15 @@
       </div>
   </template>
 </notifications>
+<notifications group="adminInco" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-danger text-center">
+        Email ou mot de passe incorrect.
+      </div>
+  </template>
+</notifications>
+
 <notifications group="User-modified" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -187,7 +233,7 @@
 </notifications>
     <notifications group="regis" />
     <notifications group="log" />
-    <router-view></router-view>
+    <router-view :hasNotif="hasNotif"></router-view>
     <vue-progress-bar></vue-progress-bar>
   </div>
 </template>
@@ -212,7 +258,42 @@ import Axios from 'axios'
 
 export default {
   name: 'App',
+  data(){
+    return{
+      hasNotif:false
+    }
+  },
+  updated(){
+    
+    if(this.$store.state.accessToken!=='')
+    {
+      console.log('app updated')
+      let formData = new FormData();
+      formData.append('user', this.$store.state.currentUser.id);
+      this.$store.dispatch('checkNotif',formData).then(()=>{
+        if(this.$store.state.hasNotif){
+          this.hasNotif=true
+        }
+      })
+    }
+  },
+  beforeMount(){
+    if(this.$store.state.accessToken!=='')
+    {
+      let formData = new FormData();
+      var user=localStorage.getItem('usetrixco')
+      console.log('user notif',user)
+      formData.append('user', user);
+      this.$store.dispatch('checkNotif',formData).then(()=>{
+        if(this.$store.state.hasNotif){
+          this.hasNotif=true
+        }
+      })
+      
+    }
+  },
   created() {
+    //localStorage.clear();
     this.$store.dispatch('checkLogin').catch(()=>{
       this.$router.push('/connexion')
     })

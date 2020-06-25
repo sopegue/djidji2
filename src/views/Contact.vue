@@ -12,22 +12,23 @@
 				</span>
 
 				<div class="wrap-input1 validate-input" data-validate = "Name is required">
-					<input class="input1" type="text" name="name" placeholder="Votre nom">
+					<input class="input1" type="text" name="name" placeholder="Votre nom" v-model="name">
 					<span class="shadow-input1"></span>
 				</div>
 
 				<div class="wrap-input1 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-					<input class="input1" type="text" name="email" placeholder="Votre email">
+					<input class="input1" type="text" name="email" placeholder="Votre email" required v-model="email">
+          <span v-if="mailInvalid" style="color:red;font-size:12px;" >Veuillez entrer un email valide.</span>
 					<span class="shadow-input1"></span>
 				</div>
 
 				<div class="wrap-input1 validate-input" data-validate = "Subject is required">
-					<input class="input1" type="text" name="subject" placeholder="Sujet">
+					<input class="input1" type="text" name="subject" placeholder="Sujet" v-model="subject">
 					<span class="shadow-input1"></span>
 				</div>
 
 				<div class="wrap-input1 validate-input" data-validate = "Message is required">
-					<textarea class="input1" name="message" placeholder="Ecrivez votre message ici"></textarea>
+					<textarea class="input1" name="message" placeholder="Ecrivez votre message ici"  required v-model="message"></textarea>
 					<span class="shadow-input1"></span>
 				</div>
 
@@ -50,12 +51,38 @@
 export default {
     data(){
         return{
-
+          name:'',
+          email:'',
+          subject:'',
+          message:'',
+          mailInvalid:false
         }
     },
     methods:{
+      checkField(){
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)
+      },
         textAdmin(){
-          
+          this.mailInvalid=false
+          if(this.checkField()){
+            this.$Progress.start()
+            var myForm= new FormData()
+            myForm.append('email',this.email)
+            myForm.append('name',this.name)
+            myForm.append('subject',this.subject)
+            myForm.append('message',this.message)
+            if(this.$store.state.accessToken!=='')
+              myForm.append('user',this.$store.state.currentUser.id)
+            this.$store.dispatch('contact',myForm).then(()=>{
+               this.$Progress.finish()
+              this.$notify({
+                group: 'admin_contact',
+              })
+            })
+          }
+          else{
+            this.mailInvalid=true
+          }
         }
     }
 }

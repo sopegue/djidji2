@@ -22,13 +22,13 @@
         </div>
       </form>
       <div class="toConnect d-flex flex-row justify-content-around">
-        <div class="userB" v-if="this.$store.state.usCoStatus==='success'">
-          <span class="dot"></span>
-          <a href="#" role="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >{{this.$store.state.currentUser.Prenom}} {{this.$store.state.currentUser.Nom}}</a>
+        <div class="userB text-center" v-show="this.$store.state.usCoStatus==='success'">
+          <span v-show="this.$store.state.hasNotif" class="dot"></span>
+          <a href="#" role="button" data-toggle="dropdown" class="a-compte dropdown-toggle">{{this.$store.state.currentUser.Nom}}</a>
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
             <li class="usliinf"><a href="#/user" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/user/notif" ><span class="dots"></span><i class="far fa-bell"></i> Mes notifications</a></li>
+            <li class="usliinf"><a href="#/user/notif" ><span v-show="this.$store.state.hasNotif" class="dots"></span><i class="far fa-bell"></i> Mes notifications</a></li>
             <li class="usliinf"><a href="#/user/list" ><i class="far fa-bookmark"></i> Ma liste</a></li>
             <li class="usliinf"><a href="#/user/added" ><i class="fas fa-list"></i> Mes annonces</a></li>
             <li class="usliinfs"><a href="#" @click="signout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
@@ -185,7 +185,14 @@
   margin: 0 auto;
 }
 .userInff{
-  width: 165px !important;
+    position: absolute;
+    width: fit-content;
+    margin: 0 auto !important;
+    z-index: 4555;
+}
+.userB{
+    width: 20%;
+    position: relative;
 }
 .sBtn{
   border-radius: unset !important;
@@ -371,9 +378,7 @@
         ],
       }
     },
-    mounted(){
-    },
-    props:['scrolling'],
+    props:['scrolling','hasNotif'],
     methods: {
       hideloc(){
         this.selectmul=false;
@@ -542,6 +547,9 @@
        this.$store.dispatch('updPlace',this.$store.state.adsPlace)
         },
       computed:{
+        // hasNotif(){
+        //   return this.$store.state.hasNotif==true
+        // },
         hidemenu(){
           return this.$store.state.categSearch
         },

@@ -7,13 +7,13 @@
         </div>
         <div id="foot-co">
             <div class="foot-co-aa d-flex flex-row justify-content-between">
-                <a href="#">
+                <a href="/#/admin">
                   <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="#">
+                <a href="/#/admin">
                   <i class="fab fa-youtube"></i>
                 </a>
-                <a href="#">
+                <a href="/#/admin">
                   <i class="fab fa-instagram"></i>
                 </a>
             </div>

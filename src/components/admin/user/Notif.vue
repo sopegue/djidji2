@@ -35,7 +35,7 @@
     }
     .us-not{
         padding-bottom: 3rem;
-        width: 50%;
+        width: 80%;
         margin: 0 auto;
         position: relative;
         top: 3rem;

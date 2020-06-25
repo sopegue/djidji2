@@ -20,6 +20,7 @@ export default new Vuex.Store({
     notok:''
   },   
 
+  hasNotif:false,
   emailreseting:'',
   mailConfirmed:false,
   resetObject:
@@ -643,6 +644,45 @@ isUserExist({commit,dispatch,state},user){
         })
         })
     },
+    sendAdmMess({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/message/sendingadmin', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('message sent')
+          resolve(respo)
+        })
+        })
+    },
+    increment({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/seen', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('view incremented')
+          resolve(respo)
+        })
+        })
+    },
+    contact({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/contact', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('admin mess sent')
+          resolve(respo)
+        })
+        })
+    },
+    checkNotif({state},user){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/checkNotif', data: user, method: 'POST' })
+        .then(respo => {
+          if(respo.data!=0)
+            state.hasNotif=true
+          else
+            state.hasNotif=false
+          resolve(respo)
+        })
+        })
+    },
     setreset({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
         Axios({url: 'http://localhost:8000/api/pwdreset', data: content, method: 'POST' })
@@ -690,6 +730,15 @@ isUserExist({commit,dispatch,state},user){
         Axios({url: 'http://localhost:8000/api/signalement', data: content, method: 'POST' })
         .then(respo => {
           console.log('ad reported')
+          resolve(respo)
+        })
+        })
+    },
+    signalerUser({commit,dispatch},content){
+      return new Promise((resolve, reject)=>{
+        Axios({url: 'http://localhost:8000/api/signalementUser', data: content, method: 'POST' })
+        .then(respo => {
+          console.log('user reported')
           resolve(respo)
         })
         })
@@ -759,6 +808,8 @@ isUserExist({commit,dispatch,state},user){
             Axios({url: 'http://localhost:8000/api/user',data: user, method: 'POST' })
             .then(respo => {
               localStorage.setItem('usetrixco', respo.data.id)
+              //console.log('type',respo.data.type)
+              localStorage.setItem('usetype', respo.data.type)
               commit('auth_user', respo.data)
               resolve(respo)
             })

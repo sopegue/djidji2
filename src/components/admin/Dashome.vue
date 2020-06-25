@@ -2,33 +2,33 @@
   <div style="height:100%; width:100%; position:fixed;" clautss="bg-light">
       <!-- sidebar de l'admin -->
     <div class="d-flex flex-row justify-content-between navbar navbar-dark sticky-top bg-light flex-md-nowrap p-0 shadow-sm">
-    <nav class="myyys d-md-block bg-light iidd sidebar d-flex">
-        <router-link to="/admin" class="navbar-brand col-md-3 col-lg-2 mr-0 px-3 a-logo logo-title">Djidji.comDashboard</router-link>
+    <nav class="myyys d-md-block bg-light iidd sidebar d-flex  text-center">
+        <router-link title="Djidji.com Dashboard" to="/admin" class="navbar-brand a-logo logo-title">DD</router-link>
     </nav>
     <div class="noff">
         <ul class="d-flex flex-row justify-content-between">
-            <li>
-                <router-link to="/user/message">
+            <li style="padding-right:20%;">
+                <router-link to="/admin/myuser/message" class="d-flex flex-row">
                 <i class="far fa-comment"></i>
-                <span class="spii badge badge-pill badge-success">4</span>
+                <span  v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span>
                 </router-link>
             </li>
             <li class="fabell">
-                <router-link to="/user/notif">
+                <router-link to="/admin/myuser/notif" class="d-flex flex-row">
                 <i class="far fa-bell"></i>
-                <span class="spii badge badge-pill badge-danger">2</span>
+                <span v-show="hasNotif" class="spii badge badge-pill badge-danger">{{nbNotif}}</span>
                 </router-link>
             </li>
         </ul>
     </div>
-    <div class="userB" >
-          <a href="#" type="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >Yaya Sopegue</a>
+    <div class="userB text-center d-flex align-items-center" >
+          <a href="#" type="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >{{this.$store.state.currentUser.Nom}}</a>
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
-            <li class="usliinf"><a href="#/user" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/user/message" ><i class="far fa-envelope"></i> Mes messages</a></li>
-            <li class="usliinf"><a href="#/user/notif" ><i class="far fa-bell"></i> Mes notifications</a></li>
-            <li class="usliinfs"><a href="#"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
+            <li class="usliinf"><a href="#/admin/myuser" ><i class="far fa-user"></i> Mon compte</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/notif" ><span v-show="hasNotif" class="spiiii badge badge-pill badge-danger">{{nbNotif}}</span><i class="far fa-bell"></i> Mes notifications</a></li>
+            <li class="usliinfs"><a href="/#/admin/connexion" @click="signout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
           </ul>
            </transition>
     </div>
@@ -85,6 +85,10 @@
 
 </style>
 <style scoped>
+.userInff{
+    position: absolute;
+    z-index: 4555;
+}
 .atote{
     position: relative;
     padding-right: 5%;
@@ -95,7 +99,8 @@
 }
 .noff{
     position: relative;
-    left: 26%;
+    width: 8%;
+    left: 24%;
     top: 0.7rem;
 }
 
@@ -103,6 +108,20 @@
     position: relative;
     right: 25%;
     top: -0.5rem;
+}
+.spiii{
+    position: absolute;;
+    z-index: 999;
+    left: 1.5%;
+    top: 2.4rem;
+  display: inline-block;
+}
+.spiiii{
+    position: absolute;;
+    z-index: 999;
+    left: 1.5%;
+    top: 4.4rem;
+  display: inline-block;
 }
 .fa-comment,.fabell svg{
     font-size: 20px;
@@ -116,7 +135,7 @@
     top: 1.5rem;
 }
 .toos:hover{
-    background-color: rgb(124, 212, 83);
+    background-color: #019751;
 }
 .toos:hover .nav-link 
 {
@@ -174,6 +193,7 @@
     background-color: rgb(0, 72, 93);
 }
 .userB{
+    width: 10%;
     position: relative;
     right: 5%;
     top: -0.1em;
@@ -182,7 +202,6 @@
 .logo-title{
     height: 48px;
   position: relative;
-  left: 8%;
   font-weight: 400;
   color: /*white*/ rgb(243, 243, 243) !important;
 }
@@ -198,9 +217,87 @@
 <script>
 // @ is an alias to /src
  import FooterAd from '@/components/footer/FooterAd.vue'
+ import Axios from 'axios'
 export default {
   name: 'Admin',
-  components:{ FooterAd
+  data() {
+      return {
+          active1:false,
+          nbNotif:0,
+          nbMess:0,
+          hasNotif:false,
+          hasMess:false,
+          active2:false,
+          active3:false,
+          active4:false,
+          active5:false,
+          active6:false,
+      }
+    },
+    
+    updated(){
+        this.checkNotif()
+        this.checkMess()
+    },
+    beforeMount(){
+        this.checkNotif()
+        this.checkMess()
+    },
+  methods:{
+      signout: function(){
+          console.log('deco')
+        this.$store.dispatch('logout').then(() =>{ 
+             console.log('deco')
+               location.reload()
+                console.log('deco')
+            })
+      },
+
+        
+        checkMess(){
+            let formData = new FormData();
+            var user=localStorage.getItem('usetrixco')
+            formData.append('user', user);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/checkMessNb', data: formData, method: 'POST' })
+                .then(respo => {
+                  if(respo.data!=0){
+                      this.hasMess=true
+                      this.nbMess=respo.data
+                  }
+                  else
+                  {
+                      this.hasMess=false
+                      this.nbMess=0
+                  }
+                  resolve(respo)
+                })
+            })
+        },
+        checkNotif(){
+            let formData = new FormData();
+            var user=localStorage.getItem('usetrixco')
+            formData.append('user', user);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/checkAdmNotifNb', data: formData, method: 'POST' })
+                .then(respo => {
+                  if(respo.data!=0){
+                      this.hasNotif=true
+                      this.nbNotif=respo.data
+                  }
+                  else
+                  {
+                      this.hasNotif=false
+                      this.nbNotif=0
+                  }
+                  resolve(respo)
+                })
+            })
+        },
+
+  },
+  components:{ 
+      FooterAd
   }
 }
 </script>

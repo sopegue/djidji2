@@ -209,25 +209,6 @@
 }
 </style>
 <script>
-function User({ id,Nom,Prenom,pseudo,email,type,isblocked,ville,tel,pp,Nom_entreprise,password,created_at,updated_at,matricule_entreprise,remembered,modified}) {
-     this.id = id;
-     this.pseaudo=pseudo
-     this.email=email;
-     this.type=type;
-     this.isblocked=isblocked;
-     this.ville=ville;
-     this.tel=tel;
-     this.pp=pp;
-     this.Nom = Nom;
-     this.Prenom= Prenom
-     this.Nom_entreprise=Nom_entreprise;
-     this.password=password;
-     this.created_at=created_at;
-     this.updated_at=updated_at;
-     this.matricule_entreprise=matricule_entreprise;
-     this.remembered=remembered;
-     this.modified=modified;
-   }
 // @ is an alias to /src
 export default {
     data(){
@@ -247,8 +228,10 @@ export default {
         },
         filteredList() {
             return this.users.filter(post => {
-            return (post.Nom.toLowerCase().includes(this.search.toLowerCase())|| post.type.toLowerCase().includes(this.search.toLowerCase()) || post.email.toLowerCase().includes(this.search.toLowerCase()) ||
-            post.Prenom.toLowerCase().includes(this.search.toLowerCase()) || (post.Nom.toLowerCase()+' '+post.Prenom.toLowerCase()).includes(this.search.toLowerCase()))
+            return (post.Nom.toLowerCase().includes(this.search.toLowerCase())
+            || post.type.toLowerCase().includes(this.search.toLowerCase()) 
+            || post.email.toLowerCase().includes(this.search.toLowerCase()) 
+            )
             })
         }
     },
@@ -274,7 +257,7 @@ export default {
         async getUser(){
         this.$Progress.start();
         const { data } = await this.$http.get('http://localhost:8000/api/user');
-         data.forEach(user => this.users.push(new User(user)));
+         this.users=data
           
       },
     }

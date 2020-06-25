@@ -107,7 +107,7 @@ import Axios from 'axios'
             let formData = new FormData();
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/notVue', data: formData, method: 'POST' })
+                Axios({url: 'http://localhost:8000/api/notVueAdmin', data: formData, method: 'POST' })
                 .then(respo => {
                     console.log('vue')
                   resolve(respo)

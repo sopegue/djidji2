@@ -52,7 +52,7 @@
       
     </div>
       <div class="container inpfo" style="padding-top:1.5rem;">
-          <label for="aatitre" class="notl">Titre de votre annonce</label><br>
+          <label for="aatitre" class="notl">Titre de votre annonce <br> (Veuillez ne pas décrire votre annonce ici)</label><br>
           <input type="text" id="aatitre" name="atitre" placeholder="Un bon titre attire toujours l'attention ..." v-model="titre"/>
           <br><span style="color:red;font-size:12px;" v-if="titreInvalid">Donner un titre ! <br></span><br>
           <label for="aaprix" class="notl">Prix de vente à afficher </label><br>

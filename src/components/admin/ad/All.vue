@@ -205,20 +205,6 @@
 }
 </style>
 <script>
- function Ads({ id, use_id, categorie, titre, description, marque, prix, pp, nbvues, added_at, updated_at}) 
-  {
-     this.id = id;
-     this.use_id= use_id;
-     this.categorie= categorie;
-     this.titre=titre;
-     this.description=description;
-     this.marque=marque;
-     this.prix=prix;
-     this.pp=pp;
-     this.nbvues=nbvues;
-     this.added_at=added_at;
-     this.updated_at=updated_at;
-   }
 // @ is an alias to /src
 export default {
     data(){
@@ -237,7 +223,7 @@ export default {
         },
         filteredList() {
             return this.ads.filter(post => {
-            return (post.titre.toLowerCase().includes(this.search.toLowerCase())|| post.categorie.toLowerCase().includes(this.search.toLowerCase()) || post.prix.toLowerCase().includes(this.search.toLowerCase()))
+            return (post.titre.toLowerCase().includes(this.search.toLowerCase())|| post.categorie.toLowerCase().includes(this.search.toLowerCase()) || post.prix.toString().toLowerCase().includes(this.search.toLowerCase()))
             })
         }
     },
@@ -261,7 +247,7 @@ export default {
        },
         async getAdsAll(){
             const { data } = await this.$http.get('http://localhost:8000/api/annonce');
-            data.forEach(ad => this.ads.push(new Ads(ad)));
+            this.ads=data
         },
     }
 }

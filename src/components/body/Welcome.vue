@@ -37,9 +37,9 @@
     methods:{
         async getAdsAll(){
             const { data } = await this.$http.get('http://localhost:8000/api/annonce');
-            data.forEach(ads => this.adseco.push(new Ads(ads)));
-            data.forEach(ads => this.adsfav.push(new Ads(ads)));
-            data.forEach(ads => this.adstop.push(new Ads(ads)));
+            this.adseco=data
+            this.adstop=data
+            this.adsfav=data
         },
     },
     components: {

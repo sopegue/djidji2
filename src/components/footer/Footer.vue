@@ -23,25 +23,25 @@
               <div class="djidji-foot">
                 <h4>Djidji</h4>
                 <div class="d-f">
-                  <router-link to="/about" class="d-f-a">A propos de Djidji.com</router-link>
-                  <router-link to="/contact" class="d-f-a">Nous contacter</router-link>
-                  <router-link to="/help" class="d-f-a">Aide</router-link>
+                  <router-link to="#" class="d-f-a">A propos de Djidji.com</router-link>
+                  <router-link to="#" class="d-f-a">Nous contacter</router-link>
+                  <router-link to="#" class="d-f-a">Aide</router-link>
                 </div>
               </div>
               <div class="services-foot">
                 <h4>Services</h4>
                 <div class="d-f">
-                  <router-link to="/sell" class="d-f-a">Vendre sur Djidji.com</router-link>
-                  <router-link to="/business" class="d-f-a">Devenir Partenaire</router-link>
-                  <router-link to="/ads" class="d-f-a">Publicité</router-link>
+                  <router-link to="#" class="d-f-a">Vendre sur Djidji.com</router-link>
+                  <router-link to="#" class="d-f-a">Devenir Partenaire</router-link>
+                  <router-link to="#" class="d-f-a">Publicité</router-link>
                 </div>
               </div>
               <div class="politics-foot">
                 <h4>Politiques</h4>
                 <div class="d-f">
-                  <router-link to="/politics" class="d-f-a">Conditions d'utilisations</router-link>
-                  <router-link to="/cookies" class="d-f-a">Politiques relative aux cookies</router-link>
-                  <router-link to="/privacy" class="d-f-a">Données privées</router-link>
+                  <router-link to="#" class="d-f-a">Conditions d'utilisations</router-link>
+                  <router-link to="#" class="d-f-a">Politiques relative aux cookies</router-link>
+                  <router-link to="#" class="d-f-a">Données privées</router-link>
                 </div>
               </div>
             </div>

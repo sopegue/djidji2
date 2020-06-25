@@ -2,27 +2,27 @@
   <div>
     <div class="well">
         <ul class="text-center nav nav-tabs">
-            <li @click="active" v-bind:class="{'actives': active1}"><router-link class="a-prof" to="/user"><i class="fas fa-user"></i>&nbsp;Profile</router-link></li>
-            <li @click="active" v-bind:class="{'actives': active2}"><router-link class="a-prof" to="/user/password"><i class="fas fa-lock"></i> Mot de passe</router-link></li>
+            <li @click="active" v-bind:class="{'actives': active1}"><router-link class="a-prof" to="/admin/myuser"><i class="fas fa-user"></i>&nbsp;Profile</router-link></li>
+            <li @click="active" v-bind:class="{'actives': active2}"><router-link class="a-prof" to="/admin/myuser/password"><i class="fas fa-lock"></i> Mot de passe</router-link></li>
             
-            <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/user/notif">
+            <li  @click="active" v-bind:class="{'actives': active3}"><router-link class="a-prof" to="/admin/myuser/message">
               
-                <i class="fas fa-bell"></i> Notifications <span v-show="hasNotif" class="spii badge badge-pill badge-success">{{nbNotif}}</span></router-link>
-                </li>
-            <li @click="active" v-bind:class="{'actives': active5}"><router-link class="a-prof" to="/user/list"><i class="fas fa-list"></i> Ma liste</router-link></li>
-            <li @click="active" v-bind:class="{'actives': active6}"><router-link class="a-prof" to="/user/added"><i class="fas fa-cube"></i> Mes annonces</router-link></li>
+                <i class="far fa-comment"></i> Messages <span v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span></router-link>
+            </li>
+            <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/admin/myuser/notif">
+              
+                <i class="far fa-bell"></i> Notifications <span v-show="hasNotif" class="spii badge badge-pill badge-danger">{{nbNotif}}</span></router-link>
+            </li>
         </ul>
     </div>
     <router-view></router-view>
   </div>
 </template>
 <script>
-import Added from '@/components/user/Added.vue'
-import Info from '@/components/user/Info.vue'
-import List from '@/components/user/List.vue'
-import Message from '@/components/user/Message.vue'
-import Notif from '@/components/user/Notif.vue'
-import Pwd from '@/components/user/Pwd.vue'
+import Info from '@/components/admin/user/Info.vue'
+import Message from '@/components/admin/user/Message.vue'
+import Notif from '@/components/admin/user/Notif.vue'
+import Pwd from '@/components/admin/user/Pwd.vue'
 import Axios from 'axios'
 // @ is an alias to /src
 export default {
@@ -30,7 +30,9 @@ export default {
       return {
           active1:false,
           nbNotif:0,
+          nbMess:0,
           hasNotif:false,
+          hasMess:false,
           active2:false,
           active3:false,
           active4:false,
@@ -39,18 +41,18 @@ export default {
       }
     },
     components:{
-        Added,
         Info,
-        List,
         Message,
         Notif,
         Pwd
     },
     updated(){
         this.checkNotif()
+        this.checkMess()
     },
     beforeMount(){
         this.checkNotif()
+        this.checkMess()
         this.active()
     },
     created(){
@@ -67,7 +69,7 @@ export default {
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/checkNotifNb', data: formData, method: 'POST' })
+                Axios({url: 'http://localhost:8000/api/checkAdmNotifNb', data: formData, method: 'POST' })
                 .then(respo => {
                   if(respo.data!=0){
                       this.hasNotif=true
@@ -82,8 +84,28 @@ export default {
                 })
             })
         },
+        checkMess(){
+            let formData = new FormData();
+            var user=localStorage.getItem('usetrixco')
+            formData.append('user', user);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/checkMessNb', data: formData, method: 'POST' })
+                .then(respo => {
+                  if(respo.data!=0){
+                      this.hasMess=true
+                      this.nbMess=respo.data
+                  }
+                  else
+                  {
+                      this.hasMess=false
+                      this.nbMess=0
+                  }
+                  resolve(respo)
+                })
+            })
+        },
         active(){
-            if(this.currentRouteName ==='Profile'){
+            if(this.currentRouteName ==='adProfile'){
                 this.active1=true;
                 this.active2=false;
                 this.active3=false;
@@ -91,7 +113,7 @@ export default {
                 this.active5=false;
                 this.active6=false;
             }
-            if(this.currentRouteName ==='Password'){
+            if(this.currentRouteName ==='adPassword'){
                 this.active1=false;
                 this.active2=true;
                 this.active3=false;
@@ -99,7 +121,7 @@ export default {
                 this.active5=false;
                 this.active6=false;
             }
-            if(this.currentRouteName ==='Message'){
+            if(this.currentRouteName ==='adMess'){
                 this.active1=false;
                 this.active2=false;
                 this.active3=true;
@@ -107,29 +129,13 @@ export default {
                 this.active5=false;
                 this.active6=false;
             }
-            if(this.currentRouteName ==='Notif'){
+            if(this.currentRouteName ==='adNotif'){
                 this.active1=false;
                 this.active2=false;
                 this.active3=false;
                 this.active4=true;
                 this.active5=false;
                 this.active6=false;
-            }
-            if(this.currentRouteName ==='List'){
-                this.active1=false;
-                this.active2=false;
-                this.active3=false;
-                this.active4=false;
-                this.active5=true;
-                this.active6=false;
-            }
-            if(this.currentRouteName ==='Added'){
-                this.active1=false;
-                this.active2=false;
-                this.active3=false;
-                this.active4=false;
-                this.active5=false;
-                this.active6=true;
             }
             
         }
@@ -176,7 +182,7 @@ export default {
     }
     
     .well li{
-        width: 13%;
+        width: 20%;
         height: 40px;
         padding-top: 0.6rem;
         text-align: center;

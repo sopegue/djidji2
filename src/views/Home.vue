@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header :scrolling="showNavbar"></Header>
+    <Header :scrolling="showNavbar" :hasNotif="hasNotif"></Header>
     <router-view></router-view>
     <Contact></Contact>
     <Footer></Footer>
@@ -30,6 +30,7 @@
         Footer,
         Contact
       },
+      props:['hasNotif'],
       mounted () {
         window.addEventListener('scroll', this.onScroll);
       },

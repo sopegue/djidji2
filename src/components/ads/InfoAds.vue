@@ -104,14 +104,14 @@
             <span class="pr">{{prix}} FCFA</span><br><br>
             <div id="ppptitre">
             <span class="ptitre">{{ad.titre}}</span>
-            </div><br>
+            </div>
             <span class="d-aj">Ajouté il y'a {{date}}</span>
           </div>
           <hr class="hr1">
           
           <div class="user-bdd">
               <div class="ustt d-titre d-flex justify-content-between">
-                  <span class="pptitre">Annonceur</span><button v-if="this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" title="Signaler l'utilisateur" class="text-center impbtn">
+                  <span class="pptitre">Annonceur</span><button @click="signalerUser" v-if="!this.$store.state.currentUser.id || this.$store.state.currentUser.id && (this.$store.state.currentUser.id !=this.user.id)" title="Signaler l'utilisateur" class="text-center impbtn">
                   <i class="fas ffaex fa-exclamation-circle"></i>
               </button>
               </div>
@@ -159,7 +159,7 @@
                   <textarea name="message" type="text" id="input-message" placeholder="Votre message" v-model="message"></textarea>
                   <span style="color:red;font-size:12px;" v-if="messValid">Veuillez ajouter un message ! </span>
                 </div>
-                  <div v-if="sending" class=" spinner-border text-secondary" role="status">
+                  <div v-if="sending" class="cdcd spinner-border text-secondary" role="status">
                     <span class="sr-only">Loading...</span>
           
                   </div>
@@ -176,6 +176,10 @@
   </div>
 </template>
 <style lang="scss" scoped>
+.cdcd{
+  width: 20px;
+  height: 20px;
+}
 .fa-edit{
   position: relative;
   top: -0.15rem;
@@ -337,7 +341,7 @@ export default {
       return this.ad.souscateg
     },
     date(){
-      var date=new Date(this.ad.updated_at.toString())
+      var date=new Date(this.ad.created_at.toString())
       var date1 = Date.now()
       var mili = date.getTime()
       const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
@@ -577,6 +581,9 @@ export default {
           content.append('ad',this.ad.id)
           content.append('user',this.$store.state.currentUser.id)
           this.$store.dispatch('retirerAd',content).then(()=>{
+            this.$notify({
+              group: 'removed',
+            })
             this.checkIfSaved()
             if(this.$router.currentRoute.path==='/user/list')
               location.reload()
@@ -596,6 +603,20 @@ export default {
           })
         }
       },
+      signalerUser(){
+        var r = confirm("Pensez-vous que ce compte est inapproprié ? Cliquez sur Ok pour signaler.")
+        if (r == true) {
+          var content = new FormData()
+          content.append('user_to',this.ad.use_id)
+          if(this.$store.state.accessToken!=='')
+            content.append('user',this.$store.state.currentUser.id)
+          this.$store.dispatch('signalerUser',content).then(()=>{
+            this.$notify({
+              group: 'ad-signaler',
+            })
+          })
+        }
+      },
       sauverAd(){
         if(this.$store.state.accessToken!=='')
          {
@@ -603,6 +624,9 @@ export default {
           content.append('ad',this.ad.id)
           content.append('user',this.$store.state.currentUser.id)
           this.$store.dispatch('sauverAd',content).then(()=>{
+            this.$notify({
+              group: 'added',
+            })
             this.checkIfSaved()
           })
           
