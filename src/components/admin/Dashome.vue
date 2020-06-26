@@ -8,13 +8,13 @@
     <div class="noff">
         <ul class="d-flex flex-row justify-content-between">
             <li style="padding-right:20%;">
-                <router-link to="/admin/myuser/message" class="d-flex flex-row">
+                <router-link to="/admin/myuser/me/message" class="d-flex flex-row">
                 <i class="far fa-comment"></i>
                 <span  v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span>
                 </router-link>
             </li>
             <li class="fabell">
-                <router-link to="/admin/myuser/notif" class="d-flex flex-row">
+                <router-link to="/admin/myuser/me/notif" class="d-flex flex-row">
                 <i class="far fa-bell"></i>
                 <span v-show="hasNotif" class="spii badge badge-pill badge-danger">{{nbNotif}}</span>
                 </router-link>
@@ -25,9 +25,9 @@
           <a href="#" type="button" data-toggle="dropdown" class="a-compte dropdown-toggle" >{{this.$store.state.currentUser.Nom}}</a>
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
-            <li class="usliinf"><a href="#/admin/myuser" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/admin/myuser/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
-            <li class="usliinf"><a href="#/admin/myuser/notif" ><span v-show="hasNotif" class="spiiii badge badge-pill badge-danger">{{nbNotif}}</span><i class="far fa-bell"></i> Mes notifications</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/me" ><i class="far fa-user"></i> Mon compte</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/me/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/me/notif" ><span v-show="hasNotif" class="spiiii badge badge-pill badge-danger">{{nbNotif}}</span><i class="far fa-bell"></i> Mes notifications</a></li>
             <li class="usliinfs"><a href="/#/admin/connexion" @click="signout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
           </ul>
            </transition>
@@ -40,13 +40,13 @@
               <div class="sidebar-sticky pt-3 myyyaa sidebar">
                 <ul class="nav flex-column">
                   <li class="nav-item">
-                    <router-link to="/admin/users" class="nav-link inks active">
+                    <router-link to="/admin/users/me" class="nav-link inks active">
                         <i class="fa fa-user"></i>
                         Utilisateurs |
                     </router-link>
                   </li>
                   <li class="nav-item">
-                      <router-link to="/admin/ads" class="nav-link inks active">
+                      <router-link to="/admin/ads/me" class="nav-link inks active">
                       <i class="fas fa-shopping-cart"></i>
                       Annonces |
                       </router-link>
@@ -100,7 +100,7 @@
 .noff{
     position: relative;
     width: 8%;
-    left: 24%;
+    left: 22%;
     top: 0.7rem;
 }
 

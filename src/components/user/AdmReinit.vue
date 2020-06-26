@@ -106,7 +106,7 @@ export default {
         this.$store.dispatch('reset',myForm).then(()=>{
           if(this.$store.state.resetObject.existMail){
             this.$Progress.finish()
-            this.$router.push('/admin/reset')
+            this.$router.push('/admin/me/reset')
           }
           else{
             this.$Progress.finish()

@@ -117,7 +117,7 @@ export default {
             this.$notify({
                 group: 'pwdreseted',
             })
-            this.$router.push('/admin/connexion')
+            this.$router.push('/admin/me/connexion')
         })
       }
     }

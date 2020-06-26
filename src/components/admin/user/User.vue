@@ -2,14 +2,14 @@
   <div>
     <div class="well">
         <ul class="text-center nav nav-tabs">
-            <li @click="active" v-bind:class="{'actives': active1}"><router-link class="a-prof" to="/admin/myuser"><i class="fas fa-user"></i>&nbsp;Profile</router-link></li>
-            <li @click="active" v-bind:class="{'actives': active2}"><router-link class="a-prof" to="/admin/myuser/password"><i class="fas fa-lock"></i> Mot de passe</router-link></li>
+            <li @click="active" v-bind:class="{'actives': active1}"><router-link class="a-prof" to="/admin/myuser/me"><i class="fas fa-user"></i>&nbsp;Profile</router-link></li>
+            <li @click="active" v-bind:class="{'actives': active2}"><router-link class="a-prof" to="/admin/myuser/me/password"><i class="fas fa-lock"></i> Mot de passe</router-link></li>
             
-            <li  @click="active" v-bind:class="{'actives': active3}"><router-link class="a-prof" to="/admin/myuser/message">
+            <li  @click="active" v-bind:class="{'actives': active3}"><router-link class="a-prof" to="/admin/myuser/me/message">
               
                 <i class="far fa-comment"></i> Messages <span v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span></router-link>
             </li>
-            <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/admin/myuser/notif">
+            <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/admin/myuser/me/notif">
               
                 <i class="far fa-bell"></i> Notifications <span v-show="hasNotif" class="spii badge badge-pill badge-danger">{{nbNotif}}</span></router-link>
             </li>

@@ -53,11 +53,9 @@ import Axios from 'axios'
     export default {
         data () {
             return { 
-                myad:[]
+                myad:[],
+                mynot:[]
             }
-        },
-        mounted(){
-            this.notVue()
         },
         beforeMount(){
             this.getAd()
@@ -103,9 +101,8 @@ import Axios from 'axios'
         props:['notif'],
         methods: {
             notVue(){
-            var user=localStorage.getItem('usetrixco')
             let formData = new FormData();
-            formData.append('user', user);
+            formData.append('notif', this.notif.id);
             return new Promise((resolve, reject)=>{
                 Axios({url: 'http://localhost:8000/api/notVue', data: formData, method: 'POST' })
                 .then(respo => {
@@ -115,6 +112,7 @@ import Axios from 'axios'
             })
             },
          gotoAd(){
+             this.notVue()
             this.$router.push({name:'InfoAd',params:{id:this.notif.ann_id}}).then(()=>{
             }).catch(err => {
                 
@@ -139,7 +137,7 @@ import Axios from 'axios'
     padding-left: 4%;
 }
 .new{
-    background-color: #d6d6d61a;
+    background-color: #d6d6d62c;
 }
 .add{
     font-weight: 700;

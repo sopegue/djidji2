@@ -8,45 +8,51 @@
       </div>
       <div v-else class="d-flex">
           <div class="pic text-center">
-               <img :style="{'position':'relative','top':'1.5rem' }" :src="'/images/1.JPG'" :height="128" :width="128"/>
-               <p class="us" :style="{'position':'relative','top':'2.5rem' }">Yaya Sopégué Soro</p>
-               <p class="sign" :style="{'position':'relative','top':'2rem' }"><i class="fas fa-user-plus"></i> Inscrit le 12 Octobre 2019</p>
-               <p class="lieu" :style="{'position':'relative','top':'1.5rem' }"><i class="fas fa-map-pin"></i> Habite à Monastir</p>
+               <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
+                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp"/>
+                </div>
+               <p v-if="user.Nom && user.Prenom" class="us" :style="{'position':'relative','top':'2.5rem' }">{{user.Prenom}} {{user.Nom}}</p>
+               <p v-else-if="user.Nom" class="us" :style="{'position':'relative','top':'2.5rem' }">{{user.Nom}}</p>
+               <p class="sign" :style="{'position':'relative','top':'2rem' }"><i class="fas fa-user-plus"></i> Membre depuis {{dateM}}</p>
+               <p v-if="user.ville" class="lieu" :style="{'position':'relative','top':'1.5rem' }"><i class="fas fa-map-pin"></i> Habite à {{user.ville}}</p>
           </div>
           <div class="pipic">
               
       <div class="adduss">
           <div class="d-flex justify-content-between flex-wrap">
             <div class="adddiv">
-            <span>Email ou Téléphone</span><br>
-            <span class="black">aazdadazda</span>
+            <span>Email</span><br>
+            <span class="black">{{user.email}}</span>
             </div>
             <div class="adddiv">
             <span>Nom</span><br>
-            <span class="black">aazdadazda</span>
+            <span class="black">{{user.Nom}}</span>
             </div>
             <div class="adddiv tt">       
             <span>Prénom</span><br>
-            <span class="black">aazdadazda</span>
+            <span v-if="user.Prenom" class="black">{{user.Prenom}}</span>
+            <span v-else class="black" style="font-style: italic;">Pas de prénom.</span>
             </div>
             <div class="adddiv tt">
           <span>Ville</span><br>
-            <span class="black">aazdadazda</span>
+            <span v-if="user.ville" class="black">{{user.ville}}</span>
+            <span v-else class="black" style="font-style: italic;">Pas de ville.</span>
             </div>
             <div class="adddiv tt ta">
            <span>Tel</span><br>
-            <span class="black">aazdadazda</span>
+            <span v-if="user.tel" class="black">{{user.tel}}</span>
+            <span v-else class="black" style="font-style: italic;">Pas de téléphone.</span>
             </div>
              <div class="adddiv tt ta">
             <span>Type de compte</span><br>
-            <span class="black">aazdadazda</span>
+            <span class="black">{{user.type}}</span>
             </div>
          </div>
-         <div v-if="blocked">
-             <button class="btn btn-danger" title="Bloquer l'utilisateur"><i class="fas fa-lock"></i></button>
+         <div v-if="user.isblocked!==0">
+             <button class="btn btn-danger" title="Cliquez pour débloquer l'utilisateur"><i class="fas fa-lock"></i></button>
          </div>
          <div v-else>
-             <button class="btn btn-success sssc" title="Débloquer l'utilisateur"><i class="fas fa-lock-open"></i></button>
+             <button class="btn btn-success sssc" title="Cliquez pour bloquer l'utilisateur"><i class="fas fa-lock-open"></i></button>
          </div>
           
          
@@ -56,7 +62,104 @@
       <hr>
   </div>
 </template>
+<script>
+// @ is an alias to /src
+export default {
+    data(){
+        return{
+            isLoading:true,
+            user:[],
+            blocked:false
+        }
+    },
+    beforeMount(){
+        this.getUser()
+        this.$Progress.finish();
+    },
+    computed:{
+        dateM(){
+      var date=new Date(this.user.created_at.toString())
+      var date1 = Date.now()
+      var mili = date.getTime()
+      const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
+      console.log(diffTime + " seconds")
+      if(Math.floor(diffTime/60)>=1){
+        if(Math.floor(diffTime/(60*60))>=1){
+          if(Math.floor(diffTime/(60*60*24))>=1){
+            if(Math.floor(diffTime/(60*60*24*7))>=1){
+              if(Math.floor(diffTime/(60*60*24*7*4))>=1){
+                if(Math.floor(diffTime/(60*60*24*7*4*12))>=1){
+                  return Math.floor(diffTime/(60*60*24*7*4*12)).toString()+' an(s)'
+                }
+                else
+                  return Math.floor(diffTime/(60*60*24*7*4)).toString()+' mois'
+                
+              }
+              else
+                return Math.floor(diffTime/(60*60*24*7)).toString()+' semaine(s)'
+            }
+            else{
+              return Math.floor(diffTime/(60*60*24)).toString()+' jour(s)'
+            }
+          }
+          else{
+            return Math.floor(diffTime/(60*60)).toString()+' heure(s)'
+          }
+        }
+        else{
+          return Math.floor(diffTime/60).toString()+' minute(s)'
+        }
+      }
+      else{
+        return '1 minute'
+      }
+    },
+    },
+    methods:{
+        async getUser(){
+        this.$Progress.start();
+        const { data } = await this.$http.get(`http://localhost:8000/api/user/${this.$store.state.notUser}`);
+       // alert(this.ad.use_id)
+        this.user=data;
+        this.isLoading=false
+        //this.$store.commit('infoUser',data)
+
+      },
+        goBack(){
+            this.$router.go(-1);
+        }
+    }
+}
+</script>
+
 <style scoped>
+img[lazy=error] {
+    /*your style here*/
+    width: 128px;
+    height: 128px;
+  }
+  img[lazy=loading] {
+    /*your style here*/
+    width: 128px;
+    height: 128px;
+  }
+  img[lazy=loaded] {
+    /*your style here*/
+    width: 128px;
+    height: 128px;
+  }
+.us-list-load{
+      position: relative;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+    }
+     .us-list-load .p{
+        position: relative;
+        top: 0.2rem !important;
+    }
 .black{
     font-weight: 700;
     font-size: 18px;
@@ -212,19 +315,3 @@
     background-color: #004E66 !important;
     }
 </style>
-<script>
-// @ is an alias to /src
-export default {
-    data(){
-        return{
-            isLoading:false,
-            blocked:false
-        }
-    },
-    methods:{
-        goBack(){
-            this.$router.go(-1);
-        }
-    }
-}
-</script>

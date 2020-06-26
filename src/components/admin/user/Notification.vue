@@ -1,19 +1,38 @@
 <template >
-    <div v-if="notif.seen==0" class="new us-c-not">
-        <div class="container">
+    <div v-if="notif.admseen==0" class="new us-c-not">
+        <div v-if="notif.ann_id" class="container">
             <div class="not-head d-flex flex-row justify-content-between">
                 <div class="not-title">
                     <div class="d-flex flex-row  align-items-center">
-                        <i class="fas fa-envelope"></i>
-                         <span style="color:green;"> Nouveau </span><p>Notifiation de message.</p>
+                        <i class="far fa-flag"></i>
+                         <span style="color:green;"> Nouveau </span><p>Notifiation de signalement (annonce).</p>
                     </div>
                 </div>
             </div>
             <div class="not-bd">
                 <div class="message">
-                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, vous avez réçu un message concernant l'annonce de titre <router-link to="#" class="add"  @click.native="gotoAd">{{myad.titre}}</router-link>.
-                   <br>
-                   Consulter votre boite email pour voir le message.
+                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, une <span style="font-weight:700">annonce</span> a été signalée, cliquez <router-link v-if="mynot.id" to="#" class="add"  @click.native="gotoAd">ici </router-link> pour la consulter.
+                  
+                </div>
+            </div>
+            <div class="not-foot d-flex flex-row justify-content-between">
+                <div class="not-timee">
+                    <i class="far fa-clock"></i> Il y a {{dateA}}
+                </div>
+            </div>
+        </div>
+        <div v-if="notif.use_to_sig" class="container">
+            <div class="not-head d-flex flex-row justify-content-between">
+                <div class="not-title">
+                    <div class="d-flex flex-row  align-items-center">
+                        <i class="far fa-flag"></i>
+                         <span style="color:green;"> Nouveau </span><p>Notifiation de signalement (utilisateur).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="not-bd">
+                <div class="message">
+                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, un <span style="font-weight:700">utilisateur</span> a été signalé, cliquez <router-link v-if="mynot.id" to="#" class="add"  @click.native="gotoAd">ici </router-link>pour consulter.
                 </div>
             </div>
             <div class="not-foot d-flex flex-row justify-content-between">
@@ -24,20 +43,39 @@
         </div>
     </div>
     <div v-else class="us-c-not">
-        <div class="container">
+        <div v-if="notif.ann_id" class="container">
             <div class="not-head d-flex flex-row justify-content-between">
                 <div class="not-title">
                     <div class="d-flex flex-row  align-items-center">
-                        <i class="fas fa-envelope"></i>
-                        <p>Notifiation de message.</p>
+                        <i class="far fa-flag"></i>
+                         <p>Notifiation de signalement (annonce).</p>
                     </div>
                 </div>
             </div>
             <div class="not-bd">
                 <div class="message">
-                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, vous avez réçu un message concernant l'annonce de titre <router-link to="#" class="add"  @click.native="gotoAd">{{myad.titre}}</router-link>.
-                   <br>
-                   Consulter votre boite email pour voir le message.
+                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, une <span style="font-weight:700">annonce</span> a été signalée, cliquez <router-link v-if="mynot.id" to="#" class="add"  @click.native="gotoAd">ici </router-link> pour la consulter.
+                  
+                </div>
+            </div>
+            <div class="not-foot d-flex flex-row justify-content-between">
+                <div class="not-timee">
+                    <i class="far fa-clock"></i> Il y a {{dateA}}
+                </div>
+            </div>
+        </div>
+        <div v-if="notif.use_to_sig" class="container">
+            <div class="not-head d-flex flex-row justify-content-between">
+                <div class="not-title">
+                    <div class="d-flex flex-row  align-items-center">
+                        <i class="far fa-flag"></i>
+                        <p>Notifiation de signalement (utilisateur).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="not-bd">
+                <div class="message">
+                   Bonjour <span style="font-weight:600;">{{ this.$store.state.currentUser.Nom}}</span>, un <span style="font-weight:700">utilisateur</span> a été signalé, cliquez <router-link v-if="mynot.id" to="#" class="add"  @click.native="gotoAd">ici </router-link>pour consulter.
                 </div>
             </div>
             <div class="not-foot d-flex flex-row justify-content-between">
@@ -53,14 +91,12 @@ import Axios from 'axios'
     export default {
         data () {
             return { 
-                myad:[]
+                myad:[],
+                mynot:[]
             }
         },
-        mounted(){
-            this.notVue()
-        },
         beforeMount(){
-            this.getAd()
+            this.getMyNotif()
         },
         computed:{
             dateA(){
@@ -103,11 +139,10 @@ import Axios from 'axios'
         props:['notif'],
         methods: {
             notVue(){
-            var user=localStorage.getItem('usetrixco')
             let formData = new FormData();
-            formData.append('user', user);
+            formData.append('notif', this.notif.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/notVueAdmin', data: formData, method: 'POST' })
+                Axios({url: 'http://localhost:8000/api/notVueAdminn', data: formData, method: 'POST' })
                 .then(respo => {
                     console.log('vue')
                   resolve(respo)
@@ -115,18 +150,36 @@ import Axios from 'axios'
             })
             },
          gotoAd(){
-            this.$router.push({name:'InfoAd',params:{id:this.notif.ann_id}}).then(()=>{
+            this.notVue()
+            if(this.notif.ann_id!==null){
+            this.$router.push({name:'InfoAdm',params:{id:this.mynot.id}}).then(()=>{
             }).catch(err => {
-                
+                this.$router.push('/admin')
             });
+            }
+            else{
+            this.$store.state.notUser=this.mynot.id
+            this.$router.push('/admin/usinf').then(()=>{
+            }).catch(err => {
+                this.$router.push('/admin')
+            });
+            }
+            
+
          },
-         getAd(){
+        getMyNotif(){
             let formData = new FormData();
-            formData.append('ad', this.notif.ann_id);
+            if(this.notif.use_to_sig!==null){
+                formData.append('user_to', this.notif.use_to_sig);
+                console.log('user',this.notif.use_to_sig)}
+            if(this.notif.ann_id!==null){
+                formData.append('ad', this.notif.ann_id);
+                console.log('ad',this.notif.ann_id)}
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getNotifAd', data: formData, method: 'POST' })
+                Axios({url: 'http://localhost:8000/api/getNotifContentAdmin', data: formData, method: 'POST' })
                 .then(respo => {
-                    this.myad=respo.data
+                    this.mynot=respo.data
+                    console.log('result',this.mynot.id)
                   resolve(respo)
                 })
             })
@@ -139,7 +192,7 @@ import Axios from 'axios'
     padding-left: 4%;
 }
 .new{
-    background-color: #d6d6d61a;
+    background-color: #d6d6d648;
 }
 .add{
     font-weight: 700;

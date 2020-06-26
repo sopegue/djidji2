@@ -45,7 +45,7 @@
         },
         methods:{
             goReinit(){
-                this.$router.push('/admin/reinit')
+                this.$router.push('/admin/me/reinit')
             },
             okConnection(){
                 if(this.mailco!==""){

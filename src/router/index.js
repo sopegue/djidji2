@@ -26,21 +26,6 @@ const ifAuthenticated = (to, from, next) => {
     next('/connexion')
 }
 
-const ifAdmNotAuthenticated = (to, from, next) => {
-    if (!store.getters.isAuthenticated) {
-        next()
-        return
-    }
-    next('/admin')
-}
-
-const ifAdmAuthenticated = (to, from, next) => {
-    if (store.getters.isAuthenticated) {
-      next()
-      return
-    }
-    next('/admin/connexion')
-}
 const routes = [
   {
         path: '/admin',
@@ -48,7 +33,6 @@ const routes = [
         children: [
           {
                 path: '',
-                beforeEnter: ifAdmAuthenticated,
                 component: () =>
                 import ('@/components/admin/Dashome.vue'),
                 children: [
@@ -66,10 +50,15 @@ const routes = [
                             import ('@/components/admin/user/UserInf.vue') /* Dashboard */
                     },
                     {
-                        path: 'adinf',
-                        name: 'gvjWelcome',
+                        path: ':id',
                         component: () =>
-                            import ('@/components/admin/ad/AdInf.vue') /* Dashboard */
+                            import ('../views/InfoAdsadm.vue'),
+                        children: [{
+                            path: '',
+                            name: 'InfoAdm',
+                            component: () =>
+                                import ('@/components/admin/ad/AdInf.vue')
+                        }, ]
                     },
 
                     {
@@ -85,12 +74,10 @@ const routes = [
                             import ('@/components/admin/AdStat.vue') /* Dashboard */
                     },
                     {
-                        path: 'myuser',
+                        path: 'myuser/me',
                         component: User,
-                        beforeEnter: ifAdmAuthenticated,
                         children: [{
                             path: '',
-                            beforeEnter: ifAdmAuthenticated,
                             component: () =>
                                 import ('@/components/admin/user/User.vue'),
                             children: [{
@@ -122,7 +109,7 @@ const routes = [
         
                     },
                     {
-                        path: 'users',
+                        path: 'users/me',
                         component: () =>
                             import ('@/components/admin/user/UserGest.vue') /* Dashboard */ ,
                         children: [{
@@ -159,7 +146,7 @@ const routes = [
                         ]
                     },
                     {
-                        path: 'ads',
+                        path: 'ads/me',
                         component: () =>
                             import ('@/components/admin/ad/AdGest.vue') /* Dashboard */ ,
                         children: [{
@@ -180,29 +167,25 @@ const routes = [
             },
             
             {
-                path: 'connexion',
+                path: 'me/connexion',
                 name: 'DashomeConnexion',
-                beforeEnter: ifAdmNotAuthenticated,
                 component: () =>
                     import ('@/components/connexion/AdmConnexion.vue') /* Dashboard */
             },
             {
-              path: 'reinit',
+              path: 'me/reinit',
               name: 'Pwdinitad',
-              beforeEnter: ifAdmNotAuthenticated,
               component: () =>
                   import ('@/components/user/AdmReinit.vue')
           },
           {
-              path: 'reset',
+              path: 'me/reset',
               name: 'Pwdresad',
-              beforeEnter: ifAdmNotAuthenticated,
               component: () =>
                   import ('@/components/user/AdmReset.vue')
           },
           {
-              path: 'verification',
-              beforeEnter: ifAdmNotAuthenticated,
+              path: 'me/verification',
               name: 'Verifyad',
               component: () =>
                   import ('@/components/user/AdmVerify.vue')

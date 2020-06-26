@@ -100,7 +100,7 @@ export default {
                         this.$notify({
                             group: 'verifiedMail',
                         });
-                        this.$router.push('/admin/verification')
+                        this.$router.push('/admin/me/verification')
                     }
                     else{
                         this.$Progress.finish()

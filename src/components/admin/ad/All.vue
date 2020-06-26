@@ -16,7 +16,7 @@
         <h6>Aucune donnée disponible.</h6>
         <hr>
       </div>
-      <table v-else class="table table-bordered">
+      <table v-else class="table table-bordered table-hover">
   <thead>
     <tr class="sticky-top">
       <th scope="col">#</th>
@@ -33,7 +33,7 @@
       <td>{{ad.titre}}</td>
       <td>{{ad.categorie}}</td>
       <td>{{ad.prix}}</td>
-      <td class="text-center"><div class="d-flex justify-content-between actbtnn"><button @click="gotoAd()" class="btn"><i class="fas fa-eye"></i></button><button class="btn"><i class="fas fa-trash"></i></button></div></td>
+      <td class="text-center"><div class="d-flex justify-content-between actbtnn"><button @click="gotoAd()" class="btn"><i class="fas fa-eye"></i></button></div></td>
     </tr>
   </tbody>
 </table>

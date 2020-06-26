@@ -12,7 +12,8 @@
             <label for="mail">Email <span style="color:red;">*</span></label>
             <input type="text" id="mail" name="mail" placeholder="Email"  v-model="mail" /><br>
             <label for="username">Nom <span style="color:red;">*</span></label>
-            <input type="text" id="username" name="username" placeholder="Nom" v-model="name" /><br>
+            <input type="text" id="username" name="username" placeholder="Nom" v-model="name" />
+            <span v-if="notname" style="color:red; font-size:12px">Vous devez donner un nom !</span><br>
             <label for="surname">Prénom</label>
             <input type="text" id="surname" name="surname" placeholder="Prénom" v-model="surname"/><br>
             <label for="pwd">Mot de passe  <span style="color:red;">*</span></label>
@@ -138,6 +139,7 @@
         data () {
             return {
                 loging:false,
+                notname:false,
                 registring:false,
                 remember:false,
                 picUploaded:false,
@@ -267,7 +269,12 @@
                         this.$store.state.okConnection.okpwd="false"
             },
             okRegister(){
-
+                if(this.name===''){
+                    this.notname=true
+                }
+                else{
+                    this.notname=false
+                }
                 if(this.mail!==""){
                     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.mail)){
                         this.$store.state.okConnection.okregmail="true"
@@ -357,7 +364,7 @@
                 this.$store.state.okConnection.notok=""
                 this.$store.state.okConnection.okregmail=""
                 this.okRegister()
-                if((this.$store.state.okConnection.okregmail==="true" && this.$store.state.okConnection.okregpwd==="true" && this.$store.state.okConnection.okregpwd2==="true")&&this.$store.state.okConnection.notokpwd!=="false"){
+                if((this.$store.state.okConnection.okregmail==="true" && this.$store.state.okConnection.okregpwd==="true" && this.$store.state.okConnection.okregpwd2==="true")&&this.$store.state.okConnection.notokpwd!=="false"  && this.name!==''){
                     this.$store.state.okConnection.okregpwd=""
                     this.$store.state.okConnection.okregpwd2=""
                     this.$store.state.okConnection.notokpwd=""

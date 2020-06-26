@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    notUser:0,
     mimage:'',
   finish:false,
   notUserExist:false,

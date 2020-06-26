@@ -7,8 +7,8 @@
       </div>
       <div class="linlink">
           <ul class="d-flex justify-content-between">
-              <li><router-link class="nnlink" to="/admin/ads">Tous les annonces (454)</router-link></li>
-              <li><router-link class="nnlink" to="/admin/ads/report">Signalées(22)</router-link></li>
+              <li><router-link class="nnlink" to="/admin/ads/me">Tous les annonces (454)</router-link></li>
+              <li><router-link class="nnlink" to="/admin/ads/me/report">Signalées(22)</router-link></li>
           </ul>
       </div>
       <router-view></router-view>

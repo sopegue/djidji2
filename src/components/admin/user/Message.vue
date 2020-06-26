@@ -1,6 +1,8 @@
 <template >
 <div class="us-mess">
 <div class="container">
+  
+    <h6>{{mysmessage.length}} message(s)</h6>
   <div class="d-flex justify-content-between">
   <h5 class="">Ma boite à messagerie</h5>
   <ul class="addli">
@@ -60,13 +62,18 @@
   <hr>
 </div>
 <div class="sms overflow-auto" style="max-height:500px" v-else>
+  <div v-if="!editing">
   <div v-for="(mess,index) in mymessage"
   :key="index">
-  <div v-if="mess.seen==0" class="bgg sms-item d-flex flex-row justify-content-between align-items-center" >
+  <div :title="mess.name" v-if="mess.seen==0" class="bgg sms-item d-flex flex-row justify-content-between" >
     <h5>{{sender(mess.name)}}<span style="font-size:18px;opacity:0.6"> {{mess.nb}}</span> | </h5>
-    <p style="opacity:0.8;font-size:19px">{{mysms(mess.content)}}</p>
-    <p style="font-size:13px;opacity:0.8"> | Il y'a {{dateM(mess)}}</p>
+    <p style="opacity:0.7;font-size:18px">{{mysms(mess.content)}}</p>
+    <p style="font-size:12px;opacity:0.7;margin-top:0.4rem"> | Il y'a {{dateM(mess)}}</p>
   </div>
+  </div>
+  </div>
+  <div v-else>
+    <router-view></router-view>
   </div>
 </div>
 </div>
@@ -74,10 +81,10 @@
 </template>
 <style scoped>
 .bgg {
-  background-color: rgba(0, 0, 0, 0.014);
+  background-color: 	#004e6604;
 }
 .bgg:hover{
-  background-color: rgba(0, 0, 0, 0.055);
+  background-color: #004e6610;
 }
 </style>
 <script>
@@ -98,6 +105,7 @@ function onlyUnique(value, index, self) {
         data () {
             return { 
               adding:true,
+              editing:false,
               isLoading:true,
               search:'',
               message:'',
@@ -125,14 +133,14 @@ function onlyUnique(value, index, self) {
         methods: {
           
            sender(nom){
-            if(nom.length>15)
-            return nom.slice(0,12)+'...'
+            if(nom.length>8)
+            return nom.slice(0,5)+'...'
             return nom
           },
           
            mysms(nom){
-            if(nom.length>58)
-            return nom.slice(0,55)+'...'
+            if(nom.length>55)
+            return nom.slice(0,52)+'...'
             return nom
           },
          getMess(){
@@ -399,7 +407,7 @@ form {
 }
 .sms-item{
    padding-left: 10%;
-   padding-top: 1.3%;
+   padding-top: 1.1%;
   padding-right: 10%;
   width: 100%;
   height: 48px;

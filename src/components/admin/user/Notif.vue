@@ -1,5 +1,6 @@
 <template >
     <div class="us-not">
+        <h6>{{not.length}} notification(s)</h6>
         <h5 class="">Mes notifications</h5>
         <hr class="hr-us-inf">
         <div v-if="isLoading" class="us-list-load">
@@ -11,7 +12,7 @@
             </div>
             <div v-else> 
             <Notification 
-            v-for="notif in not"
+            v-for="notif in not.slice().reverse()"
             :key="notif.id"
             :notif="notif"
             >
@@ -41,15 +42,18 @@
         top: 3rem;
     }
     .not-div{
-        height: 700px;
+        max-height: 600px;
     }
 </style>
 <script>
-    import Notification from '@/components/user/Notification.vue'
+    import Notification from '@/components/admin/user/Notification.vue'
     import Axios from 'axios'
     export default {
         components:{
             Notification,
+        },
+        updated(){
+            this.getNotif()
         },
         beforeMount(){
             this.getNotif()
@@ -67,7 +71,7 @@
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getNotif', data: formData, method: 'POST' })
+                Axios({url: 'http://localhost:8000/api/getNotifAdmin', data: formData, method: 'POST' })
                 .then(respo => {
                   this.isLoading=false
                   this.not=respo.data

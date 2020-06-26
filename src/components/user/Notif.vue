@@ -1,5 +1,7 @@
 <template >
     <div class="us-not">
+        
+        <h6>{{not.length}} notification(s)</h6>
         <h5 class="">Mes notifications</h5>
         <hr class="hr-us-inf">
         <div v-if="isLoading" class="us-list-load">
@@ -11,7 +13,7 @@
             </div>
             <div v-else> 
             <Notification 
-            v-for="notif in not"
+            v-for="notif in not.slice().reverse()"
             :key="notif.id"
             :notif="notif"
             >
@@ -41,7 +43,7 @@
         top: 3rem;
     }
     .not-div{
-        height: 700px;
+        max-height: 500px;
     }
 </style>
 <script>
@@ -50,6 +52,9 @@
     export default {
         components:{
             Notification,
+        },
+        updated(){
+            this.getNotif()
         },
         beforeMount(){
             this.getNotif()
