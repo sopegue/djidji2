@@ -586,8 +586,18 @@ isUserExist({commit,dispatch,state},user){
         return new Promise((resolve, reject)=>{
         Axios({url: 'http://localhost:8000/api/user/check', data: {token:state.accessToken}, method: 'POST' })
             .then(respo => {
-              commit('auth_user', respo.data)
-              commit('auth_token')
+              if(respo.data.id)
+              {
+                console.log('unblocked')
+                commit('auth_user', respo.data)
+                commit('auth_token')
+              }
+              else
+              {
+                console.log('blocked')
+                state.currentUser=[]
+                localStorage.clear()
+              }
               resolve(respo)
             }).catch(err => {
               state.okConnection.notok="true"

@@ -159,6 +159,7 @@ import Axios from 'axios'
             }
             else{
             this.$store.state.notUser=this.mynot.id
+            localStorage.setItem('ccur', this.mynot.id)
             this.$router.push('/admin/usinf').then(()=>{
             }).catch(err => {
                 this.$router.push('/admin')

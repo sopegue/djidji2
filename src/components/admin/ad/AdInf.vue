@@ -70,7 +70,7 @@
       <div class="bdd-right">
           <div class="titre">
             <div>
-              <i class="fas fa-tags"></i><span> Informatique </span> ><span> Ordinateur portable</span> <button title="Supprimer l'annonce" class="btn"><i class="fas fa-trash"></i></button>
+              <i class="fas fa-tags"></i><span> Informatique </span> ><span> Ordinateur portable</span> <button title="Supprimer l'annonce" @click="deletead(ad.id)" class="btn"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           <div class="pr-titre">
@@ -99,9 +99,9 @@
           </div>
           
           <div class="contact-bdd d-flex flex-row justify-content-between">
-             <button type="button" class="btn bbttn btn-primary"><i class="fas fa-eye"></i> Voir le profil</button>
-            <div v-if="user.isblocked===0" class="d-flex justify-content-between"><button title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><i class="fas fa-lock-open"></i></button></div>
-            <div v-else class="d-flex justify-content-between"><button class="btn btn-danger" title="Cliquez pour débloquer l'utilisateur"><i class="fas fa-lock"></i></button></div>
+             <button type="button" @click="gotoUser(ad.use_id)" class="btn bbttn btn-primary"><i class="fas fa-eye"></i> Voir le profil</button>
+            <div v-if="user.isblocked===0" class="d-flex justify-content-between"><button @click="block(ad.use_id)" title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><span key="stared" v-show="user.isblocked==0"><i class="fas fa-lock-open"></i></span></button></div>
+            <div v-else class="d-flex justify-content-between"><button class="btn btn-danger" @click="unblock(ad.use_id)"  title="Cliquez pour débloquer l'utilisateur"><span key="unstared" v-show="user.isblocked!=0"><i class="fas fa-lock"></i></span></button></div>
           </div>
           <hr class="hr11">
           
@@ -113,6 +113,7 @@
 </template>
 <script>
 import { VueperSlides, VueperSlide } from 'vueperslides'
+import Axios from 'axios'
 import 'vueperslides/dist/vueperslides.css'
 export default {
   name: 'InfoAd',
@@ -289,6 +290,69 @@ export default {
       }
   },
   methods:{
+    block(id){
+       let r = prompt('Souhaitez-vous bloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour bloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+         let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/blockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   this.user.isblocked=1
+                    console.log('blocked')
+                        this.$notify({
+                          group: 'usblocked',
+                        });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
+    unblock(id){
+       let r = prompt('Souhaitez-vous débloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour débloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+        let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/unblockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   this.user.isblocked=0
+                    console.log('unblocked')
+                    this.$notify({
+                          group: 'usunblocked',
+                    });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
+    gotoUser(us){
+        this.$store.state.notUser=us
+       this.$router.push('/admin/usinf').catch(err => {});
+        
+      },
+    deletead(id){
+      let r = prompt('Voulez-vous supprimer cette annonce? Entrez le mot "oui" puis cliquez sur Ok pour supprimer')
+        if (r == 'oui') {
+        this.$Progress.start()
+        var content = new FormData()
+          content.append('ad',id)
+          content.append('admin',this.$store.state.currentUser.id)
+          this.$store.dispatch('supprimerAd',content).then(()=>{
+            this.$notify({
+              group: 'deladdel',
+            });
+             this.$Progress.finish()
+             this.$router.go(-1)
+          })
+          }
+      },
      goBack(){
           this.$router.go(-1);
       },

@@ -7,7 +7,7 @@
             
             <li  @click="active" v-bind:class="{'actives': active3}"><router-link class="a-prof" to="/admin/myuser/me/message">
               
-                <i class="far fa-comment"></i> Messages <span v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span></router-link>
+                <i class="far fa-comment"></i> Messages <span v-show="hasMess ||nbContact!==0" class="spii badge badge-pill badge-success">{{nbMess + nbContact}}</span></router-link>
             </li>
             <li  @click="active" v-bind:class="{'actives': active4}"><router-link class="a-prof" to="/admin/myuser/me/notif">
               
@@ -30,6 +30,7 @@ export default {
       return {
           active1:false,
           nbNotif:0,
+          nbContact:0,
           nbMess:0,
           hasNotif:false,
           hasMess:false,
@@ -46,10 +47,6 @@ export default {
         Notif,
         Pwd
     },
-    updated(){
-        this.checkNotif()
-        this.checkMess()
-    },
     beforeMount(){
         this.checkNotif()
         this.checkMess()
@@ -57,6 +54,7 @@ export default {
     },
     created(){
        this.active();
+       this.getContactUs()
     },
     computed:{
         currentRouteName() {
@@ -64,6 +62,15 @@ export default {
         },
     },
     methods:{
+        getContactUs(){
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/getContactUsNb', method: 'GET' })
+                .then(respo => {
+                  this.nbContact=respo.data
+                  resolve(respo)
+                })
+            })
+            },
         checkNotif(){
             let formData = new FormData();
             var user=localStorage.getItem('usetrixco')

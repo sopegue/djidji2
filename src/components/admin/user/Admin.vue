@@ -37,8 +37,8 @@
       <td>{{us.email}}</td>
       <td>{{us.type}}</td>
         <td class="onl">Membre depuis {{dateM(us)}}.</td>
-       <td class="text-center"><div v-if="us.isblocked===0" class="d-flex justify-content-between"><button title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><i class="fas fa-lock-open"></i></button><button @click="gotoUser(us.id)" class="btn"><i class="fas fa-eye"></i></button></div>
-       <div v-else class="d-flex justify-content-between"><button class="btn btn-danger" title="Cliquez pour débloquer l'utilisateur"><i class="fas fa-lock"></i></button><button @click="gotoUser(us.id)" class="btn"><i class="fas fa-eye"></i></button></div></td>
+       <td class="text-center"><div v-if="us.isblocked===0" class="d-flex justify-content-between"><button @click="block(us.id,us)" title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><span key="stared" v-show="us.isblocked==0"><i class="fas fa-lock-open"></i></span></button></div>
+       <div v-else class="d-flex justify-content-between"><button class="btn btn-danger" @click="unblock(us.id,us)"  title="Cliquez pour débloquer l'utilisateur"><span key="unstared" v-show="us.isblocked!=0"><i class="fas fa-lock"></i></span></button></div></td>
     </tr>
   </tbody>
 </table>
@@ -49,6 +49,7 @@
 
 <script>
 // @ is an alias to /src
+import Axios from 'axios'
 export default {
     data(){
         return{
@@ -90,7 +91,50 @@ export default {
     this.userCpy=this.users;
   },
     methods:{
-      
+       block(id,us){
+       let r = prompt('Souhaitez-vous bloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour bloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+         let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/blockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   us.isblocked=1
+                    console.log('blocked')
+                    this.getUser()
+                        this.$notify({
+                          group: 'usblocked',
+                        });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
+    unblock(id,us){
+       let r = prompt('Souhaitez-vous débloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour débloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+        let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/unblockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   us.isblocked=0
+                    console.log('unblocked')
+                    this.getUser()
+                    this.$notify({
+                          group: 'usunblocked',
+                    });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
     dateM(user){
       var date=new Date(user.created_at.toString())
       var date1 = Date.now()
@@ -130,6 +174,7 @@ export default {
     },
       gotoUser(us){
         this.$store.state.notUser=us
+        localStorage.setItem('ccur', us)
        this.$router.push('/admin/usinf').catch(err => {});
         
       },

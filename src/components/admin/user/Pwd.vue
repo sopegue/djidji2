@@ -30,9 +30,6 @@
 </template>
 <script>
     export default {
-        mounted(){
-
-        },
         data () {
             return { 
                 pwd:'',

@@ -1,6 +1,6 @@
 <template >
 <div class="us-mess">
-<div class="container">
+<div v-if="boite" class="container">
   
     <h6>{{mysmessage.length}} message(s)</h6>
   <div class="d-flex justify-content-between">
@@ -45,7 +45,7 @@
             <form @submit.prevent="envoyerMess" class="mx-auto">
                 <div class="mx-auto">
                   <textarea name="message" type="text" id="input-message" placeholder="Votre message" v-model="message"></textarea>
-                  <span style="color:red;font-size:12px;" v-if="messValid">Veuillez ajouter un message ! </span>
+                  
                 </div>
                   <div v-if="sending" class="cdcd spinner-border text-secondary" role="status">
                     <span class="sr-only">Loading...</span>
@@ -63,9 +63,14 @@
 </div>
 <div class="sms overflow-auto" style="max-height:500px" v-else>
   <div v-if="!editing">
-  <div v-for="(mess,index) in mymessage"
+  <div @click="goMess(mess.use_id)" v-for="(mess,index) in mymessage"
   :key="index">
   <div :title="mess.name" v-if="mess.seen==0" class="bgg sms-item d-flex flex-row justify-content-between" >
+    <span style="font-size:12px;color:green; position:absolute; left:5%"> Nouveau </span><h5>{{sender(mess.name)}}<span style="font-size:18px;opacity:0.6"> {{mess.nb}}</span> | </h5>
+    <p style="opacity:0.7;font-size:18px">{{mysms(mess.content)}}</p>
+    <p style="font-size:12px;opacity:0.7;margin-top:0.4rem"> | Il y'a {{dateM(mess)}}</p>
+  </div>
+  <div v-else :title="mess.name" class="bggg sms-item d-flex flex-row justify-content-between" >
     <h5>{{sender(mess.name)}}<span style="font-size:18px;opacity:0.6"> {{mess.nb}}</span> | </h5>
     <p style="opacity:0.7;font-size:18px">{{mysms(mess.content)}}</p>
     <p style="font-size:12px;opacity:0.7;margin-top:0.4rem"> | Il y'a {{dateM(mess)}}</p>
@@ -76,37 +81,113 @@
     <router-view></router-view>
   </div>
 </div>
+<hr class="hr-us-inf">
+<h6>{{notif.length}} message(s)</h6>
+  <div class="d-flex justify-content-between">
+  <h5 class="">Messages d'tilisateur(s) particulier(s)</h5>
+  </div>
+  <hr class="hr-us-inf">
+  <div v-if="issLoading" class="us-list-load">
+      <b-spinner class="p" label="Loading..."></b-spinner>
+  </div>
+  <div v-else class="sms overflow-auto" style="max-height:500px">
+  <MessageContactUs 
+  v-for="not in notif.slice().reverse()"
+  :key="not.id"
+  :notif="not"
+  >
+  </MessageContactUs>
+  </div>
+</div>
+
+
+<div v-else class="container">
+<div class="scc">
+  <button @click="goBack()" class="btn btn-success"><i class="fas fa-arrow-left"></i> Retour</button>
+</div>
+<div v-if="iisLoading" class="us-list-load">
+    <b-spinner class="p" label="Loading..."></b-spinner>
+</div>
+<div v-else class="overflow-auto" style="max-height:500px; margin-top:1.5rem">
+
+<div class="allm" v-for="(mess,index) in allM"
+  :key="index">
+  <div class="d-flex flex-column">
+<div class="d-flex flex-row justify-content-between">
+<div class="us-inf-imgs d-flex flex-row " style="position:relative;"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
+  <img :style="{'position':'relative' }" :data-src="'http://localhost:8000/storage/'+mess.use_id+'/profile/'+mess.pp"/>
+  <p style="position:relative; left:15%;"><span style="font-weight:700">{{mess.Nom}}</span></p>
+</div>
+<div class="d-flex flex-row justify-content-between">
+<p style="font-size:12px">Il y'a {{dateM(mess)}}</p>
+<button type="button" class="btn" v-if="mess.response==null" @click="setToRes(mess)" title="Répondre" style="float:right; margin-top:-0.8rem"><i class="fa fa-reply" aria-hidden="true"></i></button>
+</div>
+</div>
+<div>
+  <p style="position:relative; left:6.8%; width:75%;word-wrap: break-word;">{{mess.content}}
+  </p>
+</div>
+
+<div v-if="mess.response!=null" style="width:100%;" class="d-flex flex-column align-self-end">
+<p class="align-self-end" style="position:relative;"><span style="font-weight:700">Moi</span></p>
+<p class="align-self-end" style="position:relative;direction: rtl; max-width:75%;word-wrap: break-word;">
+  {{mess.response}}
+  </p>
+</div>
+</div>
+<div v-if="mess.respond">
+<button type="button" title="Fermer" @click="close(mess)"><i class="fa fa-times" aria-hidden="true"></i></button>
+<form  @submit.prevent="respond(mess.id)" class="mx-auto">
+    <div class="mx-auto">
+      <textarea name="message" type="text" id="input-message" placeholder="Votre message" v-model="message"></textarea>
+    </div>
+      <div v-if="sending" class="cdcd spinner-border text-secondary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    <button type="submit" id="input-submit">Envoyer <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+</form>
+</div>
+</div>
+</div>
 </div>
 </div>
 </template>
 <style scoped>
 .bgg {
-  background-color: 	#004e6604;
+  background-color: 	#004e660c;
 }
-.bgg:hover{
-  background-color: #004e6610;
+.bgg:hover,.bggg:hover{
+  background-color: #004e6617;
 }
 </style>
 <script>
+import MessageContactUs from '@/components/admin/user/MessageContactUs.vue'
 function onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;
 }
   import Axios from 'axios'
     export default {
-      updated(){
-        this.getMess()
-      },
       beforeMount(){
             this.getMess()
+            this.getContactUs()
+        },
+        components:{
+          MessageContactUs
         },
         mounted(){
           this.getUser()
         },
         data () {
-            return { 
+            return {
+              notif:[],
+              curUs:0,
+              toResp:0,
+              iisLoading:true,
+              boite:true,
               adding:true,
               editing:false,
               isLoading:true,
+              issLoading:true,
               search:'',
               message:'',
               messValid:false,
@@ -117,7 +198,8 @@ function onlyUnique(value, index, self) {
               mysmessage:[],
               currentUs:[],
               us:[],
-              usUnique:[]
+              usUnique:[],
+              allM:[]
 
             }
         },
@@ -131,7 +213,60 @@ function onlyUnique(value, index, self) {
         }
         },
         methods: {
-          
+          setToRes(mess){
+            console.log('clic')
+            mess.respond=true
+          },
+          respond(id){
+            if(this.checkField()){
+            this.sending=true
+            let formData = new FormData();
+            formData.append('id', id);
+            formData.append('message',this.message)
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/getAdmMessageRespond',data: formData, method: 'POST' })
+                .then(respo => {
+                  console.log('responded')
+                  this.envoyerMessAll()
+                  
+                  this.resetField()
+                  this.$notify({
+                      group: 'success-sendEmail',
+                  });
+                  this.sending=false
+                  this.getAllMess(this.curUs,this.$store.state.currentUser.id)
+                  resolve(respo)
+                })
+            })
+            }
+          },
+          close(mess){
+           mess.respond=false
+          },
+          goBack(){
+            this.boite=true
+          },
+          goMess(us){
+            this.curUs=us
+            this.boite=false
+            this.iisLoading=true
+            //this.setVue(us.id,this.$store.state.currentUser.id)
+            this.getAllMess(us,this.$store.state.currentUser.id)
+          },
+          getAllMess(user,me){
+
+            let formData = new FormData();
+            formData.append('user', user);
+            formData.append('me', me);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/getAdmMessage',data: formData, method: 'POST' })
+                .then(respo => {
+                  this.allM=respo.data
+                  this.iisLoading=false
+                  resolve(respo)
+                })
+            })
+          },
            sender(nom){
             if(nom.length>8)
             return nom.slice(0,5)+'...'
@@ -173,6 +308,16 @@ function onlyUnique(value, index, self) {
                 })
             })
             },
+            getContactUs(){
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/getContactUs', method: 'GET' })
+                .then(respo => {
+                  this.notif=respo.data
+                  this.issLoading=false
+                  resolve(respo)
+                })
+            })
+            },
           checkField(){
       this.messValid=false
       if(this.message!==''){
@@ -185,7 +330,7 @@ function onlyUnique(value, index, self) {
       this.message=''
     },
     dateM(mess){
-      var date=new Date(mess.created_at.toString())
+      var date=new Date(mess.updated_at.toString())
       var date1 = Date.now()
       var mili = date.getTime()
       const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
@@ -221,6 +366,20 @@ function onlyUnique(value, index, self) {
         return '1 minute'
       }
     },
+  envoyerMessAll(){
+        if(this.checkField()){
+        var content = new FormData()
+        content.append('to_user',this.curUs)
+        content.append('message',this.message)
+        content.append('user',this.$store.state.currentUser.id)
+        content.append('name',this.$store.state.currentUser.Nom)
+        // envoyer le message
+        this.$store.dispatch('sendAdmMess',content).then(()=>{
+          this.getAllMess(this.curUs,this.$store.state.currentUser.id)
+        })
+      }
+          },
+
       envoyerMess(){
         if(this.checkField()){
         this.sending=true
@@ -415,6 +574,14 @@ form {
   border-bottom: 1px solid rgba(0,0,0,.12);
   cursor: pointer;
 }
+.allm{
+   padding-left: 10%;
+   padding-top: 1.1%;
+  padding-right: 10%;
+  width: 100%;
+  margin: 0 auto;
+  border-bottom: 1px solid rgba(0,0,0,.12);
+}
 .user{
   padding-left: 10%;
   padding-right: 10%;
@@ -433,7 +600,16 @@ form {
         width: 38px !important;
         height: 38px !important;
     } 
+    .us-inf-imgs{
+        width: fit-content !important;
+        height: 38px !important;
+    } 
     .us-inf-img img{
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50%;
+    }
+    .us-inf-imgs img{
         width: 38px !important;
         height: 38px !important;
         border-radius: 50%;

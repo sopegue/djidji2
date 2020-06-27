@@ -49,10 +49,11 @@
             </div>
          </div>
          <div v-if="user.isblocked!==0">
-             <button class="btn btn-danger" title="Cliquez pour débloquer l'utilisateur"><i class="fas fa-lock"></i></button>
+             <button class="btn btn-danger" @click="unblock(user.id)"  title="Cliquez pour débloquer l'utilisateur"><span key="unstared" v-show="user.isblocked!=0"><i class="fas fa-lock"></i></span></button>
          </div>
          <div v-else>
-             <button class="btn btn-success sssc" title="Cliquez pour bloquer l'utilisateur"><i class="fas fa-lock-open"></i></button>
+             <button @click="block(user.id)" title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><span key="stared" v-show="user.isblocked==0"><i class="fas fa-lock-open"></i></span></button>
+             
          </div>
           
          
@@ -63,16 +64,19 @@
   </div>
 </template>
 <script>
+import Axios from 'axios'
 // @ is an alias to /src
 export default {
     data(){
         return{
             isLoading:true,
             user:[],
+            us:0,
             blocked:false
         }
     },
     beforeMount(){
+        this.us=localStorage.getItem('ccur')
         this.getUser()
         this.$Progress.finish();
     },
@@ -116,9 +120,51 @@ export default {
     },
     },
     methods:{
+        block(id){
+       let r = prompt('Souhaitez-vous bloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour bloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+         let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/blockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   this.user.isblocked=1
+                    console.log('blocked')
+                        this.$notify({
+                          group: 'usblocked',
+                        });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
+    unblock(id){
+       let r = prompt('Souhaitez-vous débloquer cet utilisateur ? Entrez le mot "oui" puis cliquez sur Ok pour débloquer')
+      if (r == 'oui') {
+        this.$Progress.start()
+        let formData = new FormData();
+            formData.append('user', id);
+            formData.append('me', this.$store.state.currentUser.id);
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/unblockuser', data: formData, method: 'POST' })
+                .then(respo => {
+                   this.user.isblocked=0
+                    console.log('unblocked')
+                    this.$notify({
+                          group: 'usunblocked',
+                    });
+                    this.$Progress.finish()
+                  resolve(respo)
+                })
+            })
+      }
+    },
         async getUser(){
         this.$Progress.start();
-        const { data } = await this.$http.get(`http://localhost:8000/api/user/${this.$store.state.notUser}`);
+        const { data } = await this.$http.get(`http://localhost:8000/api/user/${this.us}`);
        // alert(this.ad.use_id)
         this.user=data;
         this.isLoading=false

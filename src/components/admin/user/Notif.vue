@@ -52,9 +52,6 @@
         components:{
             Notification,
         },
-        updated(){
-            this.getNotif()
-        },
         beforeMount(){
             this.getNotif()
         },

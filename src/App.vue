@@ -63,6 +63,24 @@
   </template>
 </notifications>
 
+<notifications group="usblocked" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Utilisateur bloqué &#10003;
+      </div>
+  </template>
+</notifications>
+
+<notifications group="usunblocked" :max="1" :closeOnClick="true"
+    position="top center">
+      <template slot="body">
+      <div class="alert alert-success text-center">
+        Utilisateur débloqué &#10003;
+      </div>
+  </template>
+</notifications>
+
 <notifications group="coderesent" :max="1" :closeOnClick="true"
     position="top center">
       <template slot="body">
@@ -294,7 +312,13 @@ export default {
   },
   created() {
     //localStorage.clear();
-    this.$store.dispatch('checkLogin').catch(()=>{
+    this.$store.dispatch('checkLogin')
+    .then(()=>{
+      if(!this.$store.state.currentUser.id){
+        console.log('app block')
+      }
+    })
+    .catch(()=>{
       this.$router.push('/connexion')
     })
   Axios.interceptors.response.use(undefined, function (err) {

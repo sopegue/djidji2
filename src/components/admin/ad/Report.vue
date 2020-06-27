@@ -16,23 +16,26 @@
         <h6>Aucune donnée disponible.</h6>
         <hr>
       </div>
-      <table v-else class="table table-bordered">
+      <table v-else class="table table-bordered table-hover">
   <thead>
     <tr class="sticky-top">
       <th scope="col">#</th>
       <th scope="col">Titre</th>
       <th scope="col">Catégorie</th>
       <th scope="col">Prix</th>
+      <th scope="col">Date ajout</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="(ad,index) in filteredList"
+    <tr v-for="(ad,index) in filteredList.slice().reverse()"
     :key="index">
       <th scope="row">{{++index}}</th>
-      <td>{{ad.titre}}</td>
+      <td>{{titres(ad)}}</td>
       <td>{{ad.categorie}}</td>
-      <td>{{ad.prix}} <td class="text-center"><div class="d-flex justify-content-between actbtnn"><button @click="gotoAd()"  class="btn"><i class="fas fa-eye"></i></button><button class="btn"><i class="fas fa-trash"></i></button></div></td>
+      <td>{{prix(ad)}} FCFA</td>
+      <td> Ajoutée il y'a {{dateM(ad)}}</td>
+       <td class="text-center"><div class="d-flex justify-content-between actbtnn"><button @click="gotoAd(ad.id)"  class="btn"><i class="fas fa-eye"></i></button><button title="Supprimer l'annonce" @click="deletead(ad.id)" class="btn"><i class="fas fa-trash"></i></button></div></td>
     </tr>
   </tbody>
 </table>
@@ -204,20 +207,6 @@
 }
 </style>
 <script>
- function Ads({ id, use_id, categorie, titre, description, marque, prix, pp, nbvues, added_at, updated_at}) 
-  {
-     this.id = id;
-     this.use_id= use_id;
-     this.categorie= categorie;
-     this.titre=titre;
-     this.description=description;
-     this.marque=marque;
-     this.prix=prix;
-     this.pp=pp;
-     this.nbvues=nbvues;
-     this.added_at=added_at;
-     this.updated_at=updated_at;
-   }
 // @ is an alias to /src
 export default {
     data(){
@@ -255,12 +244,101 @@ export default {
     this.adCpy=this.ads;
   },
     methods:{
-        gotoAd(){
-         this.$router.push('/admin/adinf');
+      
+      titres(ad){
+        var str = ad.titre;
+      var len = str.length;
+       if(str.length>19)
+       return str.slice(0,16)+'...'
+       return str
+      },
+    prix(ad){
+       var str = ad.prix.toString();
+      var len = str.length;
+      if (len > 4) {
+        if (len == 5) str = str.slice(0, 2) + " " + str.slice(2);
+        if (len == 6) str = str.slice(0, 3) + " " + str.slice(3);
+        if (len == 7)
+          str = str.charAt(0) + " " + str.slice(1, 4) + " " + str.slice(4);
+        if (len == 8){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2, 5) + " " + str.slice(5);
+        }
+        if (len == 9){
+          //if(count==1)
+          str = str.slice(0, 3) + " " + str.slice(3, 6) + " " + str.slice(6);
+        }
+        if (len == 10){
+          //if(count==1)
+          str = str.slice(0, 1) + " " + str.slice(1, 4) + " " + str.slice(4,7)+ " " + str.slice(7);
+        }
+      }
+      return str;
+    
+    },
+      dateM(mess){
+      var date=new Date(mess.created_at.toString())
+      var date1 = Date.now()
+      var mili = date.getTime()
+      const diffTime = Math.floor(Math.abs(date1 - mili)/1000)
+      console.log(diffTime + " seconds")
+      if(Math.floor(diffTime/60)>=1){
+        if(Math.floor(diffTime/(60*60))>=1){
+          if(Math.floor(diffTime/(60*60*24))>=1){
+            if(Math.floor(diffTime/(60*60*24*7))>=1){
+              if(Math.floor(diffTime/(60*60*24*7*4))>=1){
+                if(Math.floor(diffTime/(60*60*24*7*4*12))>=1){
+                  return Math.floor(diffTime/(60*60*24*7*4*12)).toString()+' an(s)'
+                }
+                else
+                  return Math.floor(diffTime/(60*60*24*7*4)).toString()+' mois'
+                
+              }
+              else
+                return Math.floor(diffTime/(60*60*24*7)).toString()+' semaine(s)'
+            }
+            else{
+              return Math.floor(diffTime/(60*60*24)).toString()+' jour(s)'
+            }
+          }
+          else{
+            return Math.floor(diffTime/(60*60)).toString()+' heure(s)'
+          }
+        }
+        else{
+          return Math.floor(diffTime/60).toString()+' minute(s)'
+        }
+      }
+      else{
+        return '1 minute'
+      }
+    },
+    deletead(id){
+      let r = prompt('Voulez-vous supprimer cette annonce? Entrez le mot "oui" puis cliquez sur Ok pour supprimer')
+        if (r == 'oui') {
+        this.$Progress.start()
+        var content = new FormData()
+          content.append('ad',id)
+          content.append('admin',this.$store.state.currentUser.id)
+          this.$store.dispatch('supprimerAd',content).then(()=>{
+            this.$notify({
+              group: 'deladdel',
+            });
+             this.$Progress.finish()
+             location.reload()
+          })
+          }
+      },
+        gotoAd(id){
+            this.$router.push({name:'InfoAdm',params:{id:id}}).then(()=>{
+            }).catch(err => {
+                this.$router.push('/admin')
+            });
+            
        },
         async getAdsAll(){
-            const { data } = await this.$http.get('http://localhost:8000/api/annonce');
-            data.forEach(ad => this.ads.push(new Ads(ad)));
+            const { data } = await this.$http.get('http://localhost:8000/api/annoncesignalee');
+            this.ads=data
         },
     }
 }

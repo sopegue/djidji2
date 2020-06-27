@@ -7,13 +7,42 @@
       </div>
       <div class="linlink">
           <ul class="d-flex justify-content-between">
-              <li><router-link class="nnlink" to="/admin/ads/me">Tous les annonces (454)</router-link></li>
-              <li><router-link class="nnlink" to="/admin/ads/me/report">Signalées(22)</router-link></li>
+              <li><router-link class="nnlink" to="/admin/ads/me">Tous les annonces ({{all}})</router-link></li>
+              <li><router-link class="nnlink" to="/admin/ads/me/report">Signalées({{reported}})</router-link></li>
           </ul>
       </div>
       <router-view></router-view>
   </div>
 </template>
+
+<script>
+// @ is an alias to /src
+export default {
+    data(){
+        return{
+            all:0,
+            reported:0,
+        }
+    },
+    created(){
+        this.$Progress.start()
+        this.getAll()
+        this.getReported()
+        this.$Progress.finish()
+    },
+    methods:{
+       async getAll(){
+            
+            const { data } = await this.$http.get('http://localhost:8000/api/adallnb');
+             this.all=data
+        },
+       async getReported(){
+            const { data } = await this.$http.get('http://localhost:8000/api/adssignalenb');
+             this.reported=data
+        }
+    }
+}
+</script>
 <style lang="scss" scoped>
 .linlink{
     width: 38%;
@@ -139,8 +168,3 @@
     background-color: #004E66 !important;
     }
 </style>
-<script>
-// @ is an alias to /src
-export default {
-}
-</script>

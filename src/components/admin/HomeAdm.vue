@@ -1,5 +1,9 @@
 <template>
   <div>
+      <div v-if="isLoading" class="us-list-load">
+        <b-spinner class="p" label="Loading..."></b-spinner>
+      </div>
+  <div v-else>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <div class="d-flex  aaa">
         <i class="fas fa-chart-line"></i> <h4 class="sttt"> Statistiques</h4>
@@ -17,8 +21,8 @@
               <span class="info-box-icon bg-info"><i class="far fa-bookmark"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Enregistrées</span>
-                <span class="info-box-number">1,410</span>
+                <span class="info-box-text">Enregistrée(s)</span>
+                <span class="info-box-number">{{prix(stat.saved)}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -30,8 +34,8 @@
               <span class="info-box-icon bg-success"><i class="fas fa-plus-circle"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Ajoutées</span>
-                <span class="info-box-number">410</span>
+                <span class="info-box-text">Ajoutée(s)</span>
+                <span class="info-box-number">{{prix(stat.added)}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -43,8 +47,8 @@
               <span class="info-box-icon bg-warning"><i class="far fa-flag"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Signalées</span>
-                <span class="info-box-number">13,648</span>
+                <span class="info-box-text">Signalée(s)</span>
+                <span class="info-box-number">{{prix(stat.reported)}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -56,8 +60,8 @@
               <span class="info-box-icon bg-danger"><i class="fas fa-trash"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Supprimées</span>
-                <span class="info-box-number">93,139</span>
+                <span class="info-box-text">Supprimée(s)</span>
+                <span class="info-box-number">{{prix(stat.deleted)}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -77,9 +81,9 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>150</h3>
+                <h3>{{prix(stat.comptes)}}</h3>
 
-                <p>Comptes</p>
+                <p>Compte(s)</p>
               </div>
               <div class="icon">
                 <i class="fas fa-user-plus"></i>
@@ -92,9 +96,9 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>53</h3>
+                <h3>{{prix(stat.message)}}</h3>
 
-                <p>Message</p>
+                <p>Message(s) Mail(s)</p>
               </div>
               <div class="icon">
                 <i class="far fa-envelope"></i>
@@ -107,9 +111,9 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>44</h3>
+                <h3>{{prix(stat.usReported)}}</h3>
 
-                <p>Signalement</p>
+                <p>Signalement(s)</p>
               </div>
               <div class="icon">
                 <i class="far fa-flag"></i>
@@ -122,7 +126,7 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>65</h3>
+                <h3>{{prix(stat.visiteurs)}}</h3>
 
                 <p>Visiteurs</p>
               </div>
@@ -136,8 +140,82 @@
         </div>
         </div>
   </div>
+  </div>
 </template>
+
+<script>
+// @ is an alias to /src
+ import UsStat from '@/components/admin/UsStat.vue'
+ import AdStat from '@/components/admin/AdStat.vue'
+ import Axios from 'axios'
+export default {
+  components:{UsStat,AdStat},
+  name: 'HomeDash',
+  data(){
+    return{
+      saved:0,
+      added:0,
+      reported:0,
+      deletedd:0,
+      nbCompte:0,
+      nbMess:0,
+      usReported:0,
+      visiteurs:0,
+      isLoading:true,
+      stat:[]
+    }
+  },
+  updated(){
+    this.getStat()
+  },
+  beforeMount(){
+    this.getStat()
+  },
+  methods:{
+    async getStat(){
+      this.$Progress.start();
+      return new Promise((resolve, reject)=>{
+          Axios({url: 'http://localhost:8000/api/getStat', method: 'GET' })
+          .then(respo => {
+            this.stat=respo.data
+            this.isLoading=false
+            this.$Progress.finish();
+            resolve(respo)
+          })
+      })
+    },
+    prix(number){
+       var str = number.toString();
+      var len = str.length;
+      if (len > 4) {
+        if (len == 5) str = str.slice(0, 2) + " " + str.slice(2);
+        if (len == 6) str = str.slice(0, 3) + " " + str.slice(3);
+        if (len == 7)
+          str = str.charAt(0) + " " + str.slice(1, 4) + " " + str.slice(4);
+        if (len == 8){
+          //if(count==1)
+          str = str.slice(0, 2) + " " + str.slice(2, 5) + " " + str.slice(5);
+        }
+        if (len == 9){
+          //if(count==1)
+          str = str.slice(0, 3) + " " + str.slice(3, 6) + " " + str.slice(6);
+        }
+        if (len == 10){
+          //if(count==1)
+          str = str.slice(0, 1) + " " + str.slice(1, 4) + " " + str.slice(4,7)+ " " + str.slice(7);
+        }
+      }
+      return str;
+    
+    },
+  }
+}
+</script>
 <style scoped>
+.icon{
+  position: relative;
+  left: 5%;
+}
 .zeze{
   position: relative;
 }
@@ -226,7 +304,18 @@
     top: 0.08rem;
     left: 1%;
   }
-
+.us-list-load{
+      position: relative;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+    }
+     .us-list-load .p{
+        position: relative;
+        top: 0.2rem !important;
+    }
 .too {
     background-color: rgb(0, 72, 93);
 }
@@ -252,12 +341,3 @@
     background-color: #004E66 !important;
     }
 </style>
-<script>
-// @ is an alias to /src
- import UsStat from '@/components/admin/UsStat.vue'
- import AdStat from '@/components/admin/AdStat.vue'
-export default {
-  components:{UsStat,AdStat},
-  name: 'HomeDash',
-}
-</script>

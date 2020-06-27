@@ -43,9 +43,6 @@
         components: {
             Multiselect
         },
-        mounted(){
-            
-        },
         computed:{
             mypp(){
 

@@ -10,7 +10,7 @@
             <li style="padding-right:20%;">
                 <router-link to="/admin/myuser/me/message" class="d-flex flex-row">
                 <i class="far fa-comment"></i>
-                <span  v-show="hasMess" class="spii badge badge-pill badge-success">{{nbMess}}</span>
+                <span  v-show="hasMess || nbContact!==0" class="spii badge badge-pill badge-success">{{nbMess+nbContact}}</span>
                 </router-link>
             </li>
             <li class="fabell">
@@ -26,7 +26,7 @@
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
             <li class="usliinf"><a href="#/admin/myuser/me" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/admin/myuser/me/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/me/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess+nbContact}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
             <li class="usliinf"><a href="#/admin/myuser/me/notif" ><span v-show="hasNotif" class="spiiii badge badge-pill badge-danger">{{nbNotif}}</span><i class="far fa-bell"></i> Mes notifications</a></li>
             <li class="usliinfs"><a href="/#/admin/connexion" @click="signout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
           </ul>
@@ -224,6 +224,7 @@ export default {
       return {
           active1:false,
           nbNotif:0,
+           nbContact:0,
           nbMess:0,
           hasNotif:false,
           hasMess:false,
@@ -234,14 +235,12 @@ export default {
           active6:false,
       }
     },
-    
-    updated(){
-        this.checkNotif()
-        this.checkMess()
-    },
     beforeMount(){
         this.checkNotif()
         this.checkMess()
+    },
+    created(){
+        this.getContactUs()
     },
   methods:{
       signout: function(){
@@ -253,7 +252,16 @@ export default {
             })
       },
 
-        
+         getContactUs(){
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/getContactUsNb', method: 'GET' })
+                .then(respo => {
+                  this.nbContact=respo.data
+                  console.log('nb',this.nbContact)
+                  resolve(respo)
+                })
+            })
+            },
         checkMess(){
             let formData = new FormData();
             var user=localStorage.getItem('usetrixco')

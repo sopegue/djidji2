@@ -145,6 +145,9 @@ export default {
             })
         },
     },
+    updated(){
+        this.getUser();
+    },
     created(){
         this.getUser();
         this.getUserReported();

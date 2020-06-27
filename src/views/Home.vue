@@ -10,6 +10,7 @@
   import Footer from '@/components/footer/Footer.vue'
   import Contact from '@/views/Contact.vue'
   import Header from '@/components/header/Header.vue'
+   import Axios from 'axios'
   function sleep(milliseconds) {
     const date = Date.now();
     let currentDate = null;
@@ -31,11 +32,23 @@
         Contact
       },
       props:['hasNotif'],
+      created(){
+        this.handlerClose()
+      },
       mounted () {
+        
         window.addEventListener('scroll', this.onScroll);
       },
       methods:{
-
+        handlerClose(){
+            return new Promise((resolve, reject)=>{
+                Axios({url: 'http://localhost:8000/api/incrementVisit', method: 'GET' })
+                .then(respo => {
+                  console.log(respo.data,' visiteur(s)')
+                  resolve(respo)
+                })
+            })
+        },
         onScroll () {
           const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
 

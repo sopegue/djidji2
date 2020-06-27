@@ -54,6 +54,8 @@ export default {
         this.active()
     },
     created(){
+        if(!this.$store.state.currentUser.id)
+            this.$router.push('/')
        this.active();
     },
     computed:{

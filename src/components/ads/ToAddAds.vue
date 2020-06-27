@@ -176,6 +176,10 @@ export default {
       nOther:true,
     }
   },
+  created(){
+    if(!this.$store.state.currentUser.id)
+            this.$router.push('/')
+  },
   computed:{
       values:{
           // getter

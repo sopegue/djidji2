@@ -65,8 +65,15 @@
           <b-spinner class="p" label="Loading..."></b-spinner>
       </div>
       <div v-else class="applist">
-        <div v-if="this.$store.state.hasFoundAfterResearch" class="d-list-us d-flex  justify-content-between flex-wrap">
-          <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads"></Ads>
+        <div v-if="this.$store.state.hasFoundAfterResearch && items" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in items.slice().reverse()" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+
+          </Ads>
+        </div>
+        <div v-else-if="this.$store.state.hasFoundAfterResearch && !items" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+
+          </Ads>
         </div>
         <div v-else>
            <div class="alert alert-light" role="alert">
