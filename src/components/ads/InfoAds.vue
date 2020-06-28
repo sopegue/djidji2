@@ -176,6 +176,9 @@
   </div>
 </template>
 <style lang="scss" scoped>
+.details{
+  white-space: pre-wrap;
+}
 .cdcd{
   width: 20px;
   height: 20px;
