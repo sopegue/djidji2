@@ -37,8 +37,8 @@
       <td>{{us.email}}</td>
       <td>{{us.type}}</td>
         <td class="onl">Membre depuis {{dateM(us)}}.</td>
-       <td class="text-center"><div v-if="us.isblocked===0" class="d-flex justify-content-between"><button @click="block(us.id,us)" title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><span key="stared" v-show="us.isblocked==0"><i class="fas fa-lock-open"></i></span></button></div>
-       <div v-else class="d-flex justify-content-between"><button class="btn btn-danger" @click="unblock(us.id,us)"  title="Cliquez pour débloquer l'utilisateur"><span key="unstared" v-show="us.isblocked!=0"><i class="fas fa-lock"></i></span></button></div></td>
+       <td class="text-center"><div v-if="us.isblocked===0" class="d-flex justify-content-between"><button @click="gotoUser(us.id)" class="btn"><i class="fas fa-eye"></i></button><button @click="block(us.id,us)" title="Cliquez pour bloquer l'utilisateur" class="btn btn-success sssc"><span key="stared" v-show="us.isblocked==0"><i class="fas fa-lock-open"></i></span></button></div>
+       <div v-else class="d-flex justify-content-between"><button @click="gotoUser(us.id)" class="btn"><i class="fas fa-eye"></i></button><button class="btn btn-danger" @click="unblock(us.id,us)"  title="Cliquez pour débloquer l'utilisateur"><span key="unstared" v-show="us.isblocked!=0"><i class="fas fa-lock"></i></span></button></div></td>
     </tr>
   </tbody>
 </table>

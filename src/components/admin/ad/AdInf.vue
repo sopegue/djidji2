@@ -334,6 +334,7 @@ export default {
     },
     gotoUser(us){
         this.$store.state.notUser=us
+        localStorage.setItem('ccur', us)
        this.$router.push('/admin/usinf').catch(err => {});
         
       },
@@ -669,6 +670,9 @@ export default {
     .no-shadow{
         top: 0.5rem;
     }
+    .details{
+  white-space: pre-wrap;
+}
     .us-list-load{
       position: relative;
         padding-top: 5rem;
