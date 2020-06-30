@@ -1,7 +1,7 @@
 <template>
   <div>
       <div v-if="isLoading" class="us-list-load">
-        <b-spinner class="p" label="Loading..."></b-spinner>
+        <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
       </div>
   <div v-else>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

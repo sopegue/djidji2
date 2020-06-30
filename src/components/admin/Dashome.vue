@@ -266,6 +266,7 @@ export default {
             let formData = new FormData();
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
+            formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
                 Axios({url: 'http://localhost:8000/api/checkMessNb', data: formData, method: 'POST' })
                 .then(respo => {

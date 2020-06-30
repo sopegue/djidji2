@@ -52,7 +52,7 @@
               </li>
               <li class="bbli"><router-link class="bli" to="#" @click.native="gotoAdCateg('Maison')"><i class="fas fa-home"></i> Maison</router-link> <button v-click-outside="hitem4" @click="showitem('house')"><i class="fas fa-chevron-down ss"></i></button>
                   <transition name="slide-fade">
-                  <ul v-if="mactive4" @click.native="reloading()">
+                  <ul v-if="mactive4">
                     <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Meuble')">Meuble</router-link></li>
                     <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Decoration')">Decoration</router-link></li>
                     <li class="bbli"><router-link to="#" class="bli" @click.native="gotoAdsCateg('Maison','Bricolage')">Bricolage</router-link></li>

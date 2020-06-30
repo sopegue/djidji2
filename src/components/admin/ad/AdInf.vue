@@ -5,7 +5,7 @@
 </div>
   <div class="bdd">
       <div v-if="isLoading" class="us-list-load">
-        <b-spinner class="p" label="Loading..."></b-spinner>
+        <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
       </div>
       <transition  v-else name="fade">
       <div class="bdb d-flex flex-row">

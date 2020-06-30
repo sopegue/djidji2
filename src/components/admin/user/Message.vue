@@ -55,7 +55,7 @@
         </div>
   </div>
    <div v-if="isLoading" class="us-list-load">
-      <b-spinner class="p" label="Loading..."></b-spinner>
+      <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
    </div>
 <div v-else-if="mymessage.length==0" class="messaging" style="margin-top:1rem">
   <h6 class="text-center">Aucun nouveau message.</h6>
@@ -84,11 +84,11 @@
 <hr class="hr-us-inf">
 <h6>{{notif.length}} message(s)</h6>
   <div class="d-flex justify-content-between">
-  <h5 class="">Messages d'tilisateur(s) particulier(s)</h5>
+  <h5 class="">Messages d'utilisateur(s)</h5>
   </div>
   <hr class="hr-us-inf">
   <div v-if="issLoading" class="us-list-load">
-      <b-spinner class="p" label="Loading..."></b-spinner>
+      <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
   </div>
   <div v-else class="sms overflow-auto" style="max-height:500px">
   <MessageContactUs 
@@ -106,7 +106,7 @@
   <button @click="goBack()" class="btn btn-success"><i class="fas fa-arrow-left"></i> Retour</button>
 </div>
 <div v-if="iisLoading" class="us-list-load">
-    <b-spinner class="p" label="Loading..."></b-spinner>
+    <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
 </div>
 <div v-else class="overflow-auto" style="max-height:500px; margin-top:1.5rem">
 

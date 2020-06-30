@@ -14,7 +14,7 @@
               :style="{ backgroundColor: '#f8f9fa', width: '100%', height: '100%' }"
             >
               <div class="us-list-load text-center"  v-if="isLoading">
-                <b-spinner class="p" label="Loading..."></b-spinner>
+                <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
               </div>
               <div class="d-flex flex-row justify-content-between" v-else>
                 <ads  class="p-1" v-for="(j,index) in 5"

@@ -1,7 +1,7 @@
 <template>
   <div class="bdd">
       <div v-if="isLoading" class="us-list-load">
-        <b-spinner class="p" label="Loading..."></b-spinner>
+        <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
       </div>
       <transition  v-else name="fade">
       <div class="bdb d-flex flex-row">
@@ -62,12 +62,7 @@
               </tbody>
             </table>
           </div>
-            <div class="alert-bdd d-flex flex-row justify-content-between">
-            <p class="warn-alrt"><i class="fas fa-exclamation-triangle"></i></p>
-            <p class="warn-mess">Assurez-vous de vérifier la crédibilité des annonces avant de procéder à tout achat. <br>
-              Il est aussi recommandé de procéder à l'échange dans un lieu public.
-            </p>
-          </div>
+            
       </div>
       <div class="bdd-right">
           <div class="titre d-flex justify-content-between">
@@ -159,10 +154,6 @@
                   <textarea name="message" type="text" id="input-message" placeholder="Votre message" v-model="message"></textarea>
                   <span style="color:red;font-size:12px;" v-if="messValid">Veuillez ajouter un message ! </span>
                 </div>
-                  <div v-if="sending" class="cdcd spinner-border text-secondary" role="status">
-                    <span class="sr-only">Loading...</span>
-          
-                  </div>
                 <button type="submit" id="input-submit">Envoyer <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
             </form>
             </div>
@@ -173,6 +164,12 @@
       </div>
   </div>
   </transition>
+  <div class="alert-bdd d-flex flex-row text-center mx-auto">
+    <p class="warn-alrt"><i class="fas fa-exclamation-triangle"></i></p>
+    <p class="warn-mess">Assurez-vous de vérifier la crédibilité des annonces avant de procéder à tout achat. <br>
+      Il est aussi recommandé de procéder à l'échange dans un lieu public.
+    </p>
+  </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -482,7 +479,7 @@ export default {
       this.showTelBox=true
     },
     afficheMbox(){
-      this.showMbox=true
+      this.showMbox=!this.showMbox
     },
     checkIfSaved(){
         if(this.$store.state.accessToken!=='')
@@ -555,6 +552,7 @@ export default {
       },
     envoyerMail(){
       if(this.checkField()){
+        this.$Progress.start()
         this.sending=true
         var content = new FormData()
         content.append('email',this.mail)
@@ -569,13 +567,14 @@ export default {
         if(this.$store.state.accessToken!=='')
           content.append('user',this.$store.state.currentUser.id)
         // envoyer le message
-        this.$store.dispatch('sendEmail',content).then(()=>{
-          
+        this.$Progress.finish()
+         
         this.resetField()
           this.$notify({
               group: 'success-sendEmail',
           });
-          this.sending=false
+        this.$store.dispatch('sendEmail',content).then(()=>{
+         
         })
       }
     },
@@ -877,6 +876,7 @@ export default {
     }
     .alert-bdd{
       position: relative;
+      width: 70%;
       top: 1rem;
       background: rgba(255, 184, 169, 0.08);
       border: 1px solid rgb(207, 207, 207);

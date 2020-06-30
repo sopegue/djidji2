@@ -14,7 +14,7 @@
                     <hr class="hr-us-inf">
 
                     <div class="us-list-load" v-if="this.$store.state.savedAdfound==='loading'" >
-                        <b-spinner class="p" label="Loading..."></b-spinner>
+                        <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
                     </div>
                     <div v-else>
                         <div v-if="this.$store.state.hasAdAdded">

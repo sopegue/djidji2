@@ -5,7 +5,7 @@
         <h5 class="">Mes notifications</h5>
         <hr class="hr-us-inf">
         <div v-if="isLoading" class="us-list-load">
-            <b-spinner class="p" label="Loading..."></b-spinner>
+            <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
         </div>
         <div v-else class="not-div overflow-auto">
             <div v-if="hasNoNotif" class="text-center">

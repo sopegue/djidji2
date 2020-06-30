@@ -313,11 +313,6 @@ export default {
   created() {
     //localStorage.clear();
     this.$store.dispatch('checkLogin')
-    .then(()=>{
-      if(!this.$store.state.currentUser.id){
-        console.log('app block')
-      }
-    })
     .catch(()=>{
       this.$router.push('/connexion')
     })

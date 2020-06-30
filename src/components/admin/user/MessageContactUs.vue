@@ -15,7 +15,7 @@
                    <p v-if="notif.name"><span style="font-weight:600;">Nom : </span>{{notif.name}}</p>
                    <p><span style="font-weight:600;">Email: </span>{{notif.mail}}</p>
                    <p v-if="notif.subject"><span style="font-weight:600;">Sujet : </span>{{notif.subject}}</p>
-                   <p><span style="font-weight:600;">Message: </span><br>
+                   <p style="width:90%;word-wrap: break-word;"><span style="font-weight:600;">Message: </span><br>
                     {{notif.content}}</p>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                    <p v-if="notif.name"><span style="font-weight:600;">Nom : </span>{{notif.name}}</p>
                    <p><span style="font-weight:600;">Email: </span>{{notif.mail}}</p>
                    <p v-if="notif.subject"><span style="font-weight:600;">Sujet : </span>{{notif.subject}}</p>
-                   <p><span style="font-weight:600;">Message: </span><br>
+                   <p style="width:90%;word-wrap: break-word;"><span style="font-weight:600;">Message: </span><br>
                     {{notif.content}}</p>
                 </div>
             </div>

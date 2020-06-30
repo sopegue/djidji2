@@ -4,7 +4,7 @@
           <button @click="goBack()" class="btn btn-success"><i class="fas fa-arrow-left"></i> Retour</button>
       </div>
       <div v-if="isLoading" class="us-list-load">
-        <b-spinner class="p" label="Loading..."></b-spinner>
+        <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
       </div>
       <div v-else class="d-flex">
           <div class="pic text-center">
