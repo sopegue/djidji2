@@ -58,8 +58,7 @@
     padding-bottom: 2rem;
     padding-top: 2rem;
     margin: 0 auto;
-    width: 70%;
-    width: 65%;
-    height: auto;
+    width: 80%;
+    height: fit-content;
   }
 </style>

@@ -114,7 +114,7 @@
           <label class="radio-label" for="materialUnChecked">Non</label>
           </div>
         </div><br>
-       <button type="submit" class="b-lr regb">Ajouter</button>
+       <button type="submit" class="b-lr regb"><i class="fa fa-bullhorn" aria-hidden="true"></i> Ajouter votre annonce</button>
   <br>
     </div>
     </form>
@@ -560,7 +560,8 @@ input[type="radio"] {
 </style>
 <style scoped>
   .regb,.logb{
-    width: 50%;
+    width: 100%;
+    padding: 2 2 2 2;
     margin-bottom: 1rem;
   }
 </style>

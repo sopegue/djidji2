@@ -26,7 +26,7 @@
            <transition name="slide-fade">
            <ul class="dropdown-menu userInff">
             <li class="usliinf"><a href="#/admin/myuser/me" ><i class="far fa-user"></i> Mon compte</a></li>
-            <li class="usliinf"><a href="#/admin/myuser/me/message" ><span  v-show="hasMess" class="spiii badge badge-pill badge-success">{{nbMess+nbContact}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
+            <li class="usliinf"><a href="#/admin/myuser/me/message" ><span  v-show="hasMess || nbContact!==0" class="spiii badge badge-pill badge-success">{{nbMess+nbContact}}</span><i class="far fa-envelope"></i> Mes messages</a></li>
             <li class="usliinf"><a href="#/admin/myuser/me/notif" ><span v-show="hasNotif" class="spiiii badge badge-pill badge-danger">{{nbNotif}}</span><i class="far fa-bell"></i> Mes notifications</a></li>
             <li class="usliinfs"><a href="/#/admin/connexion" @click="signout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a></li>
           </ul>

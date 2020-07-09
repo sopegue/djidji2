@@ -53,7 +53,7 @@
       <transition name="slide-fade">
        <div v-if="shme" class="head-menu">
           <div class="c-head-menu">
-            <div class="cd-head-menu">
+            <div @click="searchAds45" class="cd-head-menu">
               <span>Toutes les catégories</span>
             </div>
             <button @click="shmenu"  class="cbtn-head-menu">
@@ -419,6 +419,24 @@
           var info={
             selected:this.selected,
             search:this.search 
+          }
+          this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
+          this.selected=this.$store.state.categSearch
+        
+       
+      },
+
+      searchAds45:function(){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+         this.$store.commit('setTypeOfSearch',1)
+         this.$Progress.start();
+          var info={
+            selected:'Toutes les catégories',
+            search:''
           }
           this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
           this.selected=this.$store.state.categSearch

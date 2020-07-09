@@ -165,9 +165,6 @@ export default {
       stat:[]
     }
   },
-  updated(){
-    this.getStat()
-  },
   beforeMount(){
     this.getStat()
   },

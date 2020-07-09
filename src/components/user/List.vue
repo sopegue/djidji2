@@ -4,13 +4,18 @@
             <div class="large-12 medium-12 small-12 cell">
                     <h5 class="">Mes annonces enregistrées</h5>
                     <br />
-                     <span class="ssnb">{{this.$store.state.mysaveAds.total}} annonce(s)</span>
+                     <div v-if="this.$store.state.mysaveAds.ads">
+                    <span class="ssnb">{{this.$store.state.mysaveAds.total}} annonce(s)</span>
                      <span v-if="this.$store.state.mysaveAds.total!==0" class="ssnb"><br>
                      <span v-if="this.$store.state.mysaveAds.total>=12">
-                       <span v-if="this.$store.state.mysaveAds.total-(this.$store.state.currentPageSavedAds-1)*12 +1>12">({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{(this.$store.state.currentPageSavedAds-1)*12 + 12 }})</span>
-                       <span v-else>({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{((this.$store.state.currentPageSavedAds-1)*12 +1)+ (this.$store.state.mysaveAds.total - ((this.$store.state.currentPageSavedAds-1)*12 +1))}})</span>
+                    <span v-if="this.$store.state.mysaveAds.total-(this.$store.state.currentPageSavedAds-1)*12 +1>12">({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{(this.$store.state.currentPageSavedAds-1)*12 + 12 }})</span>
+                    <span v-else>({{(this.$store.state.currentPageSavedAds-1)*12 +1}} - {{((this.$store.state.currentPageSavedAds-1)*12 +1)+ (this.$store.state.mysaveAds.total - ((this.$store.state.currentPageSavedAds-1)*12 +1))}})</span>
                      </span>
                      <span v-else>({{this.$store.state.currentPageSavedAds}} - {{this.$store.state.mysaveAds.total}})</span></span>
+                     </div>
+                     <div v-else>
+                         <span class="ssnb">0 annonce</span>
+                     </div>
                     <hr class="hr-us-inf">
 
                     <div class="us-list-load" v-if="this.$store.state.mysavedAdfound==='loading'" >

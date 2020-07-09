@@ -7,13 +7,13 @@
         </div>
         <div id="foot-co">
             <div class="foot-co-aa d-flex flex-row justify-content-between">
-                <a href="/#/admin">
+                <a target="_blank" href="https://www.facebook.com/Djidjicom-113697483734450">
                   <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="/#/admin">
+                <a target="_blank" href="https://www.youtube.com/channel/UCrbnAIpyI0OZX5ANZ5fCCQA">
                   <i class="fab fa-youtube"></i>
                 </a>
-                <a href="/#/admin">
+                <a target="_blank" href="https://www.instagram.com/ledjidjicom/">
                   <i class="fab fa-instagram"></i>
                 </a>
             </div>

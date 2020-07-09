@@ -3,7 +3,7 @@
       <div class="ssleft">
           <div class="head-menus">
           <div class="c-head-menus">
-            <div class="cd-head-menus">
+            <div @click="searchAds45" class="cd-head-menus">
               <span>Toutes les catégories</span>
             </div>
           </div>
@@ -112,6 +112,7 @@ button{
   border: none;
 }
 .cd-head-menus{
+  cursor: pointer;
   text-align: center;
   font-weight: 600;
   font-size: 16px;
@@ -186,6 +187,23 @@ export default {
         this.$Progress.start();
         this.$store.commit('setTypeOfSearch',2)
         this.$store.dispatch('searchMenu',type).then(() =>{this.$router.push({ path: '/annonce/search/searching' });this.$Progress.finish();})
+      },
+      searchAds45:function(){
+        this.$store.state.currentPageAds=1
+        localStorage.removeItem('prix')
+        localStorage.removeItem('trier')
+        this.$store.commit('setTrier','')
+        this.$store.commit('setPmin',5)
+         this.$store.commit('setTypeOfSearch',1)
+         this.$Progress.start();
+          var info={
+            selected:'Toutes les catégories',
+            search:''
+          }
+          this.$store.dispatch('searchBar',info).then(() =>{ this.$router.push('/annonce/search/searching');this.$Progress.finish();})
+          this.selected=this.$store.state.categSearch
+        
+       
       },
       gotoAdsCateg:function(categ,scateg){
         this.$store.state.currentPageAds=1
