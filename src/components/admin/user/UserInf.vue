@@ -9,7 +9,7 @@
       <div v-else class="d-flex">
           <div class="pic text-center">
                <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
-                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp"/>
+                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'https://djidjii.herokuapp.com/storage/'+user.id+'/profile/'+user.pp"/>
                 </div>
                <p v-if="user.Nom && user.Prenom" class="us" :style="{'position':'relative','top':'2.5rem' }">{{user.Prenom}} {{user.Nom}}</p>
                <p v-else-if="user.Nom" class="us" :style="{'position':'relative','top':'2.5rem' }">{{user.Nom}}</p>

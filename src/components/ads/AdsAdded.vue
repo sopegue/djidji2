@@ -199,7 +199,7 @@ img[lazy=loading] {
         return true;
       },
       image(){
-       return 'http://localhost:8000/storage/'+this.ads.use_id+'/annonces/'+this.pic[0];
+       return 'https://djidjii.herokuapp.com/storage/'+this.ads.use_id+'/annonces/'+this.pic[0];
       }
     },
     

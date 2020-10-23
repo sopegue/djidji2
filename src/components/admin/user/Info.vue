@@ -46,7 +46,7 @@
         computed:{
             mypp(){
 
-                return this.$store.state.currentUser.id ? 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp : ''
+                return this.$store.state.currentUser.id ? 'https://djidjii.herokuapp.com/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp : ''
             },
             mail:{
                 get:function(){
@@ -182,7 +182,7 @@
                         this.$store.dispatch('checkLogin').then(()=>{
                             this.picUpdated=true
                         })
-                        //alert( 'http://localhost:8000/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp)
+                        //alert( 'https://djidjii.herokuapp.com/storage/'+this.$store.state.currentUser.id+'/profile/'+this.$store.state.currentUser.pp)
                         this.saved=true;
                         this.notimg=false;
                         setTimeout(function(){ this.saved=false }, 5000);

@@ -26,7 +26,7 @@
           <div @click="sendMessage(index)" :title="'Contacter '+user.Nom+', email : '+user.email" class="user d-flex flex-row align-items-center justify-content-between" v-for="(user,index) in filteredList"
           :key="index">
             <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
-              <img :style="{'position':'relative' }" :data-src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp"/>
+              <img :style="{'position':'relative' }" :data-src="'https://djidjii.herokuapp.com/storage/'+user.id+'/profile/'+user.pp"/>
             </div>
             <div style="font-size: 20px">
               {{nom(user.Nom)}}
@@ -39,7 +39,7 @@
         <div :title="currentUs.email" class="mx-auto d-flex flex-row justify-content-between" style=" positon:relative; width:fit-content">
             <h5>Envoyez un message à {{currentUs.Nom}}</h5>
             <div class="us-inf-img" style="position:relative; left:4%"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
-              <img :style="{'position':'relative' }" :data-src="'http://localhost:8000/storage/'+currentUs.id+'/profile/'+currentUs.pp"/>
+              <img :style="{'position':'relative' }" :data-src="'https://djidjii.herokuapp.com/storage/'+currentUs.id+'/profile/'+currentUs.pp"/>
             </div>
         </div>
             <form @submit.prevent="envoyerMess" class="mx-auto">
@@ -115,7 +115,7 @@
   <div class="d-flex flex-column">
 <div class="d-flex flex-row justify-content-between">
 <div class="us-inf-imgs d-flex flex-row " style="position:relative;"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/loadingss.gif ' }">
-  <img :style="{'position':'relative' }" :data-src="'http://localhost:8000/storage/'+mess.use_id+'/profile/'+mess.pp"/>
+  <img :style="{'position':'relative' }" :data-src="'https://djidjii.herokuapp.com/storage/'+mess.use_id+'/profile/'+mess.pp"/>
   <p style="position:relative; left:15%;"><span style="font-weight:700">{{mess.Nom}}</span></p>
 </div>
 <div class="d-flex flex-row justify-content-between">

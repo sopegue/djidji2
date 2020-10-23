@@ -25,7 +25,7 @@
                     :key="index">
                     <template v-slot:content>
                       <div class="d-vi-img"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loadingss.gif' }">
-                        <img class="vueperslide__image" style="border-radius : 10px;" :data-src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
+                        <img class="vueperslide__image" style="border-radius : 10px;" :data-src="'https://djidjii.herokuapp.com/storage/'+users+'/annonces/'+pic[index]"/>
                       </div>
                     </template>
                   </vueper-slide>
@@ -49,7 +49,7 @@
             @click.native="$refs.vueperslides2 && $refs.vueperslides2.goToSlide(i - 1)">
               <template v-slot:content>
                 <div class="vueperslide__content-wrapper"  v-lazy-container="{ selector: 'img', error: '/images/error.png', loading: '/images/loadingss.gif'  }">
-                  <img class="vueperslide__image1" style="border-radius : 10px;" :data-src="'http://localhost:8000/storage/'+users+'/annonces/'+pic[index]"/>
+                  <img class="vueperslide__image1" style="border-radius : 10px;" :data-src="'https://djidjii.herokuapp.com/storage/'+users+'/annonces/'+pic[index]"/>
                 </div>
               </template>
             </vueper-slide>
@@ -85,7 +85,7 @@
           <div class="user-bdd">
              <div class="us-inf-img d-user d-flex flex-row">
                 <div class="us-inf-img"  v-lazy-container="{ selector: 'img', error: '/images/user.png', loading: '/images/user.png' }">
-                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'http://localhost:8000/storage/'+user.id+'/profile/'+user.pp"/>
+                    <img :style="{'position':'relative','top':'2.2rem' }" :data-src="'https://djidjii.herokuapp.com/storage/'+user.id+'/profile/'+user.pp"/>
                 </div>
                 <div class="inf-nv">
                   <span class="ppr">{{this.user.Prenom}} {{this.user.Nom}}</span><br>
