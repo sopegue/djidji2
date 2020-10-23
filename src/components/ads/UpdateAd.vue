@@ -71,7 +71,7 @@
           
       </div>
       <div class="container inpfo text-center" style="position:relative; top:2rem;">
-        <h6>Si vous ajoutez des images, les images précédents seront suprrimées. </h6>
+        <h6>Si vous ajoutez des images, les images précédents seront supprimées. </h6>
       </div>
        
     <div id="my-strictly-unique-vue-upload-multiple-image" style="display: flex; justify-content: center;">
@@ -110,7 +110,7 @@
           <label class="radio-label" for="materialChecked">Oui</label>
           </div>
           <div class="d-inline d-flex align-items-center">
-          <input type="radio" class="" id="materialUnChecked" name="oui" value="0" v-model="checked" checked>
+          <input type="radio" class="" id="materialUnChecked" name="oui" value="0" v-model="checked">
           <label class="radio-label" for="materialUnChecked">Non</label>
           </div>
         </div><br>
@@ -142,7 +142,7 @@ export default {
       scategInvalid:false,
       villeInvalid:false,
       picUpload:false,
-      checked:'0',
+      checked:'',
       number:'',
       desc:'',
       prix:'',
@@ -223,6 +223,7 @@ export default {
     this.oldcateg=this.modAd.categorie
     
     this.titre=this.modAd.titre
+    this.checked=this.modAd.what
     this.prix=this.modAd.prix.toString()
     this.castPrice()
     this.desc=this.modAd.description
@@ -251,6 +252,24 @@ export default {
       this.value1=''
       this.nOther=false
       this.value='0'}
+    if(this.value==='1')
+            this.cate=this.cate1;
+        if(this.value==='2')
+            this.cate=this.cate2;
+        if(this.value==='3')
+            this.cate=this.cate3;
+        if(this.value==='4')
+            this.cate=this.cate4;
+        if(this.value==='5')
+            this.cate=this.cate5;
+        if(this.value==='6')
+            this.cate=this.cate6;
+        if(this.value==='7')
+            this.cate=this.cate7;
+        if(this.value==='8')
+            this.cate=this.cate8;
+        if(this.value==='9')
+            this.cate=this.cate9;
 
     
   },
@@ -442,6 +461,7 @@ export default {
         this.myfile.append('user',this.$store.state.currentUser.id)
         //console.log('ii',ad.images)
         //this.myfile.delete('file')
+        console.log(this.checked)
         this.addAd(this.myfile)
       }
     },
@@ -479,7 +499,7 @@ export default {
     },
     addAd(ad){
         // The Promise used for router redirect in login
-        this.$http.post('http://localhost:8000/api/annonce/mod', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
+        this.$http.post('https://djidjii.herokuapp.com/api/annonce/mod', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
          .then(resp => { // store the token in localstorage
             console.log('ad modified')
             console.log(resp)
@@ -495,7 +515,7 @@ export default {
        })
     },
     srcToFile(content,index){
-      this.$http.post('http://localhost:8000/api/picDown', content)
+      this.$http.post('https://djidjii.herokuapp.com/api/picDown', content)
          .then(resp => { // store the token in localstorage
             this.images[index]=resp
          })
@@ -520,7 +540,7 @@ export default {
         this.mymage[index]=undefined
       }
       console.log('im', this.mymage)
-      // this.$http.post('http://localhost:8000/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
+      // this.$http.post('https://djidjii.herokuapp.com/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
        //  console.log(response)
        //})
     },

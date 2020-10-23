@@ -172,7 +172,7 @@ export default {
     async getStat(){
       this.$Progress.start();
       return new Promise((resolve, reject)=>{
-          Axios({url: 'http://localhost:8000/api/getStat', method: 'GET' })
+          Axios({url: 'https://djidjii.herokuapp.com/api/getStat', method: 'GET' })
           .then(respo => {
             this.stat=respo.data
             this.isLoading=false

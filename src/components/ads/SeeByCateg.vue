@@ -56,24 +56,56 @@
           <vs-select :color="'#004e66'" placeholder="Trier par..." v-model="value">
             <vs-option label="Prix croissant" value="1">Prix croissant</vs-option>
             <vs-option label="Prix décroissant" value="2">Prix décroissant</vs-option>
-            <vs-option label="Le plus récent" value="3">Le plus récent</vs-option>
-            <vs-option label="Le plus ancien" value="4">Le plus ancien</vs-option>
+            <vs-option label="Le plus ancien" value="4">Le plus récent</vs-option>
+            <vs-option label="Le plus récent" value="3">Le plus ancien</vs-option>
           </vs-select>
         </div>
       </div>
+      
       <div class="us-list-load" style="margin-bottom:5rem;" v-if="this.$store.state.filteringAds==='loading'" >
           <b-spinner class="p text-secondary" label="Loading..."></b-spinner>
       </div>
-      <div v-else class="applist">
-        <div v-if="this.$store.state.hasFoundAfterResearch && items && type!=='Economiques'" class="d-list-us d-flex  justify-content-between flex-wrap">
-          <Ads v-for="ads in items.slice().reverse()" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+      <div v-else-if="this.$store.state.accessToken!==''" class="applist">
+        <div v-if="this.$store.state.hasFoundAfterResearch && itemss && type!=='Economiques'" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in itemss" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
 
           </Ads>
+          <div v-if="itemss.length==0" class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible.
+          </div>
+        </div>
+        <div v-else-if="this.$store.state.hasFoundAfterResearch && itemss" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in itemss" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+
+          </Ads>
+          
+        </div>
+        <div v-else-if="this.$store.state.hasFoundAfterResearch && !itemss" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in itemss" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+
+          </Ads>
+        </div>
+        <div v-else>
+           <div class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible.
+            </div>
+        </div>
+      </div>
+
+      <div v-else class="applist">
+        <div v-if="this.$store.state.hasFoundAfterResearch && items && type!=='Economiques'" class="d-list-us d-flex  justify-content-between flex-wrap">
+          <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
+
+          </Ads>
+          <div v-if="items.length==0" class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible.
+          </div>
         </div>
         <div v-else-if="this.$store.state.hasFoundAfterResearch && items" class="d-list-us d-flex  justify-content-between flex-wrap">
           <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
 
           </Ads>
+          
         </div>
         <div v-else-if="this.$store.state.hasFoundAfterResearch && !items" class="d-list-us d-flex  justify-content-between flex-wrap">
           <Ads v-for="ads in items" class="p-1" v-bind="ads" :key="ads.id" :ads.sync="ads">
@@ -81,8 +113,8 @@
           </Ads>
         </div>
         <div v-else>
-           <div class="alert alert-light" role="alert">
-              Oops ! Désolé, aucune annonce disponible."
+           <div v-if="!items || items.length==0" class="alert alert-light" role="alert">
+              Oops ! Désolé, aucune annonce disponible.
             </div>
         </div>
       </div>
@@ -215,6 +247,18 @@ import Ads from "@/components/ads/Ads.vue";
 import RangeSlider from "vue-range-slider";
 // you probably need to import built-in style
 import "vue-range-slider/dist/vue-range-slider.css";
+function resolveAfter3Seconds(x) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          x=localStorage.getItem('usetrixco')
+          resolve(x);
+        }, 3000);
+      });
+    }
+    async function f1(x) {
+       x= await resolveAfter3Seconds(x);
+       return x;
+    }
 export default {
   name: "SeeByCateg",
   data() {
@@ -242,9 +286,33 @@ export default {
  },
   methods: {
   },
+  watch:{
+      scrolling: { 
+        handler: function(n){
+          if(this.shit || this.shme || this.selectmul
+          || this.toggle || this.btnmenu || this.mactive
+          ) this.showNavbar=true;
+          else this.showNavbar=n;
+        },
+        deep: true
+      },
+      hidemenu () {
+        this.shme=false
+      }
+    },
   computed: {
     rows(){
       return this.$store.state.nbPageAds
+    },
+    itemss(){
+      let id
+      id=resolveAfter3Seconds(id).then(()=>{
+        
+      })
+      console.log('idd',id)
+      return this.$store.state.Ads.ads.filter(post => {
+       return (!post.use_id.toString().toLowerCase().includes(id.toString().toLowerCase()))
+      })
     },
     items(){
       return this.$store.state.Ads.ads

@@ -487,7 +487,7 @@ export default {
         var form= new FormData()
         form.append('user',this.$store.state.currentUser.id)
         form.append('ad',this.ad.id)
-        this.$http.post('http://localhost:8000/api/savedAdsCheck', form ).then(response => {
+        this.$http.post('https://djidjii.herokuapp.com/api/savedAdsCheck', form ).then(response => {
           if(response.data!=0)
             {
               this.saved=true

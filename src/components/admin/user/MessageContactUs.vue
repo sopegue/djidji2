@@ -112,7 +112,7 @@ import Axios from 'axios'
             let formData = new FormData();
             formData.append('notif', this.notif.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/contactusvue', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/contactusvue', data: formData, method: 'POST' })
                 .then(respo => {
                     console.log('vue')
                     this.notif.seen=1

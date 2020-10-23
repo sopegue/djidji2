@@ -254,7 +254,7 @@ export default {
 
          getContactUs(){
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getContactUsNb', method: 'GET' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getContactUsNb', method: 'GET' })
                 .then(respo => {
                   this.nbContact=respo.data
                   console.log('nb',this.nbContact)
@@ -268,7 +268,7 @@ export default {
             formData.append('user', user);
             formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/checkMessNb', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/checkMessNb', data: formData, method: 'POST' })
                 .then(respo => {
                   if(respo.data!=0){
                       this.hasMess=true
@@ -288,7 +288,7 @@ export default {
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/checkAdmNotifNb', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/checkAdmNotifNb', data: formData, method: 'POST' })
                 .then(respo => {
                   if(respo.data!=0){
                       this.hasNotif=true

@@ -224,7 +224,7 @@ function onlyUnique(value, index, self) {
             formData.append('id', id);
             formData.append('message',this.message)
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getAdmMessageRespond',data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getAdmMessageRespond',data: formData, method: 'POST' })
                 .then(respo => {
                   console.log('responded')
                   this.envoyerMessAll()
@@ -259,7 +259,7 @@ function onlyUnique(value, index, self) {
             formData.append('user', user);
             formData.append('me', me);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getAdmMessage',data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getAdmMessage',data: formData, method: 'POST' })
                 .then(respo => {
                   this.allM=respo.data
                   this.iisLoading=false
@@ -283,7 +283,7 @@ function onlyUnique(value, index, self) {
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getMess', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getMess', data: formData, method: 'POST' })
                 .then(respo => {
                   this.isLoading=false
                   this.mysmessage=respo.data
@@ -310,7 +310,7 @@ function onlyUnique(value, index, self) {
             },
             getContactUs(){
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getContactUs', method: 'GET' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getContactUs', method: 'GET' })
                 .then(respo => {
                   this.notif=respo.data
                   this.issLoading=false
@@ -418,7 +418,7 @@ function onlyUnique(value, index, self) {
          
         async getUser(){
         this.$Progress.start();
-        const { data } = await this.$http.get('http://localhost:8000/api/useradmin');
+        const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/useradmin');
          this.users=data
           this.$Progress.finish();
       },

@@ -42,7 +42,7 @@
       methods:{
         handlerClose(){
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/incrementVisit', method: 'GET' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/incrementVisit', method: 'GET' })
                 .then(respo => {
                   console.log(respo.data,' visiteur(s)')
                   resolve(respo)

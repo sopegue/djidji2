@@ -10,11 +10,25 @@ import Axios from 'axios'
 
 export default {
   name: 'Admin',
-  
-  created() {
-    if(this.$store.state.accessToken==='')
+  updated(){
+    
+    if(!localStorage.access_token){
+      if(this.$router.currentRoute.path!=='/admin/me/reinit')
+      this.$router.replace('/admin/me/connexion')
+      }
+     else if(this.$store.state.currentUser.type && this.$store.state.currentUser.type!=='administrateur')
+        this.$store.dispatch('logout').then(() => this.$router.push('/admin/me/connexion'))
+    this.$store.dispatch('checkLogin').catch(()=>{
       this.$router.push('/admin/me/connexion')
-      if(this.$store.state.currentUser.type && this.$store.state.currentUser.type!=='administrateur')
+    })
+  },
+  created() {
+    if(!localStorage.access_token){
+      this.$router.replace('/admin/me/connexion').then(()=>{
+      })
+      
+      }
+     else if(this.$store.state.currentUser.type && this.$store.state.currentUser.type!=='administrateur')
         this.$store.dispatch('logout').then(() => this.$router.push('/admin/me/connexion'))
     this.$store.dispatch('checkLogin').catch(()=>{
       this.$router.push('/admin/me/connexion')

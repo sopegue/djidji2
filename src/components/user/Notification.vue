@@ -104,7 +104,7 @@ import Axios from 'axios'
             let formData = new FormData();
             formData.append('notif', this.notif.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/notVue', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/notVue', data: formData, method: 'POST' })
                 .then(respo => {
                     console.log('vue')
                   resolve(respo)
@@ -122,7 +122,7 @@ import Axios from 'axios'
             let formData = new FormData();
             formData.append('ad', this.notif.ann_id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getNotifAd', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getNotifAd', data: formData, method: 'POST' })
                 .then(respo => {
                     this.myad=respo.data
                   resolve(respo)

@@ -99,7 +99,7 @@ export default {
             formData.append('user', id);
             formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/blockuser', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/blockuser', data: formData, method: 'POST' })
                 .then(respo => {
                    us.isblocked=1
                     console.log('blocked')
@@ -121,7 +121,7 @@ export default {
             formData.append('user', id);
             formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/unblockuser', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/unblockuser', data: formData, method: 'POST' })
                 .then(respo => {
                    us.isblocked=0
                     console.log('unblocked')
@@ -180,7 +180,7 @@ export default {
       },
         async getUser(){
         this.$Progress.start();
-        const { data } = await this.$http.get('http://localhost:8000/api/user');
+        const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/user');
         this.users=data
          this.users=this.users.filter(post => {
             return (post.type.toLowerCase().includes('particulier'))

@@ -240,7 +240,7 @@
           async submitFile(){
               let formData = new FormData();
               formData.append('file', this.file);
-              const {data}=await this.$http.post('http://localhost:8000/api/user',
+              const {data}=await this.$http.post('https://djidjii.herokuapp.com/api/user',
                 formData,{ headers: {'Content-Type': 'multipart/form-data'}});
               if(data==null)
                 console.log('success');

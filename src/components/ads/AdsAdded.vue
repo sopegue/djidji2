@@ -125,7 +125,7 @@ img[lazy=loading] {
         }
       },
       dateA(){
-      var date=new Date(this.ads.updated_at.toString())
+      var date=new Date(this.ads.created_at.toString())
       var date1 = Date.now()
       var mili = date.getTime()
       const diffTime = Math.floor(Math.abs(date1 - mili)/1000)

@@ -38,7 +38,7 @@ export default {
   methods:{
       async getUser(){
         
-        const { data } = await this.$http.get(`http://localhost:8000/api/user/${this.ad.use_id}`);
+        const { data } = await this.$http.get(`https://djidjii.herokuapp.com/api/user/${this.ad.use_id}`);
        // alert(this.ad.use_id)
         this.user=data;
         localStorage.setItem('infoUser',JSON.stringify(this.user))
@@ -47,7 +47,7 @@ export default {
       },
       async getAd(){
         this.$Progress.start();
-        const { data } = await this.$http.get(`http://localhost:8000/api/annonce/${this.$route.params.id}`)
+        const { data } = await this.$http.get(`https://djidjii.herokuapp.com/api/annonce/${this.$route.params.id}`)
         .catch(()=>{
           this.$router.push('/admin')
         })

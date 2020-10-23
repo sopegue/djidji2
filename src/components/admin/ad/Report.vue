@@ -337,7 +337,7 @@ export default {
             
        },
         async getAdsAll(){
-            const { data } = await this.$http.get('http://localhost:8000/api/annoncesignalee');
+            const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/annoncesignalee');
             this.ads=data
         },
     }

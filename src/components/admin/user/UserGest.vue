@@ -186,13 +186,13 @@ export default {
     },
          async getUser(){
         this.$Progress.start();
-        const { data } = await this.$http.get('http://localhost:8000/api/user');
+        const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/user');
          this.users=data
           
       },
        async getUserReported(){
         this.$Progress.start();
-        const { data } = await this.$http.get('http://localhost:8000/api/usersignale');
+        const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/usersignale');
          this.usersReported=data
           
       },
@@ -321,7 +321,7 @@ export default {
           async submitFile(){
               let formData = new FormData();
               formData.append('file', this.file);
-              const {data}=await this.$http.post('http://localhost:8000/api/user',
+              const {data}=await this.$http.post('https://djidjii.herokuapp.com/api/user',
                 formData,{ headers: {'Content-Type': 'multipart/form-data'}});
               if(data==null)
                 console.log('success');

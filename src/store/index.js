@@ -285,7 +285,7 @@ export default new Vuex.Store({
     },
     getNumberPlace({commit,state,dispatch}, places){
       return new Promise((resolve, reject) => {
-        Axios({url: 'http://localhost:8000/api/annonce/numbyplace', data: {place:places}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/numbyplace', data: {place:places}, method: 'POST' })
        .then(resp => { // store the token in localstorage
          state.placeNb=resp.data;
          resolve(resp)
@@ -349,7 +349,7 @@ export default new Vuex.Store({
       localStorage.removeItem('nbPageAds')
       localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/lookbywhat', data: {look:what,curPage:state.currentPageAds,prmin:state.prixmin,trier:state.trier, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/lookbywhat', data: {look:what,curPage:state.currentPageAds,prmin:state.prixmin,trier:state.trier, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
           if(state.Ads.total!=0){
@@ -400,7 +400,7 @@ export default new Vuex.Store({
       localStorage.removeItem('nbPageAds')
       localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/looksouscateg', data: {categ:info.categ,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/looksouscateg', data: {categ:info.categ,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds,scateg:info.scateg, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
           if(state.Ads.total!=0){
@@ -445,7 +445,7 @@ export default new Vuex.Store({
       localStorage.removeItem('nbPageAds')
       localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/lookcateg', data: {categ:type,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/lookcateg', data: {categ:type,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
           if(state.Ads.total!=0){
@@ -490,7 +490,7 @@ export default new Vuex.Store({
       localStorage.removeItem('nbPageAds')
       localStorage.removeItem('curPageAds')
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/annonce/look', data: {selected:info.selected,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, search:info.search, place:state.adsPlace}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/look', data: {selected:info.selected,prmin:state.prixmin,trier:state.trier,curPage:state.currentPageAds, search:info.search, place:state.adsPlace}, method: 'POST' })
          .then(resp => { // store the token in localstorage
           commit('search_success',resp.data)
            if(state.Ads.total!=0){
@@ -522,7 +522,7 @@ export default new Vuex.Store({
     
     logout({commit}){
       return new Promise((resolve, reject) => {
-        localStorage.removeItem('access_token') // clear your user's token from localstorage
+        localStorage.clear()
         delete Axios.defaults.headers.common['Authorization']
         commit('auth_logout')
         resolve()
@@ -531,7 +531,7 @@ export default new Vuex.Store({
     
   isUserExistUpdate({commit,dispatch,state},user){
     return new Promise((resolve, reject)=>{
-    Axios({url: 'http://localhost:8000/api/user/checkUserExistanceUpdate', data: user, method: 'POST' })
+    Axios({url: 'https://djidjii.herokuapp.com/api/user/checkUserExistanceUpdate', data: user, method: 'POST' })
         .then(respo => {
           if(respo.data!=0)
             state.notUserExist=false
@@ -543,7 +543,7 @@ export default new Vuex.Store({
 },
 pwdUpdate({commit,dispatch,state},info){
   return new Promise((resolve, reject)=>{
-  Axios({url: 'http://localhost:8000/api/user/pwdUpdate', data: info, method: 'POST' })
+  Axios({url: 'https://djidjii.herokuapp.com/api/user/pwdUpdate', data: info, method: 'POST' })
       .then(respo => {
         if(respo.data!==0)
           state.pwdIncorrect=false
@@ -555,7 +555,7 @@ pwdUpdate({commit,dispatch,state},info){
 },
 isUserExist({commit,dispatch,state},user){
   return new Promise((resolve, reject)=>{
-  Axios({url: 'http://localhost:8000/api/user/checkUserExistance', data: user, method: 'POST' })
+  Axios({url: 'https://djidjii.herokuapp.com/api/user/checkUserExistance', data: user, method: 'POST' })
       .then(respo => {
         if(respo.data==0)
           state.notUserExist=true
@@ -567,7 +567,7 @@ isUserExist({commit,dispatch,state},user){
 },
    signup({dispatch,state},info){
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-         Axios({url: 'http://localhost:8000/api/auth/register', data: info, method: 'POST' })
+         Axios({url: 'https://djidjii.herokuapp.com/api/auth/register', data: info, method: 'POST' })
           .then(resp => { // store the token in localstorage
             state.usRegStatus = 'success'
             state.okConnection.regmail=''
@@ -584,7 +584,7 @@ isUserExist({commit,dispatch,state},user){
       if(state.accessToken!==''){
         state.accessToken=localStorage.getItem('access_token')
         return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/user/check', data: {token:state.accessToken}, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/user/check', data: {token:state.accessToken}, method: 'POST' })
             .then(respo => {
               if(respo.data.id)
               {
@@ -612,7 +612,7 @@ isUserExist({commit,dispatch,state},user){
       commit('savedAd_reset')
       
         return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/annonce/saved', data:form, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/saved', data:form, method: 'POST' })
             .then(respo => {
               if(respo.data.total!=0){
                 console.log(respo.data)
@@ -631,7 +631,7 @@ isUserExist({commit,dispatch,state},user){
     getAdToDel({commit,state},content){
         state.adToDelete=[]
         return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/annonce/adtodell', data:content, method: 'POST' })// add to modify
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/adtodell', data:content, method: 'POST' })// add to modify
             .then(respo => {
                 commit('adtodell',respo.data)
                 localStorage.setItem('adtomod', JSON.stringify(respo.data))
@@ -648,7 +648,7 @@ isUserExist({commit,dispatch,state},user){
 
     sendEmail({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/message/sending', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/message/sending', data: content, method: 'POST' })
         .then(respo => {
           console.log('message sent')
           resolve(respo)
@@ -657,7 +657,7 @@ isUserExist({commit,dispatch,state},user){
     },
     sendAdmMess({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/message/sendingadmin', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/message/sendingadmin', data: content, method: 'POST' })
         .then(respo => {
           console.log('message sent')
           resolve(respo)
@@ -666,7 +666,7 @@ isUserExist({commit,dispatch,state},user){
     },
     increment({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/seen', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/seen', data: content, method: 'POST' })
         .then(respo => {
           console.log('view incremented')
           resolve(respo)
@@ -675,7 +675,7 @@ isUserExist({commit,dispatch,state},user){
     },
     contact({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/contact', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/contact', data: content, method: 'POST' })
         .then(respo => {
           console.log('admin mess sent')
           resolve(respo)
@@ -684,7 +684,7 @@ isUserExist({commit,dispatch,state},user){
     },
     checkNotif({state},user){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/checkNotif', data: user, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/checkNotif', data: user, method: 'POST' })
         .then(respo => {
           if(respo.data!=0)
             state.hasNotif=true
@@ -696,7 +696,7 @@ isUserExist({commit,dispatch,state},user){
     },
     setreset({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/pwdreset', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/pwdreset', data: content, method: 'POST' })
         .then(respo => {
           console.log('pwd reseted')
           resolve(respo)
@@ -705,7 +705,7 @@ isUserExist({commit,dispatch,state},user){
     },
     reset({commit,state},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/verify', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/verify', data: content, method: 'POST' })
         .then(respo => {
          if(respo.data!=0){
            commit('reset_success',respo.data)
@@ -721,7 +721,7 @@ isUserExist({commit,dispatch,state},user){
     },
     verify({commit,state},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/checkcode', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/checkcode', data: content, method: 'POST' })
         .then(respo => {
          if(respo.data!=0){
            //commit('reset_success',respo.data)
@@ -738,7 +738,7 @@ isUserExist({commit,dispatch,state},user){
     },
     signalerAd({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/signalement', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/signalement', data: content, method: 'POST' })
         .then(respo => {
           console.log('ad reported')
           resolve(respo)
@@ -747,7 +747,7 @@ isUserExist({commit,dispatch,state},user){
     },
     signalerUser({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/signalementUser', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/signalementUser', data: content, method: 'POST' })
         .then(respo => {
           console.log('user reported')
           resolve(respo)
@@ -756,7 +756,7 @@ isUserExist({commit,dispatch,state},user){
     },
     sauverAd({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/sauvegarde', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/sauvegarde', data: content, method: 'POST' })
         .then(respo => {
           console.log('ad saved')
           resolve(respo)
@@ -765,7 +765,7 @@ isUserExist({commit,dispatch,state},user){
     },
     retirerAd({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/sauvegardedel', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/sauvegardedel', data: content, method: 'POST' })
         .then(respo => {
           console.log('ad del')
           resolve(respo)
@@ -774,7 +774,7 @@ isUserExist({commit,dispatch,state},user){
     },
     supprimerAd({commit,dispatch},content){
       return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/delad', data: content, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/delad', data: content, method: 'POST' })
         .then(respo => {
           console.log('myad del')
           resolve(respo)
@@ -785,7 +785,7 @@ isUserExist({commit,dispatch,state},user){
       commit('mysavedAd_reset')
       
         return new Promise((resolve, reject)=>{
-        Axios({url: 'http://localhost:8000/api/annonce/mysaved', data:form, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/annonce/mysaved', data:form, method: 'POST' })
             .then(respo => {
               if(respo.data.total!=0){
                 console.log(respo.data)
@@ -803,20 +803,20 @@ isUserExist({commit,dispatch,state},user){
     login:({commit,state},user)=>{
       state.okConnection.notok=""
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        Axios({url: 'http://localhost:8000/api/auth/login', data: user, method: 'POST' })
+        Axios({url: 'https://djidjii.herokuapp.com/api/auth/login', data: user, method: 'POST' })
           .then(resp => {
             const token = resp.data.access_token
             localStorage.setItem('access_token', token) // store the token in localstorage
             Axios.defaults.headers.common['Authorization'] = token
             commit('auth_success', token)
 
-            Axios({url: 'http://localhost:8000/api/user/tokenS',data: {email:user.email,password:user.password,token:state.accessToken}, method: 'POST' })
+            Axios({url: 'https://djidjii.herokuapp.com/api/user/tokenS',data: {email:user.email,password:user.password,token:state.accessToken}, method: 'POST' })
             .then(tok=>{
               
               commit('auth_token',tok)
             })
 
-            Axios({url: 'http://localhost:8000/api/user',data: user, method: 'POST' })
+            Axios({url: 'https://djidjii.herokuapp.com/api/user',data: user, method: 'POST' })
             .then(respo => {
               localStorage.setItem('usetrixco', respo.data.id)
               //console.log('type',respo.data.type)

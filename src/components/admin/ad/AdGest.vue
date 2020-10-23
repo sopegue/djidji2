@@ -33,11 +33,11 @@ export default {
     methods:{
        async getAll(){
             
-            const { data } = await this.$http.get('http://localhost:8000/api/adallnb');
+            const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/adallnb');
              this.all=data
         },
        async getReported(){
-            const { data } = await this.$http.get('http://localhost:8000/api/adssignalenb');
+            const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/adssignalenb');
              this.reported=data
         }
     }

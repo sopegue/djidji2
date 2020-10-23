@@ -330,7 +330,7 @@ export default {
     methods:{
         async getUser(){
         this.$Progress.start();
-        const { data } = await this.$http.get('http://localhost:8000/api/user');
+        const { data } = await this.$http.get('https://djidjii.herokuapp.com/api/user');
          data.forEach(user => this.users.push(new User(user)));
         this.users=this.users.filter(post => {
             return !post.isblocked.toString().includes('1')

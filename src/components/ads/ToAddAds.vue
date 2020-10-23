@@ -425,7 +425,7 @@ export default {
     },
     addAd(ad){
         // The Promise used for router redirect in login
-        this.$http.post('http://localhost:8000/api/annonce', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
+        this.$http.post('https://djidjii.herokuapp.com/api/annonce', ad,{ headers: {'Content-Type': 'multipart/form-data'}})
          .then(resp => { // store the token in localstorage
             console.log('ad added')
             this.$store.dispatch('updPlace',this.$store.state.adsPlace)
@@ -458,7 +458,7 @@ export default {
         this.mymage[index]=undefined
       }
       console.log('im', this.mymage)
-      // this.$http.post('http://localhost:8000/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
+      // this.$http.post('https://djidjii.herokuapp.com/api/annonce/testfile', this.myfile ,{ headers: {'Content-Type': 'multipart/form-data'}} ).then(response => {
        //  console.log(response)
        //})
     },

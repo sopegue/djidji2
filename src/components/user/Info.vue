@@ -249,7 +249,7 @@
               this.$notify({
                    group: 'User-modified'
                  });
-              this.$http.post('http://localhost:8000/api/user/UpdateUser', user)
+              this.$http.post('https://djidjii.herokuapp.com/api/user/UpdateUser', user)
               .then(resp => { // store the token in localstorage
                 
                  console.log('updated')
@@ -267,7 +267,7 @@
               let formData = new FormData();
               formData.append('file', this.file);
               formData.append('user',this.$store.state.currentUser.id)
-              const {data}=await this.$http.post('http://localhost:8000/api/user/UpdatePic',
+              const {data}=await this.$http.post('https://djidjii.herokuapp.com/api/user/UpdatePic',
                 formData,{ headers: {'Content-Type': 'multipart/form-data'}});
               if(data==null)
                 console.log('success');

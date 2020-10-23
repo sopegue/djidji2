@@ -72,7 +72,7 @@
             var user=localStorage.getItem('usetrixco')
             formData.append('user', user);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/getNotif', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/getNotif', data: formData, method: 'POST' })
                 .then(respo => {
                   this.isLoading=false
                   this.not=respo.data

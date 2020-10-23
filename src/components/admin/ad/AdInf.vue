@@ -298,7 +298,7 @@ export default {
             formData.append('user', id);
             formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/blockuser', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/blockuser', data: formData, method: 'POST' })
                 .then(respo => {
                    this.user.isblocked=1
                     console.log('blocked')
@@ -319,7 +319,7 @@ export default {
             formData.append('user', id);
             formData.append('me', this.$store.state.currentUser.id);
             return new Promise((resolve, reject)=>{
-                Axios({url: 'http://localhost:8000/api/unblockuser', data: formData, method: 'POST' })
+                Axios({url: 'https://djidjii.herokuapp.com/api/unblockuser', data: formData, method: 'POST' })
                 .then(respo => {
                    this.user.isblocked=0
                     console.log('unblocked')
@@ -369,7 +369,7 @@ export default {
         var form= new FormData()
         form.append('user',this.$store.state.currentUser.id)
         form.append('ad',this.ad.id)
-        this.$http.post('http://localhost:8000/api/savedAdsCheck', form ).then(response => {
+        this.$http.post('https://djidjii.herokuapp.com/api/savedAdsCheck', form ).then(response => {
           if(response.data!=0)
             {
               this.saved=true
