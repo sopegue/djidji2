@@ -46,7 +46,7 @@
               </div>
             </div>
             <div class="cpy-f">
-              <small>Copyright © 2020 <router-link to="/" class="d-f-a">Djidji.com</router-link>. Tous droits réservés</small>
+              <small>Copyright © 2020 <router-link to="/" class="d-f-a">Djidji.com</router-link>.By <router-link target="_blank" to="www.linkedin.com/in/sopoude" class="d-f-a">Yaya Sopegue Soro</router-link>. Tous droits réservés</small>
             </div>
         </div>
     </div>
