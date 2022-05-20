@@ -2,6 +2,10 @@
 
 Djidji is my first website deployed project presented at school for my bachelor degree. It's a website of ecommerce C2C.
 
+# demo site
+
+[Demo here](https://djidjii.netlify.app/#/).
+
 ## Project setup
 ```
 npm install
