@@ -1,4 +1,6 @@
-# djidji2.0
+# djidji
+
+Djidji is my first website deployed project presented at school for my bachelor degree. It's a website of ecommerce C2C.
 
 ## Project setup
 ```
