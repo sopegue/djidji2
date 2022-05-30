@@ -20,7 +20,7 @@
         </div>
         <div id="foot-lsts">
             <div class="cpy-f">
-              <small>Copyright © 2020 <router-link to="/" class="d-f-a">Djidji.com</router-link>. By <a target="_blank" href="https://www.linkedin.com/in/sopoude" class="d-f-a">Yaya Sopegue Soro</a>. Tous droits réservés</small>
+              <small>Copyright © {{ toyear }} <router-link to="/" class="d-f-a">Djidji.com</router-link>. By <a target="_blank" href="https://www.linkedin.com/in/sopoude" class="d-f-a">Yaya Sopegue Soro</a>. Tous droits réservés</small>
             </div>
         </div>
     </div>
@@ -44,6 +44,7 @@
 </style>
 <script>
   export default { 
+     computed: { toyear() { return new Date().getFullYear().toString() }, },
      methods: { 
            scrollToTop() {
               window.scrollTo({
